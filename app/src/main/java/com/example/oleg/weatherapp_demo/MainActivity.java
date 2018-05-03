@@ -1,136 +1,117 @@
 package com.example.oleg.weatherapp_demo;
 
-import android.database.Cursor;
-import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.ProgressBar;
+import android.widget.ListAdapter;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.oleg.weatherapp_demo.data.WeatherAppContract;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Cursor>,
-        WeatherAppAdapter.WeatherAppAdapterOnClickHandler {
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
+public class MainActivity extends AppCompatActivity {
 
-    /*
-     * The columns of data that we are interested in displaying within our MainActivity's list of
-     * weather data.
-     */
-    public static final String[] MAIN_FORECAST_PROJECTION = {
-            WeatherAppContract.WeatherAppEntry.COLUMN_DATE,
-            WeatherAppContract.WeatherAppEntry.COLUMN_MAX_TEMP,
-            WeatherAppContract.WeatherAppEntry.COLUMN_MIN_TEMP,
-            WeatherAppContract.WeatherAppEntry.COLUMN_WEATHER_ID,
-    };
+    private ProgressDialog pDialog;
 
-    /*
-     * We store the indices of the values in the array of Strings above to more quickly be able to
-     * access the data from our query. If the order of the Strings above changes, these indices
-     * must be adjusted to match the order of the Strings.
-     */
-    public static final int INDEX_WEATHER_DATE = 0;
-    public static final int INDEX_WEATHER_MAX_TEMP = 1;
-    public static final int INDEX_WEATHER_MIN_TEMP = 2;
-    public static final int INDEX_WEATHER_CONDITION_ID = 3;
+    private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233";
 
-    private static final int ID_FORECAST_LOADER = 44;
-
-    private WeatherAppAdapter mWeatherAppAdapter;
-    private RecyclerView mRecyclerView;
-    private int mPosition = RecyclerView.NO_POSITION;
-
-    private ProgressBar mLoadingIndicator;
+    TextView mText;
+    List<String> mList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getSupportActionBar().setElevation(0f);
 
-        mRecyclerView = findViewById(R.id.rv_forecast);
-        mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
+        mText = findViewById(R.id.tv_main_activity);
+        mList = new ArrayList<>();
 
-        LinearLayoutManager layoutManager =
-                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setHasFixedSize(true);
-
-        mWeatherAppAdapter = new WeatherAppAdapter(this, this);
-
-        showLoading();
-
-        getSupportLoaderManager().initLoader(ID_FORECAST_LOADER, null, this);
+        new GetWetherData().execute();
 
     }
 
-    @NonNull
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+    private class GetWetherData extends AsyncTask<Void, Void, Void> {
 
-        switch (id) {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // Showing progress dialog
+            pDialog = new ProgressDialog(MainActivity.this);
+            pDialog.setMessage("Please wait...");
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
 
-            case ID_FORECAST_LOADER:
-                /* URI for all rows of weather data in our weather table */
-                Uri forecastQueryUri = WeatherAppContract.WeatherAppEntry.CONTENT_URI;
-                /* Sort order: Ascending by date */
-                String sortOrder = WeatherAppContract.WeatherAppEntry.COLUMN_DATE + " ASC";
-                /*
-                 * A SELECTION in SQL declares which rows you'd like to return. In our case, we
-                 * want all weather data from today onwards that is stored in our weather table.
-                 * We created a handy method to do that in our WeatherEntry class.
-                 */
-                String selection = WeatherAppContract.WeatherAppEntry.getSqlSelectForTodayOnwards();
+        @Override
+        protected Void doInBackground(Void... voids) {
+            HttpHandler sh = new HttpHandler();
 
-                return new CursorLoader(this,
-                        forecastQueryUri,
-                        MAIN_FORECAST_PROJECTION,
-                        selection,
-                        null,
-                        sortOrder);
+            // Making a request to url and getting response
+            String jsonStr = sh.makeServiceCall(url);
 
-            default:
-                throw new RuntimeException("Loader Not Implemented: " + id);
+            if (jsonStr != null) {
+                try {
+                    JSONObject jsonObj = new JSONObject(jsonStr);
+
+                    // Getting JSON Array node
+                    JSONArray currently = jsonObj.getJSONArray("currently");
+
+                    for (int i = 0; i < currently.length(); i++) {
+
+                        JSONObject c = currently.getJSONObject(i);
+                        String summary = c.getString("summary");
+                        double temperature = c.getDouble("temperature");
+
+                        // adding shit
+                        mList.add(summary + " - " + String.valueOf(temperature));
+                    }
+                } catch (final JSONException e) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(),
+                                    "Json parsing error: " + e.getMessage(),
+                                    Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                    });
+
+                }
+            } else {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),
+                                "Couldn't get json from server. Check LogCat for possible errors!",
+                                Toast.LENGTH_LONG)
+                                .show();
+                    }
+                });
+
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            // Dismiss the progress dialog
+            if (pDialog.isShowing())
+                pDialog.dismiss();
+            /**
+             * Updating parsed JSON data into ListView
+             * */
+            mText.setText(mList.toString());
+
         }
     }
-
-    @Override
-    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        mWeatherAppAdapter.swapCursor(data);
-        if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
-        mRecyclerView.smoothScrollToPosition(mPosition);
-        if (data.getCount() != 0) showWeatherDataView();
-    }
-
-    @Override
-    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-        mWeatherAppAdapter.swapCursor(null);
-    }
-
-    @Override
-    public void onClick(long date) {
-
-    }
-
-    private void showWeatherDataView() {
-        /* First, hide the loading indicator */
-        mLoadingIndicator.setVisibility(View.INVISIBLE);
-        /* Finally, make sure the weather data is visible */
-        mRecyclerView.setVisibility(View.VISIBLE);
-    }
-
-    private void showLoading() {
-        /* Then, hide the weather data */
-        mRecyclerView.setVisibility(View.INVISIBLE);
-        /* Finally, show the loading indicator */
-        mLoadingIndicator.setVisibility(View.VISIBLE);
-    }
 }
+

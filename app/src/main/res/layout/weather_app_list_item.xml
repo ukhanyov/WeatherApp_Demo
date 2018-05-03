@@ -27,7 +27,7 @@
         tools:text="Today, May 03"/>
 
     <TextView
-        android:id="@+id/weather_description"
+        android:id="@+id/weather_summery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
