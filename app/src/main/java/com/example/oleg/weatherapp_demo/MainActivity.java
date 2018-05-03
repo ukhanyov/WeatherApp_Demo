@@ -62,17 +62,22 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject jsonObj = new JSONObject(jsonStr);
 
                     // Getting JSON Array node
-                    JSONArray currently = jsonObj.getJSONArray("currently");
+                    JSONObject currently = jsonObj.getJSONObject("currently");
 
-                    for (int i = 0; i < currently.length(); i++) {
+                    String summary = currently.getString("summary");
+                    double temperature = currently.getDouble("temperature");
 
-                        JSONObject c = currently.getJSONObject(i);
-                        String summary = c.getString("summary");
-                        double temperature = c.getDouble("temperature");
+                    mList.add(summary + " - " + String.valueOf(temperature));
 
-                        // adding shit
-                        mList.add(summary + " - " + String.valueOf(temperature));
-                    }
+                    //for (int i = 0; i < currently.length(); i++) {
+//                        JSONObject c = currently.getJSONObject(0);
+//
+//                        String summary = c.getString("summary");
+//                        double temperature = c.getDouble("temperature");
+//
+//                        // adding shit
+//                        mList.add(summary + " - " + String.valueOf(temperature));
+                    //}
                 } catch (final JSONException e) {
                     runOnUiThread(new Runnable() {
                         @Override
