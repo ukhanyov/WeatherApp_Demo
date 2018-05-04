@@ -2,38 +2,21 @@ package com.example.oleg.weatherapp_demo;
 
 import android.app.ProgressDialog;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.oleg.weatherapp_demo.data.WeatherContract;
 import com.example.oleg.weatherapp_demo.data.WeatherDbHelper;
-import com.example.oleg.weatherapp_demo.utilities.WeatherDateUtilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -76,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
                 WeatherContract.WeatherEntry._ID
         );
     }
+
+
 
     private class GetWeatherData extends AsyncTask<Void, Void, Void> {
 
