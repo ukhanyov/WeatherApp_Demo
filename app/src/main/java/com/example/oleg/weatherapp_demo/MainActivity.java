@@ -4,19 +4,26 @@ import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.oleg.weatherapp_demo.data.WeatherContract;
-import com.example.oleg.weatherapp_demo.utils.WeatherDateUtils;
+import com.example.oleg.weatherapp_demo.data.WeatherDbHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,43 +39,45 @@ public class MainActivity extends AppCompatActivity {
 
     private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233";
 
-    TextView mText;
-    List<String> mList;
-
-    public static final String[] MAIN_FORECAST_PROJECTION = {
-            WeatherContract.WeatherEntry.COLUMN_DATE,
-            WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
-            WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
-            WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
-    };
-
-    public static final int INDEX_WEATHER_DATE = 0;
-    public static final int INDEX_WEATHER_MAX_TEMP = 1;
-    public static final int INDEX_WEATHER_MIN_TEMP = 2;
-    public static final int INDEX_WEATHER_CONDITION_ID = 3;
-
-    private static final int ID_WEATHER_LOADER = 44;
-
+    private SQLiteDatabase mDb;
     private WeatherAdapter mWeatherAdapter;
     private RecyclerView mRecyclerView;
-    private int mPosition = RecyclerView.NO_POSITION;
-
-    private ProgressBar mLoadingIndicator;
 
     List<ContentValues> weatherValues;
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Objects.requireNonNull(getSupportActionBar()).setElevation(0f);
+        //Objects.requireNonNull(getSupportActionBar()).setElevation(0f);
 
-        mText = findViewById(R.id.tv_main_activity);
-        mList = new ArrayList<>();
-        weatherValues = new ArrayList<>();
+        WeatherDbHelper dbHelper = new WeatherDbHelper(this);
+        mDb = dbHelper.getWritableDatabase();
+        Cursor cursor = getAllSamples();
 
-        insertWeatherData(this);
+        mRecyclerView = findViewById(R.id.rv_weather);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setHasFixedSize(true);
+
+        //new GetWeatherData().execute();
+
+        mWeatherAdapter = new WeatherAdapter(MainActivity.this, cursor);
+        mRecyclerView.setAdapter(mWeatherAdapter);
+
+    }
+
+    private Cursor getAllSamples() {
+        // Inside, call query on mDb passing in the table name and projection String [] order by _ID
+        return mDb.query(
+                WeatherContract.WeatherEntry.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                WeatherContract.WeatherEntry._ID
+        );
     }
 
 
@@ -107,10 +116,10 @@ public class MainActivity extends AppCompatActivity {
 
                         //date
                         contentValues.put(WeatherContract.WeatherEntry.COLUMN_DATE,
-                                WeatherDateUtils.normalizeDate(c.getLong("time")));
+                                c.getLong("time"));
 
                         //shit for icon
-                        contentValues.put(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
+                        contentValues.put(WeatherContract.WeatherEntry.COLUMN_SUMMARY_ID,
                                 c.getString("icon"));
 
                         //temp
@@ -132,14 +141,8 @@ public class MainActivity extends AppCompatActivity {
                                 c.getDouble("windSpeed"));
 
 
-//                        String summary = c.getString("summary");
-//                        double temperatureHigh = c.getDouble("temperatureHigh");
-//                        double temperatureLow = c.getDouble("temperatureLow");
-
                         // adding shit
-                        weatherValues.add(contentValues);
-//                        mList.add(summary + " - " + String.valueOf(temperatureHigh) +
-//                        " - " + String.valueOf(temperatureLow) + "\n");
+                        mDb.insert(WeatherContract.WeatherEntry.TABLE_NAME, null, contentValues);
                     }
                 } catch (final JSONException e) {
                     runOnUiThread(new Runnable() {
@@ -174,22 +177,7 @@ public class MainActivity extends AppCompatActivity {
             // Dismiss the progress dialog
             if (pDialog.isShowing())
                 pDialog.dismiss();
-            /**
-             * Updating parsed JSON data into ListView
-             * */
-
-            mText.setText(mList.toString());
-
         }
-    }
-
-    private void insertWeatherData(Context context){
-
-        new GetWeatherData().execute();
-
-        context.getContentResolver().bulkInsert(
-                WeatherContract.WeatherEntry.CONTENT_URI,
-                weatherValues.toArray(new ContentValues[weatherValues.size()]));
     }
 }
 

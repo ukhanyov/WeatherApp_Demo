@@ -7,75 +7,68 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.oleg.weatherapp_demo.utils.WeatherDateUtils;
-import com.example.oleg.weatherapp_demo.utils.WeatherTempUtils;
+import com.example.oleg.weatherapp_demo.data.WeatherContract;
 
 public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherAdapterViewHolder> {
 
-    private final Context mContext;
-
-    final private WeatherAdapterOnClickHandler mClickHandler;
-
-
-    public interface WeatherAdapterOnClickHandler {
-        void onClick(long date);
-    }
-
+    private Context mContext;
     private Cursor mCursor;
 
-    public WeatherAdapter(@NonNull Context context, WeatherAdapterOnClickHandler clickHandler) {
+
+    public WeatherAdapter(Context context, Cursor cursor) {
         mContext = context;
-        mClickHandler = clickHandler;
+        mCursor = cursor;
     }
 
 
     @Override
-    public WeatherAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public WeatherAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
 
-        View view = LayoutInflater
-                .from(mContext)
-                .inflate(R.layout.weather_app_list_item, viewGroup, false);
-
-        view.setFocusable(true);
-
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        View view = inflater.inflate(R.layout.weather_app_list_item, viewGroup, false);
         return new WeatherAdapterViewHolder(view);
     }
 
 
     @Override
     public void onBindViewHolder(WeatherAdapterViewHolder weatherAdapterViewHolder, int position) {
-        mCursor.moveToPosition(position);
+        // Move the cursor to the passed in position, return if moveToPosition returns false
+        if(!mCursor.moveToPosition(position))
+            return;
 
 
-        /*******************
-         * Weather Summary *
-         *******************/
-        /* Read date from the cursor */
-        long dateInMillis = mCursor.getLong(MainActivity.INDEX_WEATHER_DATE);
+        /****************
+         * Weather Icon *
+         ****************/
 
-        /* Get human readable string using our utility method */
-        String dateString = WeatherDateUtils.getFriendlyDateString(mContext, dateInMillis, false);
+        //implement getting icon, a dummy for now
+        weatherAdapterViewHolder.weatherIcon.setImageResource(R.drawable.ic_brightness_medium_black_48dp);
 
-        /* Use the weatherId to obtain the proper description */
-        int weatherId = mCursor.getInt(MainActivity.INDEX_WEATHER_CONDITION_ID);
+        /****************
+         * Weather Date *
+         ****************/
+        long date = mCursor.getLong(mCursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATE));
+        weatherAdapterViewHolder.weatherDate.setText(String.valueOf(date));
 
-        String description = "NaN";
-                //SunshineWeatherUtils.getStringForWeatherCondition(mContext, weatherId);
+        /***********************
+         * Weather Description *
+         ***********************/
+        String summary = mCursor.getString(mCursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_SUMMARY_ID));
 
-        /* Read high temperature from the cursor (in degrees celsius) */
-        double highInCelsius = mCursor.getDouble(MainActivity.INDEX_WEATHER_MAX_TEMP);
+        /**************************
+         * High (max) temperature *
+         **************************/
+        double temperatureMax = mCursor.getDouble(mCursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP));
+        weatherAdapterViewHolder.weatherTemperatureHigh.setText(String.valueOf(temperatureMax));
 
-        /* Read low temperature from the cursor (in degrees celsius) */
-        double lowInCelsius = mCursor.getDouble(MainActivity.INDEX_WEATHER_MIN_TEMP);
-
-        String highAndLowTemperature =
-                WeatherTempUtils.formatHighLows(mContext, highInCelsius, lowInCelsius);
-
-        String weatherSummary = dateString + " - " + description + " - " + highAndLowTemperature;
-
-        weatherAdapterViewHolder.weatherSummary.setText(weatherSummary);
+        /*************************
+         * Low (min) temperature *
+         *************************/
+        double temperatureMin = mCursor.getDouble(mCursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP));
+        weatherAdapterViewHolder.weatherTemperatureHigh.setText(String.valueOf(temperatureMin));
     }
 
     @Override
@@ -84,30 +77,34 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherA
         return mCursor.getCount();
     }
 
-
     void swapCursor(Cursor newCursor) {
+        // Inside, check if the current cursor is not null, and close it if so
+        if(mCursor != null) mCursor.close();
+        // Update the local mCursor to be equal to  newCursor
         mCursor = newCursor;
-        notifyDataSetChanged();
+        // Check if the newCursor is not null, and call this.notifyDataSetChanged() if so
+        if(newCursor != null){
+            //Force RecyclerView to refresh
+            this.notifyDataSetChanged();
+        }
     }
 
+    class WeatherAdapterViewHolder extends RecyclerView.ViewHolder {
 
-    class WeatherAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        final TextView weatherSummary;
+        ImageView weatherIcon;
+        TextView weatherDate;
+        TextView weatherSummary;
+        TextView weatherTemperatureHigh;
+        TextView weatherTemperatureLow;
 
         WeatherAdapterViewHolder(View view) {
             super(view);
 
-            weatherSummary = view.findViewById(R.id.tv_main_activity);
-
-            view.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            int adapterPosition = getAdapterPosition();
-            mCursor.moveToPosition(adapterPosition);
-            long dateInMillis = mCursor.getLong(MainActivity.INDEX_WEATHER_DATE);
-            mClickHandler.onClick(dateInMillis);
+            weatherIcon = view.findViewById(R.id.weather_icon);
+            weatherDate = view.findViewById(R.id.tv_weather_date);
+            weatherSummary = view.findViewById(R.id.tv_weather_summary);
+            weatherTemperatureHigh = view.findViewById(R.id.tv_high_temperature);
+            weatherTemperatureLow = view.findViewById(R.id.tv_low_temperature);
         }
     }
 }

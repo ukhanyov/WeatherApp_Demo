@@ -19,12 +19,6 @@
             </intent-filter>
         </activity>
 
-        <provider
-            android:authorities="com.example.oleg.weatherapp_demo"
-            android:name=".data.WeatherProvider"
-            android:exported="false"/>
-
-
     </application>
 
 </manifest>
