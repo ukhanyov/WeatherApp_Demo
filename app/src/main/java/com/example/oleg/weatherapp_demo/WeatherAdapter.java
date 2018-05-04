@@ -12,6 +12,9 @@ import android.widget.TextView;
 
 import com.example.oleg.weatherapp_demo.data.WeatherContract;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherAdapterViewHolder> {
 
     private Context mContext;
@@ -50,8 +53,14 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherA
         /****************
          * Weather Date *
          ****************/
-        long date = mCursor.getLong(mCursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATE));
-        weatherAdapterViewHolder.weatherDate.setText(String.valueOf(date));
+        long dbDate = mCursor.getLong(mCursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATE));
+
+        Date date = new java.util.Date(dbDate*1000L);
+        SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MM-yyyy");
+        sdf.setTimeZone(java.util.TimeZone.getTimeZone("GMT+3"));
+        String formattedDate = sdf.format(date);
+
+        weatherAdapterViewHolder.weatherDate.setText(formattedDate);
 
         /***********************
          * Weather Summary *
@@ -63,13 +72,13 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherA
          * High (max) temperature *
          **************************/
         double temperatureMax = mCursor.getDouble(mCursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP));
-        weatherAdapterViewHolder.weatherTemperatureHigh.setText(String.valueOf(temperatureMax));
+        weatherAdapterViewHolder.weatherTemperatureHigh.setText(String.valueOf(Math.round(temperatureMax))+ "\u00b0");
 
         /*************************
          * Low (min) temperature *
          *************************/
         double temperatureMin = mCursor.getDouble(mCursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP));
-        weatherAdapterViewHolder.weatherTemperatureLow.setText(String.valueOf(temperatureMin));
+        weatherAdapterViewHolder.weatherTemperatureLow.setText(String.valueOf(Math.round(temperatureMin)) + "\u00b0");
 
     }
 

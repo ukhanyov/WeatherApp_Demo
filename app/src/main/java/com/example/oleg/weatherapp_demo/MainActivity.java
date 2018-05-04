@@ -18,12 +18,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.oleg.weatherapp_demo.data.WeatherContract;
 import com.example.oleg.weatherapp_demo.data.WeatherDbHelper;
+import com.example.oleg.weatherapp_demo.utilities.WeatherDateUtilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressDialog pDialog;
 
-    private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233/";
+    private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233?units=si";
 
     private SQLiteDatabase mDb;
     private WeatherAdapter mWeatherAdapter;
@@ -60,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
 
         mWeatherAdapter = new WeatherAdapter(MainActivity.this, cursor);
         mRecyclerView.setAdapter(mWeatherAdapter);
-
     }
 
     private Cursor getAllSamples() {
@@ -74,11 +75,6 @@ public class MainActivity extends AppCompatActivity {
                 null,
                 WeatherContract.WeatherEntry._ID
         );
-    }
-
-    private boolean removeSampleData(long id){
-        return mDb.delete(WeatherContract.WeatherEntry.TABLE_NAME,
-                WeatherContract.WeatherEntry._ID + "=" +id, null) > 0;
     }
 
     private class GetWeatherData extends AsyncTask<Void, Void, Void> {

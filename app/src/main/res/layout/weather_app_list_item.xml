@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/weather_icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         tools:src="@drawable/ic_brightness_medium_black_48dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -40,8 +40,8 @@
         android:id="@+id/tv_high_temperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
         android:fontFamily="sans-serif-light"
         android:textColor="@color/primary_text"
         android:textSize="28dp"
