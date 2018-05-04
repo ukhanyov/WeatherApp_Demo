@@ -37,20 +37,16 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressDialog pDialog;
 
-    private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233";
+    private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233/";
 
     private SQLiteDatabase mDb;
     private WeatherAdapter mWeatherAdapter;
     private RecyclerView mRecyclerView;
 
-    List<ContentValues> weatherValues;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Objects.requireNonNull(getSupportActionBar()).setElevation(0f);
 
         WeatherDbHelper dbHelper = new WeatherDbHelper(this);
         mDb = dbHelper.getWritableDatabase();
@@ -60,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
 
-        //new GetWeatherData().execute();
+        new GetWeatherData().execute();
 
         mWeatherAdapter = new WeatherAdapter(MainActivity.this, cursor);
         mRecyclerView.setAdapter(mWeatherAdapter);
@@ -80,6 +76,10 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
+    private boolean removeSampleData(long id){
+        return mDb.delete(WeatherContract.WeatherEntry.TABLE_NAME,
+                WeatherContract.WeatherEntry._ID + "=" +id, null) > 0;
+    }
 
     private class GetWeatherData extends AsyncTask<Void, Void, Void> {
 

@@ -54,9 +54,10 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherA
         weatherAdapterViewHolder.weatherDate.setText(String.valueOf(date));
 
         /***********************
-         * Weather Description *
+         * Weather Summary *
          ***********************/
         String summary = mCursor.getString(mCursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_SUMMARY_ID));
+        weatherAdapterViewHolder.weatherSummary.setText(summary);
 
         /**************************
          * High (max) temperature *
@@ -68,7 +69,8 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherA
          * Low (min) temperature *
          *************************/
         double temperatureMin = mCursor.getDouble(mCursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP));
-        weatherAdapterViewHolder.weatherTemperatureHigh.setText(String.valueOf(temperatureMin));
+        weatherAdapterViewHolder.weatherTemperatureLow.setText(String.valueOf(temperatureMin));
+
     }
 
     @Override
