@@ -4,8 +4,6 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.ListAdapter;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,7 +12,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,11 +31,11 @@ public class MainActivity extends AppCompatActivity {
         mText = findViewById(R.id.tv_main_activity);
         mList = new ArrayList<>();
 
-        new GetWetherData().execute();
+        new GetWeatherData().execute();
 
     }
 
-    private class GetWetherData extends AsyncTask<Void, Void, Void> {
+    private class GetWeatherData extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
@@ -52,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
+
             HttpHandler sh = new HttpHandler();
 
             // Making a request to url and getting response
@@ -59,25 +57,23 @@ public class MainActivity extends AppCompatActivity {
 
             if (jsonStr != null) {
                 try {
+
                     JSONObject jsonObj = new JSONObject(jsonStr);
+                    JSONObject daily = jsonObj.getJSONObject("daily");
+                    JSONArray data = daily.getJSONArray("data");
 
-                    // Getting JSON Array node
-                    JSONObject currently = jsonObj.getJSONObject("currently");
+                    for (int i = 0; i < data.length(); i++) {
 
-                    String summary = currently.getString("summary");
-                    double temperature = currently.getDouble("temperature");
+                        JSONObject c = data.getJSONObject(i);
 
-                    mList.add(summary + " - " + String.valueOf(temperature));
+                        String summary = c.getString("summary");
+                        double temperatureHigh = c.getDouble("temperatureHigh");
+                        double temperatureLow = c.getDouble("temperatureLow");
 
-                    //for (int i = 0; i < currently.length(); i++) {
-//                        JSONObject c = currently.getJSONObject(0);
-//
-//                        String summary = c.getString("summary");
-//                        double temperature = c.getDouble("temperature");
-//
-//                        // adding shit
-//                        mList.add(summary + " - " + String.valueOf(temperature));
-                    //}
+                        // adding shit
+                        mList.add(summary + " - " + String.valueOf(temperatureHigh) +
+                        " - " + String.valueOf(temperatureLow) + "\n");
+                    }
                 } catch (final JSONException e) {
                     runOnUiThread(new Runnable() {
                         @Override
@@ -114,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
             /**
              * Updating parsed JSON data into ListView
              * */
+
             mText.setText(mList.toString());
 
         }
