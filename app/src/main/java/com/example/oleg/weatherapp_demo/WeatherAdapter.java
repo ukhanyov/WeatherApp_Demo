@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.oleg.weatherapp_demo.data.WeatherContract;
+import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -65,12 +66,12 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherA
          ****************/
         long dbDate = mCursor.getLong(mCursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATE));
 
-        Date date = new java.util.Date(dbDate*1000L);
-        SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MM-yyyy");
-        sdf.setTimeZone(java.util.TimeZone.getTimeZone("GMT+3"));
-        String formattedDate = sdf.format(date);
+//        Date date = new java.util.Date(dbDate*1000L);
+//        SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MM-yyyy");
+//        sdf.setTimeZone(java.util.TimeZone.getTimeZone("GMT+3"));
+//        String formattedDate = sdf.format(date);
 
-        weatherAdapterViewHolder.weatherDate.setText(formattedDate);
+        weatherAdapterViewHolder.weatherDate.setText(NormalizeDate.getHumanFriendlyDate(dbDate));
 
         /***********************
          * Weather Summary *
@@ -98,15 +99,8 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherA
     }
 
     void swapCursor(Cursor newCursor) {
-        // Inside, check if the current cursor is not null, and close it if so
-        if(mCursor != null) mCursor.close();
-        // Update the local mCursor to be equal to  newCursor
         mCursor = newCursor;
-        // Check if the newCursor is not null, and call this.notifyDataSetChanged() if so
-        if(newCursor != null){
-            //Force RecyclerView to refresh
-            this.notifyDataSetChanged();
-        }
+        notifyDataSetChanged();
     }
 
     class WeatherAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{

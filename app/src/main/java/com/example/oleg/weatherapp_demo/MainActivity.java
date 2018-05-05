@@ -8,6 +8,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -41,6 +46,8 @@ public class MainActivity extends AppCompatActivity
     public static final int INDEX_WEATHER_COLUMN_PRESSURE = 6;
     public static final int INDEX_WEATHER_COLUMN_WIND_SPEED = 7;
 
+    private static final int ID_FORECAST_LOADER = 44;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +60,6 @@ public class MainActivity extends AppCompatActivity
         mRecyclerView = findViewById(R.id.rv_weather);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
-
 
         new GetWeatherData().execute();
 
