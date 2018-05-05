@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +31,15 @@ public class MainActivity extends AppCompatActivity
     private SQLiteDatabase mDb;
     private WeatherAdapter mWeatherAdapter;
     private RecyclerView mRecyclerView;
+
+    public static final int INDEX_WEATHER_TABLE_NAME = 0;
+    public static final int INDEX_WEATHER_COLUMN_DATE = 1;
+    public static final int INDEX_WEATHER_COLUMN_SUMMARY_ID = 2;
+    public static final int INDEX_WEATHER_COLUMN_MIN_TEMP = 3;
+    public static final int INDEX_WEATHER_COLUMN_MAX_TEMP = 4;
+    public static final int INDEX_WEATHER_COLUMN_HUMIDITY = 5;
+    public static final int INDEX_WEATHER_COLUMN_PRESSURE = 6;
+    public static final int INDEX_WEATHER_COLUMN_WIND_SPEED = 7;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,9 +77,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onClick(long date) {
         Intent intent = new Intent(this, DetailsActivity.class);
+
+        Uri dateClicked = WeatherContract.WeatherEntry.CONTENT_URI.buildUpon()
+                .appendPath(Long.toString(date))
+                .build();
+
+        intent.setData(dateClicked);
         startActivity(intent);
     }
-
 
     private class GetWeatherData extends AsyncTask<Void, Void, Void> {
 

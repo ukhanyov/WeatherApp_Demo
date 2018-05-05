@@ -135,7 +135,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherA
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
             mCursor.moveToPosition(adapterPosition);
-            long dateInMillis = mCursor.getLong(1);
+            long dateInMillis = mCursor.getLong(MainActivity.INDEX_WEATHER_COLUMN_DATE);
             mClickHandler.onClick(dateInMillis);
         }
     }
