@@ -9,12 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.oleg.weatherapp_demo.data.WeatherContract;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 
 public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherAdapterViewHolder> {
@@ -22,18 +20,18 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherA
     private Context mContext;
     private Cursor mCursor;
 
+    final private WeatherAdapterOnClickHandler mClickHandler;
 
-    // Item click stuff
-    private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Toast.makeText(mContext, Arrays.toString(mCursor.getColumnNames()), Toast.LENGTH_SHORT).show();
-        }
-    };
+    public interface WeatherAdapterOnClickHandler {
+        void onClick(long date);
+    }
 
-    public WeatherAdapter(Context context, Cursor cursor) {
+    public WeatherAdapter(Context context, Cursor cursor, WeatherAdapterOnClickHandler clickHandler) {
         mContext = context;
         mCursor = cursor;
+
+        // Item click stuff
+        mClickHandler = clickHandler;
     }
 
 
@@ -43,8 +41,6 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherA
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View view = inflater.inflate(R.layout.weather_app_list_item, viewGroup, false);
 
-        // Item click stuff
-        view.setOnClickListener(mOnClickListener);
 
         return new WeatherAdapterViewHolder(view);
     }
@@ -113,7 +109,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherA
         }
     }
 
-    class WeatherAdapterViewHolder extends RecyclerView.ViewHolder{
+    class WeatherAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         ImageView weatherIcon;
         TextView weatherDate;
@@ -129,6 +125,18 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherA
             weatherSummary = view.findViewById(R.id.tv_weather_summary);
             weatherTemperatureHigh = view.findViewById(R.id.tv_high_temperature);
             weatherTemperatureLow = view.findViewById(R.id.tv_low_temperature);
+
+            view.setOnClickListener(this);
+        }
+
+
+        // Item click stuff
+        @Override
+        public void onClick(View v) {
+            int adapterPosition = getAdapterPosition();
+            mCursor.moveToPosition(adapterPosition);
+            long dateInMillis = mCursor.getLong(1);
+            mClickHandler.onClick(dateInMillis);
         }
     }
 }

@@ -2,6 +2,7 @@ package com.example.oleg.weatherapp_demo;
 
 import android.app.ProgressDialog;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -19,7 +20,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements WeatherAdapter.WeatherAdapterOnClickHandler{
 
     private ProgressDialog pDialog;
 
@@ -42,9 +44,10 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
 
+
         new GetWeatherData().execute();
 
-        mWeatherAdapter = new WeatherAdapter(MainActivity.this, cursor);
+        mWeatherAdapter = new WeatherAdapter(MainActivity.this, cursor, this);
         mRecyclerView.setAdapter(mWeatherAdapter);
     }
 
@@ -61,6 +64,11 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
+    @Override
+    public void onClick(long date) {
+        Intent intent = new Intent(this, DetailsActivity.class);
+        startActivity(intent);
+    }
 
 
     private class GetWeatherData extends AsyncTask<Void, Void, Void> {
