@@ -9,10 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.oleg.weatherapp_demo.data.WeatherContract;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherAdapterViewHolder> {
@@ -20,6 +22,14 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherA
     private Context mContext;
     private Cursor mCursor;
 
+
+    // Item click stuff
+    private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(mContext, Arrays.toString(mCursor.getColumnNames()), Toast.LENGTH_SHORT).show();
+        }
+    };
 
     public WeatherAdapter(Context context, Cursor cursor) {
         mContext = context;
@@ -32,12 +42,16 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherA
 
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View view = inflater.inflate(R.layout.weather_app_list_item, viewGroup, false);
+
+        // Item click stuff
+        view.setOnClickListener(mOnClickListener);
+
         return new WeatherAdapterViewHolder(view);
     }
 
 
     @Override
-    public void onBindViewHolder(WeatherAdapterViewHolder weatherAdapterViewHolder, int position) {
+    public void onBindViewHolder(final WeatherAdapterViewHolder weatherAdapterViewHolder, final int position) {
         // Move the cursor to the passed in position, return if moveToPosition returns false
         if(!mCursor.moveToPosition(position))
             return;
@@ -79,7 +93,6 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherA
          *************************/
         double temperatureMin = mCursor.getDouble(mCursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP));
         weatherAdapterViewHolder.weatherTemperatureLow.setText(String.valueOf(Math.round(temperatureMin)) + "\u00b0");
-
     }
 
     @Override
@@ -100,7 +113,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherA
         }
     }
 
-    class WeatherAdapterViewHolder extends RecyclerView.ViewHolder {
+    class WeatherAdapterViewHolder extends RecyclerView.ViewHolder{
 
         ImageView weatherIcon;
         TextView weatherDate;
