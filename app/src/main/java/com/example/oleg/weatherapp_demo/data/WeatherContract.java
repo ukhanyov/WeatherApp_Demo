@@ -51,10 +51,10 @@ public class WeatherContract {
          * Returns just the selection part of the weather query from a normalized today value.
          * This is used to get a weather forecast from today's date.
          */
-//        public static String getSqlSelectForTodayOnwards() {
-//            long normalizedUtcNow = NormalizeDate.getHumanFriendlyDate();
-//            return WeatherContract.WeatherEntry.COLUMN_DATE + " >= " + normalizedUtcNow;
-//        }
+        public static String getSqlSelectForTodayOnwards() {
+            long normalizedUtcNow = NormalizeDate.getNormalizedUtcNow(System.currentTimeMillis());
+            return WeatherContract.WeatherEntry.COLUMN_DATE + " >= " + normalizedUtcNow;
+        }
 
     }
 }

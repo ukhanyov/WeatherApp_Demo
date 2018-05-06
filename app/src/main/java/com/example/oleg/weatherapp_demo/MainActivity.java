@@ -27,7 +27,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity
-        implements WeatherAdapter.WeatherAdapterOnClickHandler{
+        implements WeatherAdapter.WeatherAdapterOnClickHandler,
+                    LoaderManager.LoaderCallbacks<Cursor>{
 
     private ProgressDialog pDialog;
 
@@ -36,6 +37,13 @@ public class MainActivity extends AppCompatActivity
     private SQLiteDatabase mDb;
     private WeatherAdapter mWeatherAdapter;
     private RecyclerView mRecyclerView;
+
+    public static final String[] MAIN_WEATHER_PROJECTION = {
+            WeatherContract.WeatherEntry.COLUMN_DATE,
+            WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
+            WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
+            WeatherContract.WeatherEntry.COLUMN_SUMMARY_ID,
+    };
 
     public static final int INDEX_WEATHER_TABLE_NAME = 0;
     public static final int INDEX_WEATHER_COLUMN_DATE = 1;
@@ -46,7 +54,8 @@ public class MainActivity extends AppCompatActivity
     public static final int INDEX_WEATHER_COLUMN_PRESSURE = 6;
     public static final int INDEX_WEATHER_COLUMN_WIND_SPEED = 7;
 
-    private static final int ID_FORECAST_LOADER = 44;
+    private static final int ID_WEATHER_LOADER = 44;
+    private int mPosition = RecyclerView.NO_POSITION;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,10 +70,12 @@ public class MainActivity extends AppCompatActivity
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
 
-        new GetWeatherData().execute();
+        //new GetWeatherData().execute();
 
         mWeatherAdapter = new WeatherAdapter(MainActivity.this, cursor, this);
         mRecyclerView.setAdapter(mWeatherAdapter);
+
+        getSupportLoaderManager().initLoader(ID_WEATHER_LOADER, null, this);
     }
 
     private Cursor getAllSamples() {
@@ -83,13 +94,50 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onClick(long date) {
         Intent intent = new Intent(this, DetailsActivity.class);
-
-        Uri dateClicked = WeatherContract.WeatherEntry.CONTENT_URI.buildUpon()
-                .appendPath(Long.toString(date))
-                .build();
-
-        intent.setData(dateClicked);
+        intent.setData(WeatherContract.WeatherEntry.buildWeatherUriWithDate(date));
         startActivity(intent);
+    }
+
+    @NonNull
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+        switch (id) {
+
+            case ID_WEATHER_LOADER:
+                /* URI for all rows of weather data in our weather table */
+                Uri forecastQueryUri = WeatherContract.WeatherEntry.CONTENT_URI;
+                /* Sort order: Ascending by date */
+                String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
+                /*
+                 * A SELECTION in SQL declares which rows you'd like to return. In our case, we
+                 * want all weather data from today onwards that is stored in our weather table.
+                 * We created a handy method to do that in our WeatherEntry class.
+                 */
+                String selection = WeatherContract.WeatherEntry.getSqlSelectForTodayOnwards();
+
+                return new CursorLoader(this,
+                        forecastQueryUri,
+                        MAIN_WEATHER_PROJECTION,
+                        selection,
+                        null,
+                        sortOrder);
+
+            default:
+                throw new RuntimeException("Loader Not Implemented: " + id);
+        }
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+        mWeatherAdapter.swapCursor(data);
+        if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
+        mRecyclerView.smoothScrollToPosition(mPosition);
+        if (data.getCount() != 0) mRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+        mWeatherAdapter.swapCursor(null);
     }
 
     private class GetWeatherData extends AsyncTask<Void, Void, Void> {
