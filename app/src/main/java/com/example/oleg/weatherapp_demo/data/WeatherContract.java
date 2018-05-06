@@ -3,6 +3,8 @@ package com.example.oleg.weatherapp_demo.data;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
+
 public class WeatherContract {
 
     public static final String CONTENT_AUTHORITY = "com.example.oleg.weatherapp_demo";
@@ -34,5 +36,25 @@ public class WeatherContract {
 
         /* Wind speed is stored as a float representing wind speed in mph */
         public static final String COLUMN_WIND_SPEED = "wind";
+
+        /**
+         * Builds a URI that adds the weather date to the end of the forecast content URI path.
+         * This is used to query details about a single weather entry by date.*
+         */
+        public static Uri buildWeatherUriWithDate(long date) {
+            return CONTENT_URI.buildUpon()
+                    .appendPath(Long.toString(date))
+                    .build();
+        }
+
+        /**
+         * Returns just the selection part of the weather query from a normalized today value.
+         * This is used to get a weather forecast from today's date.
+         */
+//        public static String getSqlSelectForTodayOnwards() {
+//            long normalizedUtcNow = NormalizeDate.getHumanFriendlyDate();
+//            return WeatherContract.WeatherEntry.COLUMN_DATE + " >= " + normalizedUtcNow;
+//        }
+
     }
 }
