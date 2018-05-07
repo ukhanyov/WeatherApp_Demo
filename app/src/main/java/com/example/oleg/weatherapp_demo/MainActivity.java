@@ -1,17 +1,25 @@
 package com.example.oleg.weatherapp_demo;
 
 import android.app.ProgressDialog;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.ContentValues;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import com.example.oleg.weatherapp_demo.data.Weather;
+import com.example.oleg.weatherapp_demo.data.WeatherViewModel;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,24 +27,29 @@ public class MainActivity extends AppCompatActivity {
 
     private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233?units=si";
 
-    private WeatherAdapter mWeatherAdapter;
-    private RecyclerView mRecyclerView;
-
-    private int mPosition = RecyclerView.NO_POSITION;
+    private WeatherViewModel mWeatherViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mRecyclerView = findViewById(R.id.rv_weather);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setHasFixedSize(true);
+        RecyclerView recyclerView = findViewById(R.id.rv_weather);
+        final WeatherAdapter adapter = new WeatherAdapter(this);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
 
-        //new GetWeatherData().execute();
+        // Get data from the json
+        new GetWeatherData().execute();
 
-        mRecyclerView.setAdapter(mWeatherAdapter);
-
+        mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
+        mWeatherViewModel.getAllWeather().observe(this, new Observer<List<Weather>>() {
+            @Override
+            public void onChanged(@Nullable List<Weather> weathers) {
+                adapter.setWeather(weathers);
+            }
+        });
     }
 
 
@@ -69,39 +82,33 @@ public class MainActivity extends AppCompatActivity {
 
                     for (int i = 0; i < data.length(); i++) {
 
-                        ContentValues contentValues = new ContentValues();
-
                         JSONObject c = data.getJSONObject(i);
 
-                        //date
-                        //contentValues.put(WeatherContract.WeatherEntry.COLUMN_DATE,
-                         //       c.getLong("time"));
+                        Weather weather = new Weather(
+                                //date
+                                c.getString("time"),
 
-                        //shit for icon
-                        //contentValues.put(WeatherContract.WeatherEntry.COLUMN_SUMMARY_ID,
-                        //        c.getString("icon"));
+                                //summary
+                                c.getString("summary"),
 
-                        //temp
-                        //contentValues.put(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
-                        //        c.getDouble("temperatureLow"));
-                        //contentValues.put(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
-                        //        c.getDouble("temperatureHigh"));
+                                //tempMax
+                                c.getString("temperatureHigh"),
 
-                        //humidity
-                        //contentValues.put(WeatherContract.WeatherEntry.COLUMN_HUMIDITY,
-                        //        c.getDouble("humidity"));
+                                //tempMin
+                                c.getString("temperatureLow"),
 
-                        //pressure
-                        //contentValues.put(WeatherContract.WeatherEntry.COLUMN_PRESSURE,
-                         //       c.getDouble("pressure"));
+                                //humidity
+                                c.getString("humidity"),
 
-                        //wind speed
-                        //contentValues.put(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
-                         //       c.getDouble("windSpeed"));
+                                //pressure
+                                c.getString("pressure"),
 
+                                //wind speed
+                                c.getString("windSpeed")
 
-                        // adding shit
-                        //mDb.insert(WeatherContract.WeatherEntry.TABLE_NAME, null, contentValues);
+                        );
+
+                        mWeatherViewModel.insert(weather);
                     }
                 } catch (final JSONException e) {
                     runOnUiThread(new Runnable() {

@@ -81,7 +81,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
          * Weather Date *
          ****************/
 
-        holder.weatherDate.setText(NormalizeDate.getHumanFriendlyDate(Long.getLong(current.getDate())));
+        holder.weatherDate.setText(NormalizeDate.getHumanFriendlyDate(Long.parseLong(current.getDate())));
 
         /*******************
          * Weather Summary *
@@ -92,13 +92,13 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
          * High (max) temperature *
          **************************/
         holder.weatherTemperatureHigh.setText(String.valueOf(
-                Math.round(Double.valueOf(current.getTemperatureMax()))) + "\u00b0");
+                Math.round(Double.parseDouble(current.getTemperatureMax()))) + "\u00b0");
 
         /*************************
          * Low (min) temperature *
          *************************/
         holder.weatherTemperatureLow.setText(String.valueOf(
-                Math.round(Double.valueOf(current.getTemperatureMin())))  + "\u00b0");
+                Math.round(Double.parseDouble(current.getTemperatureMin())))  + "\u00b0");
 
         } else {
             throw new IllegalArgumentException("Some error with binding data");

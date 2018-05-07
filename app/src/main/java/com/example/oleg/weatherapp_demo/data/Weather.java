@@ -64,7 +64,7 @@ public class Weather {
         return mHumidity;
     }
 
-    public String getmPressure() {
+    public String getPressure() {
         return mPressure;
     }
 

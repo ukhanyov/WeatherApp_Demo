@@ -20,6 +20,10 @@ public class WeatherViewModel extends AndroidViewModel {
         mAllWeather = mRepository.getAllWeather();
     }
 
+    public LiveData<List<Weather>> getAllWeather() {
+        return mAllWeather;
+    }
+
     public void insert(Weather weather) {mRepository.insert(weather);}
 
     public void deleteAll() {mRepository.deleteAll();}
