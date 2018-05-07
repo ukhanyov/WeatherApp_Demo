@@ -5,6 +5,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+// Timeline 1
+
 @Entity(tableName = "weather_table")
 public class Weather {
 
