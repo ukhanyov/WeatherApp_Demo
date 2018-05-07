@@ -10,6 +10,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.oleg.weatherapp_demo.data.Weather;
@@ -50,6 +52,29 @@ public class MainActivity extends AppCompatActivity {
                 adapter.setWeather(weathers);
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        mWeatherViewModel.deleteAll();
+
+        int id = item.getItemId();
+
+        if(id == R.id.action_drop_table){
+            mWeatherViewModel.deleteAll();
+            return true;
+        }else if(id == R.id.action_refresh_table){
+            new GetWeatherData().execute();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
     }
 
 

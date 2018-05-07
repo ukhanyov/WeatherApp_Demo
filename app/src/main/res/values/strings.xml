@@ -6,4 +6,6 @@
     <string name="format_temperature">
         <xliff:g id="temp">%1.0f</xliff:g>\u00B0
     </string>
+    <string name="action_drop_table">Drop Table</string>
+    <string name="action_refresh_table">Refresh Table</string>
 </resources>
