@@ -22,23 +22,12 @@ public class MainActivity extends AppCompatActivity {
     private WeatherAdapter mWeatherAdapter;
     private RecyclerView mRecyclerView;
 
-    public static final int INDEX_WEATHER_TABLE_NAME = 0;
-    public static final int INDEX_WEATHER_COLUMN_DATE = 1;
-    public static final int INDEX_WEATHER_COLUMN_SUMMARY_ID = 2;
-    public static final int INDEX_WEATHER_COLUMN_MIN_TEMP = 3;
-    public static final int INDEX_WEATHER_COLUMN_MAX_TEMP = 4;
-    public static final int INDEX_WEATHER_COLUMN_HUMIDITY = 5;
-    public static final int INDEX_WEATHER_COLUMN_PRESSURE = 6;
-    public static final int INDEX_WEATHER_COLUMN_WIND_SPEED = 7;
-
-    private static final int ID_WEATHER_LOADER = 44;
     private int mPosition = RecyclerView.NO_POSITION;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         mRecyclerView = findViewById(R.id.rv_weather);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
