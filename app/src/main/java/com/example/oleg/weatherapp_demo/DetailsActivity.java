@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.oleg.weatherapp_demo.databinding.ActivityDetailsBinding;
+import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -28,13 +29,13 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     private void populateViews(String[] weatherData) {
-        mBinding.tvDetails1.setText(weatherData[0]);
-        mBinding.tvDetails2.setText(weatherData[1]);
-        mBinding.tvDetails3.setText(weatherData[2]);
-        mBinding.tvDetails4.setText(weatherData[3]);
-        mBinding.tvDetails5.setText(weatherData[4]);
-        mBinding.tvDetails6.setText(weatherData[5]);
-        mBinding.tvDetails7.setText(weatherData[6]);
+        mBinding.tvDetails1.setText("Date: " + NormalizeDate.getHumanFriendlyDate(Long.parseLong(weatherData[0])));
+        mBinding.tvDetails2.setText("Summary: " + weatherData[1]);
+        mBinding.tvDetails3.setText("Temperature max: " + weatherData[2] + "\u00b0");
+        mBinding.tvDetails4.setText("Temperature min: " +weatherData[3] + "\u00b0");
+        mBinding.tvDetails5.setText("Humidity: " + weatherData[4]);
+        mBinding.tvDetails6.setText("Pressure: " + weatherData[5]);
+        mBinding.tvDetails7.setText("Wind speed: : " + weatherData[6]);
     }
 
 }

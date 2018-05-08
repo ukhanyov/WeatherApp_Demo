@@ -21,4 +21,7 @@ public interface WeatherDao {
 
     @Query("SELECT * FROM weather_table ORDER BY date ASC")
     LiveData<List<Weather>> getAllWeather();
+
+//    @Query("SELECT date FROM weather_table")
+//    Weather getWeatherInstense(String qd);
 }
