@@ -86,6 +86,16 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onClick(Weather weather) {
         Intent startDetailsActivity = new Intent(MainActivity.this, DetailsActivity.class);
+        String[] data = {
+                weather.getDate(),
+                weather.getSummary(),
+                weather.getTemperatureMax(),
+                weather.getTemperatureMin(),
+                weather.getHumidity(),
+                weather.getPressure(),
+                weather.getWindSpeed()
+        };
+        startDetailsActivity.putExtra(Intent.EXTRA_TEXT, data);
         startActivity(startDetailsActivity);
     }
 
