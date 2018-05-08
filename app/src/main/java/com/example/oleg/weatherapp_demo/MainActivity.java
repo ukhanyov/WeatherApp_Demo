@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onClick(Weather weather) {
         Intent startDetailsActivity = new Intent(MainActivity.this, DetailsActivity.class);
+        startActivity(startDetailsActivity);
     }
 
 
