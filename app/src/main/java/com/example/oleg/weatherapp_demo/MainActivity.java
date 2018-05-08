@@ -3,7 +3,7 @@ package com.example.oleg.weatherapp_demo;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.ContentValues;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,7 +23,9 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements
+        // item click shit
+        WeatherAdapter.WeatherAdapterOnClickHandler{
 
     private ProgressDialog pDialog;
 
@@ -37,7 +39,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         RecyclerView recyclerView = findViewById(R.id.rv_weather);
-        final WeatherAdapter adapter = new WeatherAdapter(this);
+
+        // Second this is for item click
+        final WeatherAdapter adapter = new WeatherAdapter(this, this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
@@ -75,6 +79,13 @@ public class MainActivity extends AppCompatActivity {
         } else {
             return super.onOptionsItemSelected(item);
         }
+    }
+
+
+    // Item click shit, obviously
+    @Override
+    public void onClick(Weather weather) {
+        Intent startDetailsActivity = new Intent(MainActivity.this, DetailsActivity.class);
     }
 
 

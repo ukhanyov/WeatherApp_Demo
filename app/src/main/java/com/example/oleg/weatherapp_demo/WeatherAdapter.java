@@ -39,22 +39,27 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         // Item click stuff
         @Override
         public void onClick(View v) {
-            //int adapterPosition = getAdapterPosition();
-            //mCursor.moveToPosition(adapterPosition);
-            //long dateInMillis = mCursor.getLong(MainActivity.INDEX_WEATHER_COLUMN_DATE);
-            //mClickHandler.onClick(dateInMillis);
+            int adapterPosition = getAdapterPosition();
+            Weather weather = mWeather.get(adapterPosition);
+            mClickHandler.onClick(weather);
         }
     }
 
     private final LayoutInflater mInflater;
     private List<Weather> mWeather; // Cached copy of weather
 
-    public WeatherAdapter(Context context) {
-        mInflater =LayoutInflater.from(context);
+    // Item click stuff
+    final private WeatherAdapterOnClickHandler mClickHandler;
+
+    public WeatherAdapter(Context context, WeatherAdapterOnClickHandler clickHandler) {
+        mInflater = LayoutInflater.from(context);
+
+        // Item click stuff
+        mClickHandler = clickHandler;
     }
 
     public interface WeatherAdapterOnClickHandler {
-        void onClick(long date);
+        void onClick(Weather date);
     }
 
     @Override
