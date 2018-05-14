@@ -13,7 +13,7 @@
 
 
         <ImageView
-            android:id="@+id/iv_deteils_wether_icon"
+            android:id="@+id/iv_details_weather_icon"
             android:layout_width="322dp"
             android:layout_height="108dp"
             android:layout_marginBottom="8dp"
