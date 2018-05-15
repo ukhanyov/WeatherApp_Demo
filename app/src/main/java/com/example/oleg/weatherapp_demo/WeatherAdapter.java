@@ -80,8 +80,8 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         /******************
         //* Weather Icon *
         //****************/
-        //implement getting icon, a dummy for now
-        holder.weatherIcon.setImageResource(R.drawable.ic_brightness_medium_black_48dp);
+
+        holder.weatherIcon.setImageResource(WeatherIconInterpreter.interpretIcon(current.getSummary()));
 
         /****************
          * Weather Date *
