@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.oleg.weatherapp_demo.data.Weather;
 import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
+import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 
 import java.util.List;
 
@@ -91,7 +92,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         /*******************
          * Weather Summary *
          *******************/
-        holder.weatherSummary.setText(current.getSummary());
+        holder.weatherSummary.setText(WeatherIconInterpreter.interpreteDescription(current.getSummary()));
 
         /**************************
          * High (max) temperature *

@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements
                                 c.getString("time"),
 
                                 //summary
-                                c.getString("summary"),
+                                c.getString("icon"),
 
                                 //tempMax
                                 c.getString("temperatureHigh"),
