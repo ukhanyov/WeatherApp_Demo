@@ -1,54 +1,56 @@
 package com.example.oleg.weatherapp_demo.utils;
 
+import com.example.oleg.weatherapp_demo.R;
+
 public class WeatherIconInterpreter {
 
-    public static void interpreteIcon(String input) {
+    public static int interpretIcon(String input) {
         switch (input) {
             case "clear-day":
+                return R.drawable.ic_weather_clear_day;
 
-                break;
             case "clear-night":
+                return R.drawable.ic_weather_clear_night;
 
-                break;
             case "rain":
+                return R.drawable.ic_weather_rain;
 
-                break;
             case "snow":
+                return R.drawable.ic_weather_snow;
 
-                break;
             case "sleet":
+                return R.drawable.ic_weather_sleet;
 
-                break;
             case "wind":
+                return R.drawable.ic_weather_wind;
 
-                break;
             case "fog":
+                return R.drawable.ic_weather_fog;
 
-                break;
             case "cloudy":
+                return R.drawable.ic_weather_cloudy;
 
-                break;
             case "partly-cloudy-day":
+                return R.drawable.ic_weather_partly_cloudy_day;
 
-                break;
             case "partly-cloudy-night":
+                return R.drawable.ic_weather_partly_cloudy_night;
 
-                break;
             case "hail":
+                return R.drawable.ic_weather_hail;
 
-                break;
             case "thunderstorm":
+                return R.drawable.ic_weather_thunderstorm;
 
-                break;
             case "tornado":
+                return R.drawable.ic_weather_tornado;
 
-                break;
             default:
-                break;
+                return R.drawable.ic_weather_default;
         }
     }
 
-    public static String interpreteDescription(String input) {
+    public static String interpretDescription(String input) {
         switch (input) {
             case "clear-day":
                 return "Clear day";

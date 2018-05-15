@@ -32,7 +32,7 @@ public class DetailsActivity extends AppCompatActivity {
     private void populateViews(String[] weatherData) {
 
         mBinding.tvDetails1.setText("Date: " + NormalizeDate.getHumanFriendlyDate(Long.parseLong(weatherData[0])));
-        mBinding.tvDetails2.setText("Summary: " + WeatherIconInterpreter.interpreteDescription(weatherData[1]));
+        mBinding.tvDetails2.setText("Summary: " + WeatherIconInterpreter.interpretDescription(weatherData[1]));
         mBinding.tvDetails3.setText("Temperature max: " + weatherData[2] + "\u00b0");
         mBinding.tvDetails4.setText("Temperature min: " +weatherData[3] + "\u00b0");
         mBinding.tvDetails5.setText("Humidity: " + weatherData[4]);

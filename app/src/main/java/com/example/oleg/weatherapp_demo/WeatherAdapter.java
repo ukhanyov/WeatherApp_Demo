@@ -92,7 +92,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         /*******************
          * Weather Summary *
          *******************/
-        holder.weatherSummary.setText(WeatherIconInterpreter.interpreteDescription(current.getSummary()));
+        holder.weatherSummary.setText(WeatherIconInterpreter.interpretDescription(current.getSummary()));
 
         /**************************
          * High (max) temperature *
