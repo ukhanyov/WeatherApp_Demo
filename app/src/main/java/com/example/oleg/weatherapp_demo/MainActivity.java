@@ -1,6 +1,7 @@
 package com.example.oleg.weatherapp_demo;
 
 import android.app.ProgressDialog;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.oleg.weatherapp_demo.data.Weather;
 import com.example.oleg.weatherapp_demo.data.WeatherViewModel;
+import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,12 +52,8 @@ public class MainActivity extends AppCompatActivity implements
         new GetWeatherData().execute();
 
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
-        mWeatherViewModel.getAllWeather().observe(this, new Observer<List<Weather>>() {
-            @Override
-            public void onChanged(@Nullable List<Weather> weathers) {
-                adapter.setWeather(weathers);
-            }
-        });
+        mWeatherViewModel.getAllWeather().observe(this, adapter::setWeather);
+
     }
 
     @Override
@@ -85,18 +83,25 @@ public class MainActivity extends AppCompatActivity implements
     // Item click shit, obviously
     @Override
     public void onClick(Weather weather) {
-        Intent startDetailsActivity = new Intent(MainActivity.this, DetailsActivity.class);
-        String[] data = {
-                weather.getDate(),
-                weather.getSummary(),
-                weather.getTemperatureMax(),
-                weather.getTemperatureMin(),
-                weather.getHumidity(),
-                weather.getPressure(),
-                weather.getWindSpeed()
-        };
-        startDetailsActivity.putExtra(Intent.EXTRA_TEXT, data);
-        startActivity(startDetailsActivity);
+
+        String date = weather.getDate();
+
+        //LiveData<Weather> weatherNow = mWeatherViewModel.getSingleWeather(date);
+        Toast.makeText(MainActivity.this, "Selected date: " + NormalizeDate.getHumanFriendlyDate(Long.parseLong(date)), Toast.LENGTH_SHORT).show();
+
+
+//        Intent startDetailsActivity = new Intent(MainActivity.this, DetailsActivity.class);
+//        String[] data = {
+//                weather.getDate(),
+//                weather.getSummary(),
+//                weather.getTemperatureMax(),
+//                weather.getTemperatureMin(),
+//                weather.getHumidity(),
+//                weather.getPressure(),
+//                weather.getWindSpeed()
+//        };
+//        startDetailsActivity.putExtra(Intent.EXTRA_TEXT, data);
+//        startActivity(startDetailsActivity);
     }
 
 
