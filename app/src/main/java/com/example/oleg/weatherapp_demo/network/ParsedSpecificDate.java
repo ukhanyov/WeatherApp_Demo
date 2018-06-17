@@ -25,16 +25,16 @@ public class ParsedSpecificDate {
     private Double moonPhase;
     @SerializedName("precipIntensity")
     @Expose
-    private Long precipIntensity;
+    private Double precipIntensity;
     @SerializedName("precipIntensityMax")
     @Expose
-    private Long precipIntensityMax;
+    private Double precipIntensityMax;
     @SerializedName("precipIntensityMaxTime")
     @Expose
     private Long precipIntensityMaxTime;
     @SerializedName("precipProbability")
     @Expose
-    private Long precipProbability;
+    private Double precipProbability;
     @SerializedName("precipType")
     @Expose
     private String precipType;
@@ -85,7 +85,7 @@ public class ParsedSpecificDate {
     private Long windBearing;
     @SerializedName("cloudCover")
     @Expose
-    private Long cloudCover;
+    private Double cloudCover;
     @SerializedName("uvIndex")
     @Expose
     private Long uvIndex;
@@ -171,19 +171,19 @@ public class ParsedSpecificDate {
         this.moonPhase = moonPhase;
     }
 
-    public Long getPrecipIntensity() {
+    public Double getPrecipIntensity() {
         return precipIntensity;
     }
 
-    public void setPrecipIntensity(Long precipIntensity) {
+    public void setPrecipIntensity(Double precipIntensity) {
         this.precipIntensity = precipIntensity;
     }
 
-    public Long getPrecipIntensityMax() {
+    public Double getPrecipIntensityMax() {
         return precipIntensityMax;
     }
 
-    public void setPrecipIntensityMax(Long precipIntensityMax) {
+    public void setPrecipIntensityMax(Double precipIntensityMax) {
         this.precipIntensityMax = precipIntensityMax;
     }
 
@@ -195,11 +195,11 @@ public class ParsedSpecificDate {
         this.precipIntensityMaxTime = precipIntensityMaxTime;
     }
 
-    public Long getPrecipProbability() {
+    public Double getPrecipProbability() {
         return precipProbability;
     }
 
-    public void setPrecipProbability(Long precipProbability) {
+    public void setPrecipProbability(Double precipProbability) {
         this.precipProbability = precipProbability;
     }
 
@@ -331,11 +331,11 @@ public class ParsedSpecificDate {
         this.windBearing = windBearing;
     }
 
-    public Long getCloudCover() {
+    public Double getCloudCover() {
         return cloudCover;
     }
 
-    public void setCloudCover(Long cloudCover) {
+    public void setCloudCover(Double cloudCover) {
         this.cloudCover = cloudCover;
     }
 
