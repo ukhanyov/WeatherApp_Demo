@@ -194,5 +194,9 @@ public class MainActivity extends AppCompatActivity implements
         startDetailsActivity.putExtra(Intent.EXTRA_TEXT, data);
         startActivity(startDetailsActivity);
     }
+
+    public void currentWeatherClick(View view) {
+        // Implement single item retrieval from db by date
+    }
 }
 
