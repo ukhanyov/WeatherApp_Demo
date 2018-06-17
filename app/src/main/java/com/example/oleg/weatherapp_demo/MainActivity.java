@@ -1,14 +1,10 @@
 package com.example.oleg.weatherapp_demo;
 
-import android.app.ProgressDialog;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,10 +12,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.oleg.weatherapp_demo.databinding.ActivityMainBinding;
 import com.example.oleg.weatherapp_demo.data.Weather;
 import com.example.oleg.weatherapp_demo.data.WeatherViewModel;
 import com.example.oleg.weatherapp_demo.network.GetDataService;
@@ -27,14 +23,8 @@ import com.example.oleg.weatherapp_demo.network.ParsedJSON;
 import com.example.oleg.weatherapp_demo.network.ParsedJSONCurrentWeather;
 import com.example.oleg.weatherapp_demo.network.ParsedSpecificDate;
 import com.example.oleg.weatherapp_demo.network.RetrofitWeatherInstance;
-import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -61,13 +51,19 @@ public class MainActivity extends AppCompatActivity implements
 
     private WeatherViewModel mWeatherViewModel;
 
+    // Fancy dataBinding
+    ActivityMainBinding mBinding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RecyclerView recyclerView = findViewById(R.id.rv_weather);
-        progressBar = findViewById(R.id.pb_loading_indicator);
+        // Fancy dataBinding
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
+        RecyclerView recyclerView = mBinding.rvWeather;
+        progressBar = mBinding.pbLoadingIndicator;
 
         // Second this is for item click
         final WeatherAdapter adapter = new WeatherAdapter(this, this);
@@ -101,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements
             public void onResponse(@NonNull Call<ParsedJSONCurrentWeather> call, @NonNull Response<ParsedJSONCurrentWeather> response) {
                 ParsedJSONCurrentWeather pj = response.body();
 
+                Toast.makeText(MainActivity.this, "Weather: " + pj.getCurrently().getIcon(), Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(View.INVISIBLE);
             }
 
@@ -172,7 +169,6 @@ public class MainActivity extends AppCompatActivity implements
             return super.onOptionsItemSelected(item);
         }
     }
-
 
     // Item click shit, obviously
     @Override
