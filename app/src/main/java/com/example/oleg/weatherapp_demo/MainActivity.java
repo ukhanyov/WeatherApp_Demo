@@ -23,6 +23,8 @@ import com.example.oleg.weatherapp_demo.network.ParsedJSON;
 import com.example.oleg.weatherapp_demo.network.ParsedJSONCurrentWeather;
 import com.example.oleg.weatherapp_demo.network.ParsedSpecificDate;
 import com.example.oleg.weatherapp_demo.network.RetrofitWeatherInstance;
+import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
+import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -96,8 +98,14 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onResponse(@NonNull Call<ParsedJSONCurrentWeather> call, @NonNull Response<ParsedJSONCurrentWeather> response) {
                 ParsedJSONCurrentWeather pj = response.body();
-
-                Toast.makeText(MainActivity.this, "Weather: " + pj.getCurrently().getIcon(), Toast.LENGTH_SHORT).show();
+                if(pj != null) {
+                    mBinding.ivWeatherNow.setImageResource(WeatherIconInterpreter.interpretIcon(pj.getCurrently().getIcon()));
+                    mBinding.tvWeatherNowDate.setText(NormalizeDate.getHumanFriendlyDate((pj.getCurrently().getTime())));
+                    mBinding.tvWeatherNowDescription.setText(WeatherIconInterpreter.interpretDescription(pj.getCurrently().getIcon()));
+                    mBinding.tvWeatherNowTemp.setText(getString(R.string.weather_now_current_temp) + pj.getCurrently().getTemperature().toString() + "\u00b0");
+                    mBinding.tvWeatherNowHumidity.setText(getString(R.string.weather_now_humidity_level) + pj.getCurrently().getHumidity().toString());
+                    mBinding.tvWeatherNowLocation.setText(pj.getTimezone());
+                }
                 progressBar.setVisibility(View.INVISIBLE);
             }
 

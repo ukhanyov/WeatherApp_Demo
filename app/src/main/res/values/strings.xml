@@ -9,4 +9,9 @@
     <string name="action_drop_table">Drop Table</string>
     <string name="action_refresh_table">Refresh Table</string>
     <string name="contentDescription_weather_icon">Icon that represents expected weather</string>
+    <string name="weather_now_humidity_level">Humidity level: </string>
+    <string name="weather_now_current_temp">Temperature is: </string>
+    <string name="weather_now_description_hint">Weather is whatever</string>
+    <string name="weather_now_date_hint">Weather now</string>
+    <string name="weather_now_location_hint">Your location</string>
 </resources>
