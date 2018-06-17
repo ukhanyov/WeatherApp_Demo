@@ -24,6 +24,7 @@ import com.example.oleg.weatherapp_demo.data.Weather;
 import com.example.oleg.weatherapp_demo.data.WeatherViewModel;
 import com.example.oleg.weatherapp_demo.network.GetDataService;
 import com.example.oleg.weatherapp_demo.network.ParsedJSON;
+import com.example.oleg.weatherapp_demo.network.ParsedJSONCurrentWeather;
 import com.example.oleg.weatherapp_demo.network.ParsedSpecificDate;
 import com.example.oleg.weatherapp_demo.network.RetrofitWeatherInstance;
 import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final String QUERY_EXCLUDE = "exclude";
     private static final String QUERY_EXCLUDE_ALL_BUT_DATE_ARRAY = "currently,minutely,hourly,flags";
+    private static final String QUERY_EXCLUDE_ALL_BUT_CURRENT_WEATHER = "minutely,hourly,flags,daily";
 
     private WeatherViewModel mWeatherViewModel;
 
@@ -77,9 +79,38 @@ public class MainActivity extends AppCompatActivity implements
         // Get data from the json
         fetchData();
 
+        // Display weather now
+        displayWeatherNow();
+
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
         mWeatherViewModel.getAllWeather().observe(this, adapter::setWeather);
 
+    }
+
+    private void displayWeatherNow() {
+        progressBar.setVisibility(View.VISIBLE);
+
+        GetDataService service = RetrofitWeatherInstance.getRetrofitInstance().create(GetDataService.class);
+        Map<String, String> data = new HashMap<>();
+        data.put(QUERY_UTILS, QUERY_UTILS_FORMAT);
+        data.put(QUERY_EXCLUDE, QUERY_EXCLUDE_ALL_BUT_CURRENT_WEATHER);
+        Call<ParsedJSONCurrentWeather> parsedJSON = service.getCurrentWeather(ACCESS_KEY, LOCATION, data);
+
+        parsedJSON.enqueue(new Callback<ParsedJSONCurrentWeather>() {
+            @Override
+            public void onResponse(@NonNull Call<ParsedJSONCurrentWeather> call, @NonNull Response<ParsedJSONCurrentWeather> response) {
+                ParsedJSONCurrentWeather pj = response.body();
+
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ParsedJSONCurrentWeather> call, @NonNull Throwable t) {
+                Log.d("Error: ", t.getMessage());
+                Toast.makeText(MainActivity.this,  "Oh no... Something went wrong when fetching data!", Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 
     private void fetchData() {

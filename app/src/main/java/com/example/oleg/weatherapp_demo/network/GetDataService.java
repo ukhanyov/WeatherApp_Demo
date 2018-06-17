@@ -14,4 +14,11 @@ public interface GetDataService {
             @Path("location") String location,
             @QueryMap Map<String, String> options
     );
+
+    @GET("/forecast/{access_key}/{location}")
+    Call<ParsedJSONCurrentWeather> getCurrentWeather(
+            @Path("access_key") String access_key,
+            @Path("location") String location,
+            @QueryMap Map<String, String> options
+    );
 }
