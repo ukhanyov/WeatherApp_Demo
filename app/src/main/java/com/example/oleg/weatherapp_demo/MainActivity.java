@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import com.example.oleg.weatherapp_demo.data.Weather;
 import com.example.oleg.weatherapp_demo.data.WeatherViewModel;
+import com.example.oleg.weatherapp_demo.network.GetDataService;
+import com.example.oleg.weatherapp_demo.network.RetrofitWeatherInstance;
 import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 
 import org.json.JSONArray;
@@ -33,7 +35,10 @@ public class MainActivity extends AppCompatActivity implements
 
     private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233?units=si";
 
-
+    private static final String ACCESS_KEY = "31b4710c5ae2b750bb6227c0517f84de";
+    private static String LOCATION = "37.8267,-122.4233";
+    private static final String UTILS = "units=si";
+    private static final String EXCLUDE = "exclude=currently,minutely,hourly,flags";
 
     private WeatherViewModel mWeatherViewModel;
 
@@ -53,9 +58,15 @@ public class MainActivity extends AppCompatActivity implements
         // Get data from the json
         new GetWeatherData().execute();
 
+        fetchData(ACCESS_KEY, LOCATION, UTILS);
+
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
         mWeatherViewModel.getAllWeather().observe(this, adapter::setWeather);
 
+    }
+
+    private void fetchData(String accessKey, String location, String utils) {
+        GetDataService service = RetrofitWeatherInstance.getRetrofitInstance().create(GetDataService.class);
     }
 
     @Override
