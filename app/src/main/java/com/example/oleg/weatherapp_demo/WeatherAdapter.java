@@ -48,12 +48,14 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
 
     private final LayoutInflater mInflater;
     private List<Weather> mWeather; // Cached copy of weather
+    private Context mContext;
 
     // Item click stuff
     final private WeatherAdapterOnClickHandler mClickHandler;
 
     public WeatherAdapter(Context context, WeatherAdapterOnClickHandler clickHandler) {
         mInflater = LayoutInflater.from(context);
+        mContext = context;
 
         // Item click stuff
         mClickHandler = clickHandler;
@@ -77,35 +79,24 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
 
         Weather current = mWeather.get(position);
 
-        /******************
-        //* Weather Icon *
-        //****************/
-
+        // Weather Icon
         holder.weatherIcon.setImageResource(WeatherIconInterpreter.interpretIcon(current.getSummary()));
 
-        /****************
-         * Weather Date *
-         ****************/
-
+        //Weather Date
         holder.weatherDate.setText(NormalizeDate.getHumanFriendlyDate(Long.parseLong(current.getDate())));
 
-        /*******************
-         * Weather Summary *
-         *******************/
+        // Weather Summary
         holder.weatherSummary.setText(WeatherIconInterpreter.interpretDescription(current.getSummary()));
 
-        /**************************
-         * High (max) temperature *
-         **************************/
-        holder.weatherTemperatureHigh.setText(String.valueOf(
-                Math.round(Double.parseDouble(current.getTemperatureMax()))) + "\u00b0");
+        // High (max) temperature
+        holder.weatherTemperatureHigh.setText(
+                        mContext.getString(R.string.temperature_view_holder_degrees_celsius,
+                        String.valueOf(Math.round(Double.parseDouble(current.getTemperatureMax())))));
 
-        /*************************
-         * Low (min) temperature *
-         *************************/
-        holder.weatherTemperatureLow.setText(String.valueOf(
-                Math.round(Double.parseDouble(current.getTemperatureMin())))  + "\u00b0");
-
+         // Low (min) temperature
+        holder.weatherTemperatureLow.setText(
+                        mContext.getString(R.string.temperature_view_holder_degrees_celsius,
+                        String.valueOf(Math.round(Double.parseDouble(current.getTemperatureMin())))));
         } else {
             throw new IllegalArgumentException("Some error with binding data");
         }

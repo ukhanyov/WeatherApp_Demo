@@ -36,10 +36,11 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements
         // item click shit
-        WeatherAdapter.WeatherAdapterOnClickHandler{
+        WeatherAdapter.WeatherAdapterOnClickHandler {
 
     //private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233?units=si&exclude=currently,minutely,hourly,flags";
     private ProgressBar progressBar;
+    private String currentWeatherTime;
 
     private static final String ACCESS_KEY = "31b4710c5ae2b750bb6227c0517f84de";
     private static String LOCATION = "37.8267,-122.4233";
@@ -85,39 +86,6 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    private void displayWeatherNow() {
-        progressBar.setVisibility(View.VISIBLE);
-
-        GetDataService service = RetrofitWeatherInstance.getRetrofitInstance().create(GetDataService.class);
-        Map<String, String> data = new HashMap<>();
-        data.put(QUERY_UTILS, QUERY_UTILS_FORMAT);
-        data.put(QUERY_EXCLUDE, QUERY_EXCLUDE_ALL_BUT_CURRENT_WEATHER);
-        Call<ParsedJSONCurrentWeather> parsedJSON = service.getCurrentWeather(ACCESS_KEY, LOCATION, data);
-
-        parsedJSON.enqueue(new Callback<ParsedJSONCurrentWeather>() {
-            @Override
-            public void onResponse(@NonNull Call<ParsedJSONCurrentWeather> call, @NonNull Response<ParsedJSONCurrentWeather> response) {
-                ParsedJSONCurrentWeather pj = response.body();
-                if(pj != null) {
-                    mBinding.ivWeatherNow.setImageResource(WeatherIconInterpreter.interpretIcon(pj.getCurrently().getIcon()));
-                    mBinding.tvWeatherNowDate.setText(NormalizeDate.getHumanFriendlyDate((pj.getCurrently().getTime())));
-                    mBinding.tvWeatherNowDescription.setText(WeatherIconInterpreter.interpretDescription(pj.getCurrently().getIcon()));
-                    mBinding.tvWeatherNowTemp.setText(getString(R.string.weather_now_current_temp) + pj.getCurrently().getTemperature().toString() + "\u00b0");
-                    mBinding.tvWeatherNowHumidity.setText(getString(R.string.weather_now_humidity_level) + pj.getCurrently().getHumidity().toString());
-                    mBinding.tvWeatherNowLocation.setText(pj.getTimezone());
-                }
-                progressBar.setVisibility(View.INVISIBLE);
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ParsedJSONCurrentWeather> call, @NonNull Throwable t) {
-                Log.d("Error: ", t.getMessage());
-                Toast.makeText(MainActivity.this,  "Oh no... Something went wrong when fetching data!", Toast.LENGTH_SHORT).show();
-                progressBar.setVisibility(View.INVISIBLE);
-            }
-        });
-    }
-
     private void fetchData() {
         progressBar.setVisibility(View.VISIBLE);
 
@@ -131,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onResponse(@NonNull Call<ParsedJSON> call, @NonNull Response<ParsedJSON> response) {
                 ParsedJSON pj = response.body();
-                for(ParsedSpecificDate item : Objects.requireNonNull(pj).getParsedArrayWithDates().getData()){
+                for (ParsedSpecificDate item : Objects.requireNonNull(pj).getParsedArrayWithDates().getData()) {
                     Weather weather = new Weather(
                             item.getTime().toString(),
                             item.getIcon(),
@@ -149,7 +117,42 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onFailure(@NonNull Call<ParsedJSON> call, @NonNull Throwable t) {
                 Log.d("Error: ", t.getMessage());
-                Toast.makeText(MainActivity.this,  "Oh no... Something went wrong when fetching data!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Oh no... Something went wrong when fetching data!", Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+    private void displayWeatherNow() {
+        progressBar.setVisibility(View.VISIBLE);
+
+        GetDataService service = RetrofitWeatherInstance.getRetrofitInstance().create(GetDataService.class);
+        Map<String, String> data = new HashMap<>();
+        data.put(QUERY_UTILS, QUERY_UTILS_FORMAT);
+        data.put(QUERY_EXCLUDE, QUERY_EXCLUDE_ALL_BUT_CURRENT_WEATHER);
+        Call<ParsedJSONCurrentWeather> parsedJSON = service.getCurrentWeather(ACCESS_KEY, LOCATION, data);
+
+        parsedJSON.enqueue(new Callback<ParsedJSONCurrentWeather>() {
+            @Override
+            public void onResponse(@NonNull Call<ParsedJSONCurrentWeather> call, @NonNull Response<ParsedJSONCurrentWeather> response) {
+                ParsedJSONCurrentWeather pj = response.body();
+                if (pj != null) {
+                    mBinding.ivWeatherNow.setImageResource(WeatherIconInterpreter.interpretIcon(pj.getCurrently().getIcon()));
+                    mBinding.tvWeatherNowDate.setText(NormalizeDate.getHumanFriendlyDate((pj.getCurrently().getTime())));
+                    mBinding.tvWeatherNowDescription.setText(WeatherIconInterpreter.interpretDescription(pj.getCurrently().getIcon()));
+                    mBinding.tvWeatherNowTemp.setText(getString(R.string.weather_now_current_temp, pj.getCurrently().getTemperature().toString(), getString(R.string.degrees_celsius)));
+                    mBinding.tvWeatherNowHumidity.setText(getString(R.string.weather_now_humidity_level, pj.getCurrently().getHumidity().toString()));
+                    mBinding.tvWeatherNowLocation.setText(pj.getTimezone());
+
+                    currentWeatherTime = pj.getCurrently().getTime().toString();
+                }
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ParsedJSONCurrentWeather> call, @NonNull Throwable t) {
+                Log.d("Error: ", t.getMessage());
+                Toast.makeText(MainActivity.this, "Oh no... Something went wrong when fetching data!", Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(View.INVISIBLE);
             }
         });
@@ -167,10 +170,10 @@ public class MainActivity extends AppCompatActivity implements
 
         int id = item.getItemId();
 
-        if(id == R.id.action_drop_table){
+        if (id == R.id.action_drop_table) {
             mWeatherViewModel.deleteAll();
             return true;
-        }else if(id == R.id.action_refresh_table){
+        } else if (id == R.id.action_refresh_table) {
             fetchData();
             return true;
         } else {
@@ -197,6 +200,7 @@ public class MainActivity extends AppCompatActivity implements
 
     public void currentWeatherClick(View view) {
         // Implement single item retrieval from db by date
+        //LiveData<Weather> weather = mWeatherViewModel.getSingleWeather(currentWeatherTime);
     }
 }
 

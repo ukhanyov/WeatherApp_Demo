@@ -23,9 +23,9 @@ public class WeatherRepository {
         return mAllWeather;
     }
 
-//    LiveData<Weather> getSingleWeather(final String weatherDate){
-//        return mWeatherDao.loadSingleWeather(weatherDate);
-//    }
+    LiveData<Weather> getSingleWeather(final String weatherDate){
+        return mWeatherDao.loadSingleWeather(weatherDate);
+    }
 
     void insert(Weather weather){
         new insertAsyncTask(mWeatherDao).execute(weather);

@@ -79,7 +79,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_weather_now"
                     app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_description"
-                    android:hint="@string/weather_now_current_temp"/>
+                    android:hint="@string/weather_now_current_temp_hint"/>
 
                 <TextView
                     android:id="@+id/tv_weather_now_humidity"
@@ -89,7 +89,7 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="4dp"
-                    android:hint="@string/weather_now_humidity_level"
+                    android:hint="@string/weather_now_humidity_level_hint"
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     app:layout_constraintBottom_toTopOf="@+id/tv_weather_now_location"
                     app:layout_constraintEnd_toEndOf="parent"
