@@ -15,25 +15,25 @@ public class WeatherViewModel extends AndroidViewModel {
 
     private WeatherRepository mRepository;
     private LiveData<List<Weather>> mAllWeather;
-    private LiveData<Weather> loadWeather;
-    private MutableLiveData<String> filterLiveData = new MutableLiveData<String>();
+//    private LiveData<Weather> loadWeather;
+//    private MutableLiveData<String> filterLiveData = new MutableLiveData<String>();
 
     public WeatherViewModel(@NonNull Application application) {
         super(application);
         mRepository = new WeatherRepository(application);
         mAllWeather = mRepository.getAllWeather();
-        loadWeather = Transformations.switchMap(filterLiveData, filter -> mRepository.getSingleWeather(filter));
+        //loadWeather = Transformations.switchMap(filterLiveData, filter -> mRepository.getSingleWeather(filter));
     }
 
     public LiveData<List<Weather>> getAllWeather() {
         return mAllWeather;
     }
 
-    public LiveData<Weather> getSingleWeather(String filter) {
-        setSearchDate(filter);
-        return loadWeather;
-    }
-    public void setSearchDate(String filter) { filterLiveData.setValue(filter); }
+//    public LiveData<Weather> getSingleWeather(String filter) {
+//        setSearchDate(filter);
+//        return loadWeather;
+//    }
+//    public void setSearchDate(String filter) { filterLiveData.setValue(filter); }
 
     public void insert(Weather weather) {mRepository.insert(weather);}
 

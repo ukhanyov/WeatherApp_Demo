@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233?units=si";
 
+
+
     private WeatherViewModel mWeatherViewModel;
 
     @Override
@@ -83,25 +85,18 @@ public class MainActivity extends AppCompatActivity implements
     // Item click shit, obviously
     @Override
     public void onClick(Weather weather) {
-
-        String date = weather.getDate();
-
-        //LiveData<Weather> weatherNow = mWeatherViewModel.getSingleWeather(date);
-        Toast.makeText(MainActivity.this, "Selected date: " + NormalizeDate.getHumanFriendlyDate(Long.parseLong(date)), Toast.LENGTH_SHORT).show();
-
-
-//        Intent startDetailsActivity = new Intent(MainActivity.this, DetailsActivity.class);
-//        String[] data = {
-//                weather.getDate(),
-//                weather.getSummary(),
-//                weather.getTemperatureMax(),
-//                weather.getTemperatureMin(),
-//                weather.getHumidity(),
-//                weather.getPressure(),
-//                weather.getWindSpeed()
-//        };
-//        startDetailsActivity.putExtra(Intent.EXTRA_TEXT, data);
-//        startActivity(startDetailsActivity);
+        Intent startDetailsActivity = new Intent(MainActivity.this, DetailsActivity.class);
+        String[] data = {
+                weather.getDate(),
+                weather.getSummary(),
+                weather.getTemperatureMax(),
+                weather.getTemperatureMin(),
+                weather.getHumidity(),
+                weather.getPressure(),
+                weather.getWindSpeed()
+        };
+        startDetailsActivity.putExtra(Intent.EXTRA_TEXT, data);
+        startActivity(startDetailsActivity);
     }
 
 
