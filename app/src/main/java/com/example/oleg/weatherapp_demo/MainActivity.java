@@ -15,6 +15,9 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.oleg.weatherapp_demo.data.Weather;
@@ -29,7 +32,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,14 +45,17 @@ public class MainActivity extends AppCompatActivity implements
         // item click shit
         WeatherAdapter.WeatherAdapterOnClickHandler{
 
-    private ProgressDialog pDialog;
-
-    private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233?units=si&exclude=currently,minutely,hourly,flags";
+    //private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233?units=si&exclude=currently,minutely,hourly,flags";
+    private ProgressBar progressBar;
 
     private static final String ACCESS_KEY = "31b4710c5ae2b750bb6227c0517f84de";
     private static String LOCATION = "37.8267,-122.4233";
-    private static final String UTILS = "units=si";
-    private static final String EXCLUDE_ALL_BUT_DATE_ARRAY = "exclude=currently,minutely,hourly,flags";
+
+    private static final String QUERY_UTILS = "units";
+    private static final String QUERY_UTILS_FORMAT = "si";
+
+    private static final String QUERY_EXCLUDE = "exclude";
+    private static final String QUERY_EXCLUDE_ALL_BUT_DATE_ARRAY = "currently,minutely,hourly,flags";
 
     private WeatherViewModel mWeatherViewModel;
 
@@ -56,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         RecyclerView recyclerView = findViewById(R.id.rv_weather);
+        progressBar = findViewById(R.id.pb_loading_indicator);
 
         // Second this is for item click
         final WeatherAdapter adapter = new WeatherAdapter(this, this);
@@ -63,9 +73,8 @@ public class MainActivity extends AppCompatActivity implements
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        // Get data from the json
-        //new GetWeatherData().execute();
 
+        // Get data from the json
         fetchData();
 
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
@@ -74,14 +83,19 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void fetchData() {
+        progressBar.setVisibility(View.VISIBLE);
+
         GetDataService service = RetrofitWeatherInstance.getRetrofitInstance().create(GetDataService.class);
-        Call<ParsedJSON> parsedJSON = service.getAllWeather();
+        Map<String, String> data = new HashMap<>();
+        data.put(QUERY_UTILS, QUERY_UTILS_FORMAT);
+        data.put(QUERY_EXCLUDE, QUERY_EXCLUDE_ALL_BUT_DATE_ARRAY);
+        Call<ParsedJSON> parsedJSON = service.getAllWeather(ACCESS_KEY, LOCATION, data);
 
         parsedJSON.enqueue(new Callback<ParsedJSON>() {
             @Override
             public void onResponse(@NonNull Call<ParsedJSON> call, @NonNull Response<ParsedJSON> response) {
                 ParsedJSON pj = response.body();
-                for(ParsedSpecificDate item : pj.getParsedArrayWithDates().getData()){
+                for(ParsedSpecificDate item : Objects.requireNonNull(pj).getParsedArrayWithDates().getData()){
                     Weather weather = new Weather(
                             item.getTime().toString(),
                             item.getIcon(),
@@ -93,12 +107,14 @@ public class MainActivity extends AppCompatActivity implements
 
                     mWeatherViewModel.insert(weather);
                 }
+                progressBar.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void onFailure(@NonNull Call<ParsedJSON> call, @NonNull Throwable t) {
                 Log.d("Error: ", t.getMessage());
-                Toast.makeText(MainActivity.this,  "Oh no... Something went wrong!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this,  "Oh no... Something went wrong when fetching data!", Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -119,7 +135,6 @@ public class MainActivity extends AppCompatActivity implements
             mWeatherViewModel.deleteAll();
             return true;
         }else if(id == R.id.action_refresh_table){
-            //new GetWeatherData().execute();
             fetchData();
             return true;
         } else {
@@ -144,99 +159,5 @@ public class MainActivity extends AppCompatActivity implements
         startDetailsActivity.putExtra(Intent.EXTRA_TEXT, data);
         startActivity(startDetailsActivity);
     }
-
-
-//    private class GetWeatherData extends AsyncTask<Void, Void, Void> {
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//            // Showing progress dialog
-//            pDialog = new ProgressDialog(MainActivity.this);
-//            pDialog.setMessage("Please wait...");
-//            pDialog.setCancelable(false);
-//            pDialog.show();
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//
-//            HttpHandler sh = new HttpHandler();
-//
-//            // Making a request to url and getting response
-//            String jsonStr = sh.makeServiceCall(url);
-//
-//            if (jsonStr != null) {
-//                try {
-//
-//                    JSONObject jsonObj = new JSONObject(jsonStr);
-//                    JSONObject daily = jsonObj.getJSONObject("daily");
-//                    JSONArray data = daily.getJSONArray("data");
-//
-//                    for (int i = 0; i < data.length(); i++) {
-//
-//                        JSONObject c = data.getJSONObject(i);
-//
-//                        Weather weather = new Weather(
-//                                //date
-//                                c.getString("time"),
-//
-//                                //summary
-//                                c.getString("icon"),
-//
-//                                //tempMax
-//                                c.getString("temperatureHigh"),
-//
-//                                //tempMin
-//                                c.getString("temperatureLow"),
-//
-//                                //humidity
-//                                c.getString("humidity"),
-//
-//                                //pressure
-//                                c.getString("pressure"),
-//
-//                                //wind speed
-//                                c.getString("windSpeed")
-//
-//                        );
-//
-//                        mWeatherViewModel.insert(weather);
-//                    }
-//                } catch (final JSONException e) {
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            Toast.makeText(getApplicationContext(),
-//                                    "Json parsing error: " + e.getMessage(),
-//                                    Toast.LENGTH_LONG)
-//                                    .show();
-//                        }
-//                    });
-//
-//                }
-//            } else {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Toast.makeText(getApplicationContext(),
-//                                "Couldn't get json from server. Check LogCat for possible errors!",
-//                                Toast.LENGTH_LONG)
-//                                .show();
-//                    }
-//                });
-//
-//            }
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void aVoid) {
-//            super.onPostExecute(aVoid);
-//            // Dismiss the progress dialog
-//            if (pDialog.isShowing())
-//                pDialog.dismiss();
-//        }
-//    }
 }
 

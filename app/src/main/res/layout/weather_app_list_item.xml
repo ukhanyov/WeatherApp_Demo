@@ -10,10 +10,11 @@
         android:id="@+id/weather_icon"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        tools:src="@drawable/ic_brightness_medium_black_48dp"
+        tools:src="@drawable/ic_weather_default"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline"/>
+        app:layout_constraintTop_toTopOf="@+id/guideline"
+        android:contentDescription="@string/contentDescription_weather_icon"/>
 
     <TextView
         android:id="@+id/tv_weather_date"

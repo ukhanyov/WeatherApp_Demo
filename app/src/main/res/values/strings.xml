@@ -8,4 +8,5 @@
     </string>
     <string name="action_drop_table">Drop Table</string>
     <string name="action_refresh_table">Refresh Table</string>
+    <string name="contentDescription_weather_icon">Icon that represents expected weather</string>
 </resources>
