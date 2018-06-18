@@ -49,7 +49,8 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_layout2"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/guideline_horizontal_weather_now" />
+                    app:layout_constraintTop_toTopOf="@+id/guideline_horizontal_weather_now"
+                    android:textColor="?attr/primaryTextColor"/>
 
                 <TextView
                     android:id="@+id/tv_weather_now_description"
@@ -62,7 +63,8 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_layout2"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_date" />
+                    app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_date"
+                    android:textColor="?attr/primaryTextColor"/>
 
                 <TextView
                     android:id="@+id/tv_weather_now_temp"
@@ -75,7 +77,8 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_layout2"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_description" />
+                    app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_description"
+                    android:textColor="?attr/primaryTextColor"/>
 
                 <TextView
                     android:id="@+id/tv_weather_now_humidity"
@@ -88,7 +91,8 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_layout2"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_temp" />
+                    app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_temp"
+                    android:textColor="?attr/primaryTextColor"/>
 
                 <TextView
                     android:id="@+id/tv_weather_now_location"
@@ -101,7 +105,8 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_layout2"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_humidity" />
+                    app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_humidity"
+                    android:textColor="?attr/primaryTextColor"/>
 
                 <android.support.constraint.Guideline
                     android:id="@+id/guideline_vertical_layout2"

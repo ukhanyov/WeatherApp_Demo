@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:tools="http://schemas.android.com/tools">
+
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -47,11 +47,11 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:hint="@string/weather_now_date_hint"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     app:layout_constraintBottom_toTopOf="@+id/tv_weather_now_description"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_weather_now"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:textColor="?attr/primaryTextColor"/>
 
                 <TextView
                     android:id="@+id/tv_weather_now_description"
@@ -60,11 +60,11 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="4dp"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                    android:hint="@string/weather_now_description_hint"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_weather_now"
                     app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_date"
-                    android:hint="@string/weather_now_description_hint"/>
+                    android:textColor="?attr/primaryTextColor"/>
 
                 <TextView
                     android:id="@+id/tv_weather_now_temp"
@@ -74,12 +74,12 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="4dp"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                    android:hint="@string/weather_now_current_temp_hint"
                     app:layout_constraintBottom_toTopOf="@+id/tv_weather_now_humidity"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_weather_now"
                     app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_description"
-                    android:hint="@string/weather_now_current_temp_hint"/>
+                    android:textColor="?attr/primaryTextColor"/>
 
                 <TextView
                     android:id="@+id/tv_weather_now_humidity"
@@ -90,11 +90,11 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="4dp"
                     android:hint="@string/weather_now_humidity_level_hint"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     app:layout_constraintBottom_toTopOf="@+id/tv_weather_now_location"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_weather_now"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_temp" />
+                    app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_temp"
+                    android:textColor="?attr/primaryTextColor"/>
 
                 <TextView
                     android:id="@+id/tv_weather_now_location"
@@ -104,10 +104,10 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="4dp"
                     android:hint="@string/weather_now_location_hint"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_weather_now"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_humidity" />
+                    app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_humidity"
+                    android:textColor="?attr/primaryTextColor"/>
 
 
             </android.support.constraint.ConstraintLayout>
@@ -141,11 +141,11 @@
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:backgroundTint="#ffffff"
             android:indeterminate="true"
             android:indeterminateTint="#1a09d6"
-            android:max="100"
-            android:layout_gravity="center"/>
+            android:max="100" />
 
     </FrameLayout>
 </layout>

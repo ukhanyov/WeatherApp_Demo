@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout android:padding="16dp"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:padding="16dp">
 
     <ImageView
         android:id="@+id/weather_icon"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        tools:src="@drawable/ic_weather_default"
+        android:contentDescription="@string/contentDescription_weather_icon"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline"
-        android:contentDescription="@string/contentDescription_weather_icon"/>
+        tools:src="@drawable/ic_weather_default" />
 
     <TextView
         android:id="@+id/tv_weather_date"
@@ -25,17 +25,18 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintLeft_toRightOf="@+id/weather_icon"
-        tools:text="Today, May 03"/>
+        tools:text="Today, May 03"
+        android:textColor="?attr/primaryTextColor"/>
 
     <TextView
         android:id="@+id/tv_weather_summary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@color/secondaryText"
+        android:textColor="?attr/secondaryTextColor"
         app:layout_constraintLeft_toLeftOf="@+id/tv_weather_date"
         app:layout_constraintTop_toTopOf="@+id/guideline"
-        tools:text="Cloudly"/>
+        tools:text="Cloudly" />
 
     <TextView
         android:id="@+id/tv_high_temperature"
@@ -44,12 +45,12 @@
         android:layout_marginEnd="4dp"
         android:layout_marginRight="4dp"
         android:fontFamily="sans-serif-light"
-        android:textColor="@color/primaryText"
-        android:textSize="28dp"
+        android:textSize="28sp"
+        android:textColor="?attr/primaryTextColor"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintRight_toLeftOf="@+id/tv_low_temperature"
         app:layout_constraintTop_toTopOf="@+id/guideline"
-        tools:text="19\u00b0"/>
+        tools:text="19\u00b0" />
 
     <TextView
         android:id="@+id/tv_low_temperature"
@@ -57,17 +58,18 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-light"
         android:gravity="end"
-        android:textSize="28dp"
+        android:textSize="28sp"
+        android:textColor="?attr/secondaryTextColor"
         app:layout_constraintBottom_toBottomOf="@+id/guideline"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline"
-        tools:text="10\u00b0"/>
+        tools:text="10\u00b0" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5"/>
+        app:layout_constraintGuide_percent="0.5" />
 
 </android.support.constraint.ConstraintLayout>

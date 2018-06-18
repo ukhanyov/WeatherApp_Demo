@@ -9,8 +9,6 @@
     <color name="buttonNormal">#e30425</color>
     <color name="buttonHighlight">#ff554f</color>
     <color name="buttonText">#FFFFFF</color>
-    <!--<color name="primary_text">#212121</color>-->
-    <!--<color name="secondary_text">#727272</color>-->
 
     <color name="mintColorPrimary">#76be2f</color>
     <color name="mintColorPrimaryDark">#289b23</color>
