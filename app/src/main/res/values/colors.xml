@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--Preaty theme stuff-->
+    <!--Pretty theme stuff-->
     <color name="colorPrimary">#720d5d</color>
     <color name="colorPrimaryDark">#430033</color>
     <color name="colorAccent">#e30425</color>
