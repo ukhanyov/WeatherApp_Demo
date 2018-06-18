@@ -23,4 +23,19 @@
         <item name="android:textColor">?attr/buttonTextColor</item>
     </style>
 
+    <style name="Theme.App.Mint" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="primaryButtonTheme">
+            @style/Widget.Button.Primary
+        </item>
+        <item name="colorPrimary">@color/mintColorPrimary</item>
+        <item name="colorPrimaryDark">@color/mintColorPrimaryDark</item>
+        <item name="colorAccent">@color/mintColorAccent</item>
+        <item name="primaryTextColor">@color/mintPrimaryText</item>
+        <item name="buttonNormalColor">@color/mintButtonNormal</item>
+        <item name="buttonHighlightColor">
+            @color/mintButtonHighlight
+        </item>
+        <item name="buttonTextColor">@color/mintButtonText</item>
+    </style>
+
 </resources>

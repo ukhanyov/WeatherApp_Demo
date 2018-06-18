@@ -32,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@color/secondary_text"
+        android:textColor="@color/secondaryText"
         app:layout_constraintLeft_toLeftOf="@+id/tv_weather_date"
         app:layout_constraintTop_toTopOf="@+id/guideline"
         tools:text="Cloudly"/>
@@ -44,7 +44,7 @@
         android:layout_marginEnd="4dp"
         android:layout_marginRight="4dp"
         android:fontFamily="sans-serif-light"
-        android:textColor="@color/primary_text"
+        android:textColor="@color/primaryText"
         android:textSize="28dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintRight_toLeftOf="@+id/tv_low_temperature"
