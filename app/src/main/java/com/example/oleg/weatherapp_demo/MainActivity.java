@@ -262,9 +262,13 @@ public class MainActivity extends AppCompatActivity implements
         protected void onReceiveResult(int resultCode, final Bundle resultData) {
             if (resultCode == Constants.SUCCESS_RESULT) {
                 final Address address = resultData.getParcelable(Constants.RESULT_ADDRESS);
-                runOnUiThread(() -> mBinding.tvWeatherNowLocation.setText(resultData.getString(Constants.RESULT_DATA_KEY)));
+                //runOnUiThread(() -> mBinding.tvWeatherNowLocation.setText(resultData.getString(Constants.RESULT_DATA_KEY)));
+                runOnUiThread(() -> {
+                    assert address != null;
+                    mBinding.tvWeatherNowLocation.setText(address.getLocality());
+                });
             } else {
-                runOnUiThread(() -> mBinding.tvWeatherNowLocation.setText(resultData.getString(Constants.RESULT_DATA_KEY)));
+                Toast.makeText(MainActivity.this, "gfdrgdg", Toast.LENGTH_SHORT).show();
             }
         }
     }
