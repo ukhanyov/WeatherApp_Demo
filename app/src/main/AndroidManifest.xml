@@ -21,6 +21,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".DetailsActivity" />
+
+        <service
+            android:name=".geo.GeocodeAddressIntentService"
+            android:exported="false"/>
+
     </application>
 
 </manifest>

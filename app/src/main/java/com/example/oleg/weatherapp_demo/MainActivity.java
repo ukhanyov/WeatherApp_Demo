@@ -6,9 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
+import android.location.Address;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +27,7 @@ import android.widget.Toast;
 import com.example.oleg.weatherapp_demo.data.Weather;
 import com.example.oleg.weatherapp_demo.data.WeatherViewModel;
 import com.example.oleg.weatherapp_demo.databinding.ActivityMainBinding;
+import com.example.oleg.weatherapp_demo.geo.GeocodeAddressIntentService;
 import com.example.oleg.weatherapp_demo.network.GetDataService;
 import com.example.oleg.weatherapp_demo.network.ParsedJSON;
 import com.example.oleg.weatherapp_demo.network.ParsedJSONCurrentWeather;
@@ -65,6 +69,9 @@ public class MainActivity extends AppCompatActivity implements
 
     // Permissions
     private static final int REQUEST_LOCATION = 1;
+
+    // Get city name
+    AddressResultReceiver mResultReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,11 +116,19 @@ public class MainActivity extends AppCompatActivity implements
             ActivityCompat.requestPermissions(MainActivity.this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
 
-        }
-        else {
+        } else {
             assert locationManager != null;
             Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
             LOCATION = String.valueOf(location.getLatitude()) + "," + String.valueOf(location.getLongitude());
+
+            // Get city name
+            mResultReceiver = new AddressResultReceiver(null);
+            Intent intent = new Intent(this, GeocodeAddressIntentService.class);
+            intent.putExtra(Constants.RECEIVER, mResultReceiver);
+            intent.putExtra(Constants.FETCH_TYPE_EXTRA, Constants.USE_ADDRESS_LOCATION);
+            intent.putExtra(Constants.LOCATION_LATITUDE_DATA_EXTRA, location.getLatitude());
+            intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, location.getLongitude());
+            startService(intent);
         }
 
     }
@@ -235,6 +250,23 @@ public class MainActivity extends AppCompatActivity implements
     public void currentWeatherClick(View view) {
         // Implement single item retrieval from db by date
         //LiveData<Weather> weather = mWeatherViewModel.getSingleWeather(currentWeatherTime);
+    }
+
+    // Get city name
+    class AddressResultReceiver extends ResultReceiver {
+        public AddressResultReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, final Bundle resultData) {
+            if (resultCode == Constants.SUCCESS_RESULT) {
+                final Address address = resultData.getParcelable(Constants.RESULT_ADDRESS);
+                runOnUiThread(() -> mBinding.tvWeatherNowLocation.setText(resultData.getString(Constants.RESULT_DATA_KEY)));
+            } else {
+                runOnUiThread(() -> mBinding.tvWeatherNowLocation.setText(resultData.getString(Constants.RESULT_DATA_KEY)));
+            }
+        }
     }
 }
 
