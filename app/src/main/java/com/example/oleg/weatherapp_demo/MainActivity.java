@@ -1,10 +1,18 @@
 package com.example.oleg.weatherapp_demo;
 
+import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -57,6 +65,11 @@ public class MainActivity extends AppCompatActivity implements
     // Fancy dataBinding
     ActivityMainBinding mBinding;
 
+    // Permissions
+    private static final int REQUEST_LOCATION = 1;
+//    private final int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1;
+//    private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +87,8 @@ public class MainActivity extends AppCompatActivity implements
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
+        // Get users location
+        findUserLocation();
 
         // Get data from the json
         fetchData();
@@ -83,6 +98,27 @@ public class MainActivity extends AppCompatActivity implements
 
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
         mWeatherViewModel.getAllWeather().observe(this, adapter::setWeather);
+
+    }
+
+    private void findUserLocation() {
+
+        // Acquire a reference to the system Location Manager
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission
+                (MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+
+        }
+        else {
+            assert locationManager != null;
+            Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+            LOCATION = String.valueOf(location.getLatitude()) + "," + String.valueOf(location.getLongitude());
+        }
 
     }
 
@@ -172,8 +208,10 @@ public class MainActivity extends AppCompatActivity implements
 
         if (id == R.id.action_drop_table) {
             mWeatherViewModel.deleteAll();
+            mBinding.ivWeatherNow.setImageResource(R.drawable.ic_weather_default);
             return true;
         } else if (id == R.id.action_refresh_table) {
+            displayWeatherNow();
             fetchData();
             return true;
         } else {
