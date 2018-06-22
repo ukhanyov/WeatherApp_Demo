@@ -7,15 +7,19 @@ public class ParsedJSONCurrentWeather {
     @SerializedName("latitude")
     @Expose
     private Double latitude;
+
     @SerializedName("longitude")
     @Expose
     private Double longitude;
+
     @SerializedName("timezone")
     @Expose
     private String timezone;
+
     @SerializedName("currently")
     @Expose
     private ParsedCurrentWeather currently;
+
     @SerializedName("offset")
     @Expose
     private Integer offset;

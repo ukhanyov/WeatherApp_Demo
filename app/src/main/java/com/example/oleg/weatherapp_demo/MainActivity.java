@@ -1,6 +1,7 @@
 package com.example.oleg.weatherapp_demo;
 
 import android.Manifest;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -164,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onFailure(@NonNull Call<ParsedJSON> call, @NonNull Throwable t) {
                 Log.d("Error: ", t.getMessage());
-                Toast.makeText(MainActivity.this, "Oh no... Something went wrong when fetching data!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Oh no... Error fetching all data!", Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(View.INVISIBLE);
             }
         });
@@ -191,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements
                     mBinding.tvWeatherNowHumidity.setText(getString(R.string.weather_now_humidity_level, pj.getCurrently().getHumidity().toString()));
                     //mBinding.tvWeatherNowLocation.setText(pj.getTimezone());
 
-                    currentWeatherTime = pj.getCurrently().getTime().toString();
+                    //currentWeatherTime = pj.getCurrently().getTime().toString();
                 }
                 progressBar.setVisibility(View.INVISIBLE);
             }
@@ -199,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onFailure(@NonNull Call<ParsedJSONCurrentWeather> call, @NonNull Throwable t) {
                 Log.d("Error: ", t.getMessage());
-                Toast.makeText(MainActivity.this, "Oh no... Something went wrong when fetching data!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Oh no... Error fetching today's data!", Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(View.INVISIBLE);
             }
         });
@@ -249,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements
 
     public void currentWeatherClick(View view) {
         // Implement single item retrieval from db by date
-        //LiveData<Weather> weather = mWeatherViewModel.getSingleWeather(currentWeatherTime);
+        LiveData<Weather> weather = mWeatherViewModel.getSingleWeather(currentWeatherTime);
     }
 
     // Get city name

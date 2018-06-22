@@ -8,117 +8,155 @@ public class ParsedSpecificDate {
     @SerializedName("time")
     @Expose
     private Long time;
+
     @SerializedName("summary")
     @Expose
     private String summary;
+
     @SerializedName("icon")
     @Expose
     private String icon;
+
     @SerializedName("sunriseTime")
     @Expose
     private Long sunriseTime;
+
     @SerializedName("sunsetTime")
     @Expose
     private Long sunsetTime;
+
     @SerializedName("moonPhase")
     @Expose
     private Double moonPhase;
+
     @SerializedName("precipIntensity")
     @Expose
     private Double precipIntensity;
+
     @SerializedName("precipIntensityMax")
     @Expose
     private Double precipIntensityMax;
+
     @SerializedName("precipIntensityMaxTime")
     @Expose
     private Long precipIntensityMaxTime;
+
     @SerializedName("precipProbability")
     @Expose
     private Double precipProbability;
+
     @SerializedName("precipType")
     @Expose
     private String precipType;
+
     @SerializedName("temperatureHigh")
     @Expose
     private Double temperatureHigh;
+
     @SerializedName("temperatureHighTime")
     @Expose
     private Long temperatureHighTime;
+
     @SerializedName("temperatureLow")
     @Expose
     private Double temperatureLow;
+
     @SerializedName("temperatureLowTime")
     @Expose
     private Long temperatureLowTime;
+
     @SerializedName("apparentTemperatureHigh")
     @Expose
     private Double apparentTemperatureHigh;
+
     @SerializedName("apparentTemperatureHighTime")
     @Expose
     private Long apparentTemperatureHighTime;
+
     @SerializedName("apparentTemperatureLow")
     @Expose
     private Double apparentTemperatureLow;
+
     @SerializedName("apparentTemperatureLowTime")
     @Expose
     private Long apparentTemperatureLowTime;
+
     @SerializedName("dewPoint")
     @Expose
     private Double dewPoint;
+
     @SerializedName("humidity")
     @Expose
     private Double humidity;
+
     @SerializedName("pressure")
     @Expose
     private Double pressure;
+
     @SerializedName("windSpeed")
     @Expose
     private Double windSpeed;
+
     @SerializedName("windGust")
     @Expose
     private Double windGust;
+
     @SerializedName("windGustTime")
     @Expose
     private Long windGustTime;
+
     @SerializedName("windBearing")
     @Expose
     private Long windBearing;
+
     @SerializedName("cloudCover")
     @Expose
     private Double cloudCover;
+
     @SerializedName("uvIndex")
     @Expose
     private Long uvIndex;
+
     @SerializedName("uvIndexTime")
     @Expose
     private Long uvIndexTime;
+
     @SerializedName("visibility")
     @Expose
     private Double visibility;
+
     @SerializedName("ozone")
     @Expose
     private Double ozone;
+
     @SerializedName("temperatureMin")
     @Expose
     private Double temperatureMin;
+
     @SerializedName("temperatureMinTime")
     @Expose
     private Long temperatureMinTime;
+
     @SerializedName("temperatureMax")
     @Expose
     private Double temperatureMax;
+
     @SerializedName("temperatureMaxTime")
     @Expose
     private Long temperatureMaxTime;
+
     @SerializedName("apparentTemperatureMin")
     @Expose
     private Double apparentTemperatureMin;
+
     @SerializedName("apparentTemperatureMinTime")
     @Expose
     private Long apparentTemperatureMinTime;
+
     @SerializedName("apparentTemperatureMax")
     @Expose
     private Double apparentTemperatureMax;
+
     @SerializedName("apparentTemperatureMaxTime")
     @Expose
     private Long apparentTemperatureMaxTime;

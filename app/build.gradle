@@ -29,7 +29,7 @@ android {
 }
 
 dependencies {
-    def roomVersion = "1.1.0"
+    def roomVersion = "1.1.1"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.1'
