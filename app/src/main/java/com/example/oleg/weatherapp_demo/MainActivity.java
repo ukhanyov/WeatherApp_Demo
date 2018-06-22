@@ -30,9 +30,9 @@ import com.example.oleg.weatherapp_demo.data.WeatherViewModel;
 import com.example.oleg.weatherapp_demo.databinding.ActivityMainBinding;
 import com.example.oleg.weatherapp_demo.geo.GeocodeAddressIntentService;
 import com.example.oleg.weatherapp_demo.network.GetDataService;
-import com.example.oleg.weatherapp_demo.network.ParsedJSON;
-import com.example.oleg.weatherapp_demo.network.ParsedJSONCurrentWeather;
-import com.example.oleg.weatherapp_demo.network.ParsedSpecificDate;
+import com.example.oleg.weatherapp_demo.network.PJWeekly;
+import com.example.oleg.weatherapp_demo.network.PJCurrent;
+import com.example.oleg.weatherapp_demo.network.PJWeeklySpecificDay;
 import com.example.oleg.weatherapp_demo.network.RetrofitWeatherInstance;
 import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
@@ -141,13 +141,13 @@ public class MainActivity extends AppCompatActivity implements
         Map<String, String> data = new HashMap<>();
         data.put(QUERY_UTILS, QUERY_UTILS_FORMAT);
         data.put(QUERY_EXCLUDE, QUERY_EXCLUDE_ALL_BUT_DATE_ARRAY);
-        Call<ParsedJSON> parsedJSON = service.getAllWeather(ACCESS_KEY, LOCATION, data);
+        Call<PJWeekly> parsedJSON = service.getAllWeather(ACCESS_KEY, LOCATION, data);
 
-        parsedJSON.enqueue(new Callback<ParsedJSON>() {
+        parsedJSON.enqueue(new Callback<PJWeekly>() {
             @Override
-            public void onResponse(@NonNull Call<ParsedJSON> call, @NonNull Response<ParsedJSON> response) {
-                ParsedJSON pj = response.body();
-                for (ParsedSpecificDate item : Objects.requireNonNull(pj).getParsedArrayWithDates().getData()) {
+            public void onResponse(@NonNull Call<PJWeekly> call, @NonNull Response<PJWeekly> response) {
+                PJWeekly pj = response.body();
+                for (PJWeeklySpecificDay item : Objects.requireNonNull(pj).getPJWeeklyArray().getData()) {
                     Weather weather = new Weather(
                             item.getTime().toString(),
                             item.getIcon(),
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements
             }
 
             @Override
-            public void onFailure(@NonNull Call<ParsedJSON> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<PJWeekly> call, @NonNull Throwable t) {
                 Log.d("Error: ", t.getMessage());
                 Toast.makeText(MainActivity.this, "Oh no... Error fetching all data!", Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(View.INVISIBLE);
@@ -178,12 +178,12 @@ public class MainActivity extends AppCompatActivity implements
         Map<String, String> data = new HashMap<>();
         data.put(QUERY_UTILS, QUERY_UTILS_FORMAT);
         data.put(QUERY_EXCLUDE, QUERY_EXCLUDE_ALL_BUT_CURRENT_WEATHER);
-        Call<ParsedJSONCurrentWeather> parsedJSON = service.getCurrentWeather(ACCESS_KEY, LOCATION, data);
+        Call<PJCurrent> parsedJSON = service.getCurrentWeather(ACCESS_KEY, LOCATION, data);
 
-        parsedJSON.enqueue(new Callback<ParsedJSONCurrentWeather>() {
+        parsedJSON.enqueue(new Callback<PJCurrent>() {
             @Override
-            public void onResponse(@NonNull Call<ParsedJSONCurrentWeather> call, @NonNull Response<ParsedJSONCurrentWeather> response) {
-                ParsedJSONCurrentWeather pj = response.body();
+            public void onResponse(@NonNull Call<PJCurrent> call, @NonNull Response<PJCurrent> response) {
+                PJCurrent pj = response.body();
                 if (pj != null) {
                     mBinding.ivWeatherNow.setImageResource(WeatherIconInterpreter.interpretIcon(pj.getCurrently().getIcon()));
                     mBinding.tvWeatherNowDate.setText(NormalizeDate.getHumanFriendlyDate((pj.getCurrently().getTime())));
@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements
             }
 
             @Override
-            public void onFailure(@NonNull Call<ParsedJSONCurrentWeather> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<PJCurrent> call, @NonNull Throwable t) {
                 Log.d("Error: ", t.getMessage());
                 Toast.makeText(MainActivity.this, "Oh no... Error fetching today's data!", Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(View.INVISIBLE);

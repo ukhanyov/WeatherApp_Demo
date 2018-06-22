@@ -3,7 +3,7 @@ package com.example.oleg.weatherapp_demo.network;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class ParsedCurrentWeather {
+public class PJCurrentInstance {
     @SerializedName("time")
     @Expose
     private Integer time;

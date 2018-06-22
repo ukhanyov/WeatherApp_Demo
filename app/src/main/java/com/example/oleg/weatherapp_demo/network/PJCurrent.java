@@ -3,7 +3,7 @@ package com.example.oleg.weatherapp_demo.network;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class ParsedJSONCurrentWeather {
+public class PJCurrent {
     @SerializedName("latitude")
     @Expose
     private Double latitude;
@@ -18,7 +18,7 @@ public class ParsedJSONCurrentWeather {
 
     @SerializedName("currently")
     @Expose
-    private ParsedCurrentWeather currently;
+    private PJCurrentInstance currently;
 
     @SerializedName("offset")
     @Expose
@@ -48,11 +48,11 @@ public class ParsedJSONCurrentWeather {
         this.timezone = timezone;
     }
 
-    public ParsedCurrentWeather getCurrently() {
+    public PJCurrentInstance getCurrently() {
         return currently;
     }
 
-    public void setCurrently(ParsedCurrentWeather currently) {
+    public void setCurrently(PJCurrentInstance currently) {
         this.currently = currently;
     }
 

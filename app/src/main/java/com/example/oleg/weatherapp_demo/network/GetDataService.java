@@ -9,14 +9,14 @@ import retrofit2.http.QueryMap;
 
 public interface GetDataService {
     @GET("/forecast/{access_key}/{location}")
-    Call<ParsedJSON> getAllWeather(
+    Call<PJWeekly> getAllWeather(
             @Path("access_key") String access_key,
             @Path("location") String location,
             @QueryMap Map<String, String> options
     );
 
     @GET("/forecast/{access_key}/{location}")
-    Call<ParsedJSONCurrentWeather> getCurrentWeather(
+    Call<PJCurrent> getCurrentWeather(
             @Path("access_key") String access_key,
             @Path("location") String location,
             @QueryMap Map<String, String> options
