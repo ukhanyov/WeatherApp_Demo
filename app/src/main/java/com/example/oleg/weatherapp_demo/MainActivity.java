@@ -190,9 +190,6 @@ public class MainActivity extends AppCompatActivity implements
                     mBinding.tvWeatherNowDescription.setText(WeatherIconInterpreter.interpretDescription(pj.getCurrently().getIcon()));
                     mBinding.tvWeatherNowTemp.setText(getString(R.string.weather_now_current_temp, pj.getCurrently().getTemperature().toString(), getString(R.string.degrees_celsius)));
                     mBinding.tvWeatherNowHumidity.setText(getString(R.string.weather_now_humidity_level, pj.getCurrently().getHumidity().toString()));
-                    //mBinding.tvWeatherNowLocation.setText(pj.getTimezone());
-
-                    //currentWeatherTime = pj.getCurrently().getTime().toString();
                 }
                 progressBar.setVisibility(View.INVISIBLE);
             }

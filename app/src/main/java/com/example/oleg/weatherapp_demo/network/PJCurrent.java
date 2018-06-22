@@ -12,17 +12,17 @@ public class PJCurrent {
     @Expose
     private Double longitude;
 
-    @SerializedName("timezone")
-    @Expose
-    private String timezone;
+//    @SerializedName("timezone")
+//    @Expose
+//    private String timezone;
 
     @SerializedName("currently")
     @Expose
     private PJCurrentInstance currently;
 
-    @SerializedName("offset")
-    @Expose
-    private Integer offset;
+//    @SerializedName("offset")
+//    @Expose
+//    private Integer offset;
 
     public Double getLatitude() {
         return latitude;
@@ -40,13 +40,13 @@ public class PJCurrent {
         this.longitude = longitude;
     }
 
-    public String getTimezone() {
-        return timezone;
-    }
-
-    public void setTimezone(String timezone) {
-        this.timezone = timezone;
-    }
+//    public String getTimezone() {
+//        return timezone;
+//    }
+//
+//    public void setTimezone(String timezone) {
+//        this.timezone = timezone;
+//    }
 
     public PJCurrentInstance getCurrently() {
         return currently;
@@ -56,11 +56,11 @@ public class PJCurrent {
         this.currently = currently;
     }
 
-    public Integer getOffset() {
-        return offset;
-    }
-
-    public void setOffset(Integer offset) {
-        this.offset = offset;
-    }
+//    public Integer getOffset() {
+//        return offset;
+//    }
+//
+//    public void setOffset(Integer offset) {
+//        this.offset = offset;
+//    }
 }
