@@ -76,6 +76,8 @@ public class MainActivity extends AppCompatActivity implements
     // Get city name
     AddressResultReceiver mResultReceiver;
 
+    private List<Weather> mWeatherList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -192,8 +194,6 @@ public class MainActivity extends AppCompatActivity implements
                     mBinding.tvWeatherNowDescription.setText(WeatherIconInterpreter.interpretDescription(pj.getCurrently().getIcon()));
                     mBinding.tvWeatherNowTemp.setText(getString(R.string.weather_now_current_temp, pj.getCurrently().getTemperature().toString(), getString(R.string.degrees_celsius)));
                     mBinding.tvWeatherNowHumidity.setText(getString(R.string.weather_now_humidity_level, pj.getCurrently().getHumidity().toString()));
-
-                    currentWeatherTime = pj.getCurrently().getTime().toString();
                 }
                 progressBar.setVisibility(View.INVISIBLE);
             }
@@ -255,7 +255,23 @@ public class MainActivity extends AppCompatActivity implements
 //        mWeatherViewModel.getSingleWeather(currentWeatherTime).observe(this, weather::add);
 //        Toast.makeText(this, weather.get(0).getDate(), Toast.LENGTH_SHORT).show();
 
+        getCurrentDate();
         Toast.makeText(this, NormalizeDate.getHumanFriendlyDate(Long.parseLong(currentWeatherTime)), Toast.LENGTH_SHORT).show();
+    }
+
+    private void getCurrentDate(){
+        mWeatherList = new ArrayList<>();
+
+        mWeatherViewModel.getAllWeather().observe(this, weathers -> {
+            assert weathers != null;
+            mWeatherList.addAll(weathers);
+        });
+
+        for(Weather entry : mWeatherList){
+            if(NormalizeDate.getHumanFriendlyDate(Long.parseLong(entry.getDate())).equals(mBinding.tvWeatherNowDate.getText().toString())){
+                currentWeatherTime = entry.getDate();
+            }
+        }
     }
 
     // Get city name
