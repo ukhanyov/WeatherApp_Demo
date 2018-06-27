@@ -16,7 +16,7 @@ public class WeatherViewModel extends AndroidViewModel {
     private WeatherRepository mRepository;
     private LiveData<List<Weather>> mAllWeather;
     private LiveData<Weather> loadWeather;
-    private MutableLiveData<String> filterLiveData = new MutableLiveData<String>();
+    private MutableLiveData<String> filterLiveData = new MutableLiveData<>();
 
     public WeatherViewModel(@NonNull Application application) {
         super(application);

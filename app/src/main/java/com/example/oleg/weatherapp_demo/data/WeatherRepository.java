@@ -24,7 +24,7 @@ public class WeatherRepository {
     }
 
     LiveData<Weather> getSingleWeather(final String weatherDate){
-        return mWeatherDao.loadSingleWeather(weatherDate);
+        return mWeatherDao.getSingleWeather(weatherDate);
     }
 
     void insert(Weather weather){

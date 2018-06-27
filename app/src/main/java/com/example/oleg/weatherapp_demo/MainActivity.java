@@ -37,7 +37,9 @@ import com.example.oleg.weatherapp_demo.network.RetrofitWeatherInstance;
 import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -190,6 +192,8 @@ public class MainActivity extends AppCompatActivity implements
                     mBinding.tvWeatherNowDescription.setText(WeatherIconInterpreter.interpretDescription(pj.getCurrently().getIcon()));
                     mBinding.tvWeatherNowTemp.setText(getString(R.string.weather_now_current_temp, pj.getCurrently().getTemperature().toString(), getString(R.string.degrees_celsius)));
                     mBinding.tvWeatherNowHumidity.setText(getString(R.string.weather_now_humidity_level, pj.getCurrently().getHumidity().toString()));
+
+                    currentWeatherTime = pj.getCurrently().getTime().toString();
                 }
                 progressBar.setVisibility(View.INVISIBLE);
             }
@@ -247,7 +251,11 @@ public class MainActivity extends AppCompatActivity implements
 
     public void currentWeatherClick(View view) {
         // Implement single item retrieval from db by date
-        LiveData<Weather> weather = mWeatherViewModel.getSingleWeather(currentWeatherTime);
+//        List<Weather> weather = new ArrayList<>();
+//        mWeatherViewModel.getSingleWeather(currentWeatherTime).observe(this, weather::add);
+//        Toast.makeText(this, weather.get(0).getDate(), Toast.LENGTH_SHORT).show();
+
+        Toast.makeText(this, NormalizeDate.getHumanFriendlyDate(Long.parseLong(currentWeatherTime)), Toast.LENGTH_SHORT).show();
     }
 
     // Get city name
