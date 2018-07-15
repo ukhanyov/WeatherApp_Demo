@@ -12,8 +12,8 @@ public class WeatherRepository {
 
     private WeatherDao mWeatherDao;
     private LiveData<List<Weather>> mAllWeather;
-
-    public WeatherRepository(Application application) {
+ 
+    WeatherRepository(Application application) {
         WeatherRoomDatabase db = WeatherRoomDatabase.getDatabase(application);
         mWeatherDao = db.weatherDao();
         mAllWeather = mWeatherDao.getAllWeather();

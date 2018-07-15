@@ -251,12 +251,13 @@ public class MainActivity extends AppCompatActivity implements
 
     public void currentWeatherClick(View view) {
         // Implement single item retrieval from db by date
-//        List<Weather> weather = new ArrayList<>();
-//        mWeatherViewModel.getSingleWeather(currentWeatherTime).observe(this, weather::add);
-//        Toast.makeText(this, weather.get(0).getDate(), Toast.LENGTH_SHORT).show();
 
         getCurrentDate();
-        Toast.makeText(this, NormalizeDate.getHumanFriendlyDate(Long.parseLong(currentWeatherTime)), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, NormalizeDate.getHumanFriendlyDate(Long.parseLong(currentWeatherTime)), Toast.LENGTH_SHORT).show();
+
+        List<Weather> weather = new ArrayList<>();
+        mWeatherViewModel.getSingleWeather(currentWeatherTime).observe(this, weather::add);
+        Toast.makeText(this, weather.get(0).getDate(), Toast.LENGTH_SHORT).show();
     }
 
     private void getCurrentDate(){
