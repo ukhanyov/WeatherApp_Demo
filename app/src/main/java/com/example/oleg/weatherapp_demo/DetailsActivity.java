@@ -41,7 +41,7 @@ public class DetailsActivity extends AppCompatActivity {
         mBinding.ivDetailsWeatherIcon.setImageResource(
                 WeatherIconInterpreter.interpretIcon(weatherData[WEATHER_SUMMARY]));
 
-        mBinding.tvDetails1.setText("Date: " + NormalizeDate.getHumanFriendlyDate(
+        mBinding.tvDetails1.setText("Date: " + NormalizeDate.getHumanFriendlyDateFromDB(
                 Long.parseLong(weatherData[WEATHER_DATE])));
         mBinding.tvDetails2.setText("Summary: " + WeatherIconInterpreter.interpretDescription(
                 weatherData[WEATHER_SUMMARY]));

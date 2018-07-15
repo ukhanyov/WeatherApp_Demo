@@ -1,7 +1,6 @@
 package com.example.oleg.weatherapp_demo;
 
 import android.Manifest;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -38,6 +37,7 @@ import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -190,7 +190,13 @@ public class MainActivity extends AppCompatActivity implements
                 PJCurrent pj = response.body();
                 if (pj != null) {
                     mBinding.ivWeatherNow.setImageResource(WeatherIconInterpreter.interpretIcon(pj.getCurrently().getIcon()));
-                    mBinding.tvWeatherNowDate.setText(NormalizeDate.getHumanFriendlyDate((pj.getCurrently().getTime())));
+
+                    String currentTime = NormalizeDate.getHumanFriendlyDateFromDB(Calendar.getInstance().getTimeInMillis());
+
+                    if(NormalizeDate.getHumanFriendlyDateFromDB(pj.getCurrently().getTime()) == currentTime){
+                        mBinding.tvWeatherNowDate.setText(R.string.weather_now);
+                    }
+
                     mBinding.tvWeatherNowDescription.setText(WeatherIconInterpreter.interpretDescription(pj.getCurrently().getIcon()));
                     mBinding.tvWeatherNowTemp.setText(getString(R.string.weather_now_current_temp, pj.getCurrently().getTemperature().toString(), getString(R.string.degrees_celsius)));
                     mBinding.tvWeatherNowHumidity.setText(getString(R.string.weather_now_humidity_level, pj.getCurrently().getHumidity().toString()));
@@ -253,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements
         // Implement single item retrieval from db by date
 
         getCurrentDate();
-        //Toast.makeText(this, NormalizeDate.getHumanFriendlyDate(Long.parseLong(currentWeatherTime)), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, NormalizeDate.getHumanFriendlyDateFromDB(Long.parseLong(currentWeatherTime)), Toast.LENGTH_SHORT).show();
 
         List<Weather> weather = new ArrayList<>();
         mWeatherViewModel.getSingleWeather(currentWeatherTime).observe(this, weather::add);
@@ -269,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements
         });
 
         for(Weather entry : mWeatherList){
-            if(NormalizeDate.getHumanFriendlyDate(Long.parseLong(entry.getDate())).equals(mBinding.tvWeatherNowDate.getText().toString())){
+            if(NormalizeDate.getHumanFriendlyDateFromDB(Long.parseLong(entry.getDate())).equals(mBinding.tvWeatherNowDate.getText().toString())){
                 currentWeatherTime = entry.getDate();
             }
         }
