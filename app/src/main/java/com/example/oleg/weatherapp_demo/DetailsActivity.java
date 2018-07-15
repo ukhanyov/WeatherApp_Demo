@@ -1,5 +1,6 @@
 package com.example.oleg.weatherapp_demo;
 
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -33,7 +34,6 @@ public class DetailsActivity extends AppCompatActivity {
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_details);
 
         mWeatherData = getIntent().getStringArrayExtra(Intent.EXTRA_TEXT);
-
         populateViews(mWeatherData);
     }
 
@@ -41,15 +41,28 @@ public class DetailsActivity extends AppCompatActivity {
         mBinding.ivDetailsWeatherIcon.setImageResource(
                 WeatherIconInterpreter.interpretIcon(weatherData[WEATHER_SUMMARY]));
 
-        mBinding.tvDetails1.setText("Date: " + NormalizeDate.getHumanFriendlyDateFromDB(
-                Long.parseLong(weatherData[WEATHER_DATE])));
-        mBinding.tvDetails2.setText("Summary: " + WeatherIconInterpreter.interpretDescription(
-                weatherData[WEATHER_SUMMARY]));
-        mBinding.tvDetails3.setText("Temperature max: " + weatherData[WEATHER_TEMPERATURE_MAX] + "\u00b0");
-        mBinding.tvDetails4.setText("Temperature min: " +weatherData[WEATHER_TEMPERATURE_MIN] + "\u00b0");
-        mBinding.tvDetails5.setText("Humidity: " + weatherData[WEATHER_HUMIDITY]);
-        mBinding.tvDetails6.setText("Pressure: " + weatherData[WEATHER_PRESSURE]);
-        mBinding.tvDetails7.setText("Wind speed: " + weatherData[WEATHER_WIND_SPEED]);
+        mBinding.tvDetails1.setText(getString(R.string.weather_details_date,
+                NormalizeDate.getHumanFriendlyDateFromDB(Long.parseLong(weatherData[WEATHER_DATE]))));
+
+        mBinding.tvDetails2.setText(getString(R.string.weather_details_summary,
+                WeatherIconInterpreter.interpretDescription(weatherData[WEATHER_SUMMARY])));
+
+        mBinding.tvDetails3.setText(getString(R.string.weather_details_temperature_max,
+                weatherData[WEATHER_TEMPERATURE_MAX],
+                getString(R.string.degrees_celsius)));
+
+        mBinding.tvDetails4.setText(getString(R.string.weather_details_temperature_min,
+                weatherData[WEATHER_TEMPERATURE_MIN],
+                getString(R.string.degrees_celsius)));
+
+        mBinding.tvDetails5.setText(getString(R.string.weather_details_humidity,
+                weatherData[WEATHER_HUMIDITY]));
+
+        mBinding.tvDetails6.setText(getString(R.string.weather_details_pressure,
+                weatherData[WEATHER_PRESSURE]));
+
+        mBinding.tvDetails7.setText(getString(R.string.weather_details_wind_speed,
+                weatherData[WEATHER_WIND_SPEED]));
     }
 
 }

@@ -193,9 +193,9 @@ public class MainActivity extends AppCompatActivity implements
 
                     String currentTime = NormalizeDate.getHumanFriendlyDateFromDB(Calendar.getInstance().getTimeInMillis());
 
-                    if(NormalizeDate.getHumanFriendlyDateFromDB(pj.getCurrently().getTime()) == currentTime){
-                        mBinding.tvWeatherNowDate.setText(R.string.weather_now);
-                    }
+//                    if(NormalizeDate.getHumanFriendlyDateFromDB(pj.getCurrently().getTime()) == currentTime){
+//                        mBinding.tvWeatherNowDate.setText(R.string.weather_now);
+//                    }
 
                     mBinding.tvWeatherNowDescription.setText(WeatherIconInterpreter.interpretDescription(pj.getCurrently().getIcon()));
                     mBinding.tvWeatherNowTemp.setText(getString(R.string.weather_now_current_temp, pj.getCurrently().getTemperature().toString(), getString(R.string.degrees_celsius)));

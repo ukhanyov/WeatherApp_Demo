@@ -53,7 +53,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
     // Item click stuff
     final private WeatherAdapterOnClickHandler mClickHandler;
 
-    public WeatherAdapter(Context context, WeatherAdapterOnClickHandler clickHandler) {
+    WeatherAdapter(Context context, WeatherAdapterOnClickHandler clickHandler) {
         mInflater = LayoutInflater.from(context);
         mContext = context;
 
@@ -65,6 +65,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         void onClick(Weather date);
     }
 
+    @NonNull
     @Override
     public WeatherViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
 
