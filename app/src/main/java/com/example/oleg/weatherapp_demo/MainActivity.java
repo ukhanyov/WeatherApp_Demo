@@ -228,6 +228,12 @@ public class MainActivity extends AppCompatActivity implements
         if (id == R.id.action_drop_table) {
             mWeatherViewModel.deleteAll();
             mBinding.ivWeatherNow.setImageResource(R.drawable.ic_weather_default);
+
+            mBinding.tvWeatherNowDate.setText(null);
+            mBinding.tvWeatherNowDescription.setText(null);
+            mBinding.tvWeatherNowTemp.setText(null);
+            mBinding.tvWeatherNowHumidity.setText(null);
+            mBinding.tvWeatherNowLocation.setText(null);
             return true;
         } else if (id == R.id.action_refresh_table) {
             displayWeatherNow();
