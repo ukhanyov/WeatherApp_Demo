@@ -264,28 +264,28 @@ public class MainActivity extends AppCompatActivity implements
     public void currentWeatherClick(View view) {
         // Implement single item retrieval from db by date
 
-        getCurrentDate();
-        //Toast.makeText(this, NormalizeDate.getHumanFriendlyDateFromDB(Long.parseLong(currentWeatherTime)), Toast.LENGTH_SHORT).show();
-
-        List<Weather> weather = new ArrayList<>();
-        mWeatherViewModel.getSingleWeather(currentWeatherTime).observe(this, weather::add);
-        Toast.makeText(this, weather.get(0).getDate(), Toast.LENGTH_SHORT).show();
+//        getCurrentDate();
+//        //Toast.makeText(this, NormalizeDate.getHumanFriendlyDateFromDB(Long.parseLong(currentWeatherTime)), Toast.LENGTH_SHORT).show();
+//
+//        List<Weather> weather = new ArrayList<>();
+//        mWeatherViewModel.getSingleWeather(currentWeatherTime).observe(this, weather::add);
+//        Toast.makeText(this, weather.get(0).getDate(), Toast.LENGTH_SHORT).show();
     }
 
-    private void getCurrentDate(){
-        mWeatherList = new ArrayList<>();
-
-        mWeatherViewModel.getAllWeather().observe(this, weathers -> {
-            assert weathers != null;
-            mWeatherList.addAll(weathers);
-        });
-
-        for(Weather entry : mWeatherList){
-            if(NormalizeDate.getHumanFriendlyDateFromDB(Long.parseLong(entry.getDate())).equals(mBinding.tvWeatherNowDate.getText().toString())){
-                currentWeatherTime = entry.getDate();
-            }
-        }
-    }
+//    private void getCurrentDate(){
+//        mWeatherList = new ArrayList<>();
+//
+//        mWeatherViewModel.getAllWeather().observe(this, weathers -> {
+//            assert weathers != null;
+//            mWeatherList.addAll(weathers);
+//        });
+//
+//        for(Weather entry : mWeatherList){
+//            if(NormalizeDate.getHumanFriendlyDateFromDB(Long.parseLong(entry.getDate())).equals(mBinding.tvWeatherNowDate.getText().toString())){
+//                currentWeatherTime = entry.getDate();
+//            }
+//        }
+//    }
 
     // Get city name
     class AddressResultReceiver extends ResultReceiver {
@@ -297,13 +297,12 @@ public class MainActivity extends AppCompatActivity implements
         protected void onReceiveResult(int resultCode, final Bundle resultData) {
             if (resultCode == Constants.SUCCESS_RESULT) {
                 final Address address = resultData.getParcelable(Constants.RESULT_ADDRESS);
-                //runOnUiThread(() -> mBinding.tvWeatherNowLocation.setText(resultData.getString(Constants.RESULT_DATA_KEY)));
                 runOnUiThread(() -> {
                     assert address != null;
                     mBinding.tvWeatherNowLocation.setText(address.getLocality());
                 });
             } else {
-                Toast.makeText(MainActivity.this, "gfdrgdg", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Error parsing location", Toast.LENGTH_SHORT).show();
             }
         }
     }
