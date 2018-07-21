@@ -1,6 +1,7 @@
 package com.example.oleg.weatherapp_demo.utils;
 
 import java.util.Calendar;
+import java.util.Date;
 
 public class NormalizeDate {
 
@@ -32,5 +33,11 @@ public class NormalizeDate {
             default:
                 return "NanN";
         }
+    }
+
+    public static boolean checkIfItIsToday(String inputDate){
+        Calendar currentTime = Calendar.getInstance();
+        String compareDate = getHumanFriendlyDateFromDB(currentTime.getTimeInMillis());
+        return inputDate.equals(compareDate);
     }
 }
