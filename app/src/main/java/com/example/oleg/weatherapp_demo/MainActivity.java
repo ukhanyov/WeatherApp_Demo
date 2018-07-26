@@ -270,6 +270,7 @@ public class MainActivity extends AppCompatActivity implements
 //        List<Weather> weather = new ArrayList<>();
 //        mWeatherViewModel.getSingleWeather(currentWeatherTime).observe(this, weather::add);
 //        Toast.makeText(this, weather.get(0).getDate(), Toast.LENGTH_SHORT).show();
+
     }
 
 //    private void getCurrentDate(){

@@ -22,6 +22,7 @@ public class WeatherViewModel extends AndroidViewModel {
         super(application);
         mRepository = new WeatherRepository(application);
         mAllWeather = mRepository.getAllWeather();
+        //loadWeather = mRepository.getSingleWeather();
         loadWeather = Transformations.switchMap(filterLiveData, filter -> mRepository.getSingleWeather(filter));
     }
 
@@ -29,10 +30,12 @@ public class WeatherViewModel extends AndroidViewModel {
         return mAllWeather;
     }
 
-    public LiveData<Weather> getSingleWeather(String filter) {
-        setSearchDate(filter);
-        return loadWeather;
-    }
+//    public LiveData<Weather> getSingleWeather(String filter) {
+//        //setSearchDate(filter);
+//        filterLiveData.setValue(filter);
+//        return loadWeather;
+//    }
+
     private void setSearchDate(String filter) { filterLiveData.setValue(filter); }
 
     public void insert(Weather weather) {mRepository.insert(weather);}
