@@ -37,7 +37,9 @@ public class NormalizeDate {
 
     public static boolean checkIfItIsToday(String inputDate){
         Calendar currentTime = Calendar.getInstance();
-        String compareDate = getHumanFriendlyDateFromDB(currentTime.getTimeInMillis());
+
+        //Divide by 1000 because DarkWeather time is in seconds, not milliseconds
+        String compareDate = getHumanFriendlyDateFromDB(currentTime.getTimeInMillis() / 1000L);
         return inputDate.equals(compareDate);
     }
 }

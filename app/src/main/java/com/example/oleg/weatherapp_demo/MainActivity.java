@@ -1,7 +1,7 @@
 package com.example.oleg.weatherapp_demo;
 
 import android.Manifest;
-import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,15 +31,14 @@ import com.example.oleg.weatherapp_demo.data.WeatherViewModel;
 import com.example.oleg.weatherapp_demo.databinding.ActivityMainBinding;
 import com.example.oleg.weatherapp_demo.geo.GeocodeAddressIntentService;
 import com.example.oleg.weatherapp_demo.network.GetDataService;
-import com.example.oleg.weatherapp_demo.network.PJWeekly;
 import com.example.oleg.weatherapp_demo.network.PJCurrent;
+import com.example.oleg.weatherapp_demo.network.PJWeekly;
 import com.example.oleg.weatherapp_demo.network.PJWeeklySpecificDay;
 import com.example.oleg.weatherapp_demo.network.RetrofitWeatherInstance;
 import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -196,9 +196,9 @@ public class MainActivity extends AppCompatActivity implements
                 if (pj != null) {
                     mBinding.ivWeatherNow.setImageResource(WeatherIconInterpreter.interpretIcon(pj.getCurrently().getIcon()));
 
-                    String currentTime = NormalizeDate.getHumanFriendlyDateFromDB(pj.getCurrently().getTime() * 1000L);
+                    String currentTime = NormalizeDate.getHumanFriendlyDateFromDB(pj.getCurrently().getTime());
 
-                    if(NormalizeDate.checkIfItIsToday(currentTime)){
+                    if (NormalizeDate.checkIfItIsToday(currentTime)) {
                         mBinding.tvWeatherNowDate.setText(R.string.weather_now);
                     }
 
@@ -268,15 +268,26 @@ public class MainActivity extends AppCompatActivity implements
 
     public void currentWeatherClick(View view) {
         // Implement single item retrieval from db by date
-        if(mWeatherList.isEmpty()){
+        if (mWeatherList.isEmpty()) {
             return;
         }
-        String date = mWeatherList.get(0).getDate();
-        if(NormalizeDate.checkIfItIsToday(date)){
+        Weather weathersdfsdgf = mWeatherList.get(0);
+        String datesdfsdf = weathersdfsdgf.getDate();
+        String date = NormalizeDate.getHumanFriendlyDateFromDB(Long.parseLong(datesdfsdf));
+        if (NormalizeDate.checkIfItIsToday(date)) {
             mWeatherViewModel.init(mWeatherList.get(0).getDate());
-            mWeatherViewModel.getWeatherNow().observe(this, weather -> mWeatherNow = weather);
 
-        }else{
+            // Need to wait a callback from aSyncTask or to find a workaround
+            //mWeatherViewModel.getWeatherNow().observe(this, weather -> mWeatherNow = weather);
+            mWeatherViewModel.getWeatherNow().observe(this, weather -> {
+                mWeatherNow = weather;
+//                    if(mWeatherNow != null){
+//                        Toast.makeText(MainActivity.this, mWeatherNow.getSummary(), Toast.LENGTH_SHORT).show();
+//                    }
+
+            });
+
+        } else {
 
         }
 
