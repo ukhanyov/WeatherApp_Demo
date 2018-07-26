@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements
 
     //private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233?units=si&exclude=currently,minutely,hourly,flags";
     private ProgressBar progressBar;
-    private String currentWeatherTime;
 
     private static final String ACCESS_KEY = "31b4710c5ae2b750bb6227c0517f84de";
     private static String LOCATION = "37.8267,-122.4233";
@@ -76,6 +75,8 @@ public class MainActivity extends AppCompatActivity implements
 
     // Get city name
     AddressResultReceiver mResultReceiver;
+
+    private Weather mWeatherNow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +106,14 @@ public class MainActivity extends AppCompatActivity implements
 
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
         mWeatherViewModel.getAllWeather().observe(this, adapter::setWeather);
+
+        String firstDate = checkDate();
+        if(NormalizeDate.checkIfItIsToday(firstDate)){
+            mWeatherNow = mWeatherViewModel.init(firstDate);
+            Toast.makeText(this, mWeatherNow.getSummary(), Toast.LENGTH_SHORT).show();
+        }else{
+            throw new NullPointerException();
+        }
 
     }
 
@@ -212,6 +221,12 @@ public class MainActivity extends AppCompatActivity implements
         });
     }
 
+    private String checkDate() {
+        List<Weather> listOfWeathers = null;
+        mWeatherViewModel.getAllWeather().observe(this, listOfWeathers::addAll);
+        return listOfWeathers.get(0).getDate();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -264,8 +279,20 @@ public class MainActivity extends AppCompatActivity implements
         // Implement single item retrieval from db by date
         try {
             LiveData<List<Weather>> mWeatherList = mWeatherViewModel.getAllWeather();
-            LiveData<Weather> singleWeather = mWeatherViewModel.init(mWeatherList.getValue().get(0).getDate());
-            Toast.makeText(this, singleWeather.getValue().getDate(), Toast.LENGTH_SHORT).show();
+            Weather singleWeather;
+
+            //mWeatherViewModel.init(mWeatherList.getValue().get(0).getDate()).observe(this, new singleWeather);
+
+            singleWeather = mWeatherViewModel.init(mWeatherList.getValue().get(0).getDate());
+            if(singleWeather == null){
+                Toast.makeText(this,"Empty weather obj", Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(this, singleWeather.getSummary(), Toast.LENGTH_SHORT).show();
+            }
+//            String[] sWeather = {singleWeather.getValue().getDate(),
+//                                    singleWeather.getValue().getWindSpeed()};
+//            Toast.makeText(this, sWeather.toString(), Toast.LENGTH_SHORT).show();
+
         }catch (Exception e){
             e.printStackTrace();
         }
