@@ -3,7 +3,6 @@ package com.example.oleg.weatherapp_demo.data;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
 import java.util.List;
@@ -14,6 +13,7 @@ public class WeatherViewModel extends AndroidViewModel {
 
     private WeatherRepository mRepository;
     private LiveData<List<Weather>> mAllWeather;
+    private LiveData<Weather> mWeatherNow;
 
     public WeatherViewModel(@NonNull Application application) {
         super(application);
@@ -21,8 +21,12 @@ public class WeatherViewModel extends AndroidViewModel {
         mAllWeather = mRepository.getAllWeather();
     }
 
-    public Weather init(String key){
-        return mRepository.getSingleWeather(key);
+    public void init(String key){
+        mWeatherNow = mRepository.getSingleWeather(key);
+    }
+
+    public LiveData<Weather> getWeatherNow() {
+        return mWeatherNow;
     }
 
     public LiveData<List<Weather>> getAllWeather() {

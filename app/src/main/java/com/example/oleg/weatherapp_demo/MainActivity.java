@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements
     AddressResultReceiver mResultReceiver;
 
     private Weather mWeatherNow;
+    private List<Weather> mWeatherList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,13 +108,9 @@ public class MainActivity extends AppCompatActivity implements
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
         mWeatherViewModel.getAllWeather().observe(this, adapter::setWeather);
 
-        String firstDate = checkDate();
-        if(NormalizeDate.checkIfItIsToday(firstDate)){
-            mWeatherNow = mWeatherViewModel.init(firstDate);
-            Toast.makeText(this, mWeatherNow.getSummary(), Toast.LENGTH_SHORT).show();
-        }else{
-            throw new NullPointerException();
-        }
+        mWeatherList = new ArrayList<>();
+        mWeatherViewModel.getAllWeather().observe(this, mWeatherList::addAll);
+
 
     }
 
@@ -199,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements
                 if (pj != null) {
                     mBinding.ivWeatherNow.setImageResource(WeatherIconInterpreter.interpretIcon(pj.getCurrently().getIcon()));
 
-                    String currentTime = NormalizeDate.getHumanFriendlyDateFromDB(Calendar.getInstance().getTimeInMillis());
+                    String currentTime = NormalizeDate.getHumanFriendlyDateFromDB(pj.getCurrently().getTime() * 1000L);
 
                     if(NormalizeDate.checkIfItIsToday(currentTime)){
                         mBinding.tvWeatherNowDate.setText(R.string.weather_now);
@@ -219,12 +216,6 @@ public class MainActivity extends AppCompatActivity implements
                 progressBar.setVisibility(View.INVISIBLE);
             }
         });
-    }
-
-    private String checkDate() {
-        List<Weather> listOfWeathers = null;
-        mWeatherViewModel.getAllWeather().observe(this, listOfWeathers::addAll);
-        return listOfWeathers.get(0).getDate();
     }
 
     @Override
@@ -277,48 +268,19 @@ public class MainActivity extends AppCompatActivity implements
 
     public void currentWeatherClick(View view) {
         // Implement single item retrieval from db by date
-        try {
-            LiveData<List<Weather>> mWeatherList = mWeatherViewModel.getAllWeather();
-            Weather singleWeather;
-
-            //mWeatherViewModel.init(mWeatherList.getValue().get(0).getDate()).observe(this, new singleWeather);
-
-            singleWeather = mWeatherViewModel.init(mWeatherList.getValue().get(0).getDate());
-            if(singleWeather == null){
-                Toast.makeText(this,"Empty weather obj", Toast.LENGTH_SHORT).show();
-            }else {
-                Toast.makeText(this, singleWeather.getSummary(), Toast.LENGTH_SHORT).show();
-            }
-//            String[] sWeather = {singleWeather.getValue().getDate(),
-//                                    singleWeather.getValue().getWindSpeed()};
-//            Toast.makeText(this, sWeather.toString(), Toast.LENGTH_SHORT).show();
-
-        }catch (Exception e){
-            e.printStackTrace();
+        if(mWeatherList.isEmpty()){
+            return;
         }
-//        getCurrentDate();
-//        //Toast.makeText(this, NormalizeDate.getHumanFriendlyDateFromDB(Long.parseLong(currentWeatherTime)), Toast.LENGTH_SHORT).show();
-//
-//        List<Weather> weather = new ArrayList<>();
-//        mWeatherViewModel.getSingleWeather(currentWeatherTime).observe(this, weather::add);
-//        Toast.makeText(this, weather.get(0).getDate(), Toast.LENGTH_SHORT).show();
+        String date = mWeatherList.get(0).getDate();
+        if(NormalizeDate.checkIfItIsToday(date)){
+            mWeatherViewModel.init(mWeatherList.get(0).getDate());
+            mWeatherViewModel.getWeatherNow().observe(this, weather -> mWeatherNow = weather);
+
+        }else{
+
+        }
 
     }
-
-//    private void getCurrentDate(){
-//        mWeatherList = new ArrayList<>();
-//
-//        mWeatherViewModel.getAllWeather().observe(this, weathers -> {
-//            assert weathers != null;
-//            mWeatherList.addAll(weathers);
-//        });
-//
-//        for(Weather entry : mWeatherList){
-//            if(NormalizeDate.getHumanFriendlyDateFromDB(Long.parseLong(entry.getDate())).equals(mBinding.tvWeatherNowDate.getText().toString())){
-//                currentWeatherTime = entry.getDate();
-//            }
-//        }
-//    }
 
     // Get city name
     class AddressResultReceiver extends ResultReceiver {

@@ -23,5 +23,5 @@ public interface WeatherDao {
     LiveData<List<Weather>> getAllWeather();
 
     @Query("SELECT * FROM weather_table WHERE date = :weatherDate")
-    Weather getSingleWeather(String weatherDate);
+    LiveData<Weather> getSingleWeather(String weatherDate);
 }
