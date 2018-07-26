@@ -25,12 +25,11 @@ public class WeatherRepository {
     }
 
     LiveData<Weather> getSingleWeather(String weatherDate){
-        //return mWeatherDao.getSingleWeather(weatherDate);
         new getSingleWeatherAsyncTask(mWeatherDao).execute(weatherDate);
         return mWeatherInstance;
     }
 
-    private static class getSingleWeatherAsyncTask extends AsyncTask<String, Void, LiveData<Weather>>{
+    private static class getSingleWeatherAsyncTask extends AsyncTask<String, Void, LiveData<Weather>> {
 
         private WeatherDao mAsyncDao;
 
@@ -40,7 +39,8 @@ public class WeatherRepository {
 
         @Override
         protected LiveData<Weather> doInBackground(String... strings) {
-            return mWeatherInstance = mAsyncDao.getSingleWeather(strings[0]);
+            mWeatherInstance = mAsyncDao.getSingleWeather(strings[0]);
+            return mWeatherInstance;
         }
     }
 

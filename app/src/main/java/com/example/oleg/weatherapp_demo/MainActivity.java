@@ -1,6 +1,7 @@
 package com.example.oleg.weatherapp_demo;
 
 import android.Manifest;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -75,8 +76,6 @@ public class MainActivity extends AppCompatActivity implements
 
     // Get city name
     AddressResultReceiver mResultReceiver;
-
-    private List<Weather> mWeatherList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -263,7 +262,13 @@ public class MainActivity extends AppCompatActivity implements
 
     public void currentWeatherClick(View view) {
         // Implement single item retrieval from db by date
-
+        try {
+            LiveData<List<Weather>> mWeatherList = mWeatherViewModel.getAllWeather();
+            LiveData<Weather> singleWeather = mWeatherViewModel.init(mWeatherList.getValue().get(0).getDate());
+            Toast.makeText(this, singleWeather.getValue().getDate(), Toast.LENGTH_SHORT).show();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 //        getCurrentDate();
 //        //Toast.makeText(this, NormalizeDate.getHumanFriendlyDateFromDB(Long.parseLong(currentWeatherTime)), Toast.LENGTH_SHORT).show();
 //
