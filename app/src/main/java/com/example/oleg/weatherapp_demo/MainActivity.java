@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements
     // Get city name
     AddressResultReceiver mResultReceiver;
 
-    private Weather mWeatherNow;
     private List<Weather> mWeatherList;
 
     @Override
@@ -271,25 +270,17 @@ public class MainActivity extends AppCompatActivity implements
         if (mWeatherList.isEmpty()) {
             return;
         }
-        Weather weathersdfsdgf = mWeatherList.get(0);
-        String datesdfsdf = weathersdfsdgf.getDate();
-        String date = NormalizeDate.getHumanFriendlyDateFromDB(Long.parseLong(datesdfsdf));
-        if (NormalizeDate.checkIfItIsToday(date)) {
-            mWeatherViewModel.init(mWeatherList.get(0).getDate());
 
-            // Need to wait a callback from aSyncTask or to find a workaround
-            //mWeatherViewModel.getWeatherNow().observe(this, weather -> mWeatherNow = weather);
-            mWeatherViewModel.getWeatherNow().observe(this, weather -> {
-                mWeatherNow = weather;
-//                    if(mWeatherNow != null){
-//                        Toast.makeText(MainActivity.this, mWeatherNow.getSummary(), Toast.LENGTH_SHORT).show();
-//                    }
+        for (Weather instance : mWeatherList) {
+            if (NormalizeDate.checkIfItIsToday(
+                    NormalizeDate.getHumanFriendlyDateFromDB(
+                            Long.parseLong(instance.getDate())
+                    ))){
 
-            });
-
-        } else {
+            }
 
         }
+
 
     }
 

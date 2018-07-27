@@ -13,21 +13,10 @@ public class WeatherViewModel extends AndroidViewModel {
 
     private WeatherRepository mRepository;
     private LiveData<List<Weather>> mAllWeather;
-    private LiveData<Weather> mWeatherNow;
-
     public WeatherViewModel(@NonNull Application application) {
         super(application);
         mRepository = new WeatherRepository(application);
         mAllWeather = mRepository.getAllWeather();
-    }
-
-    public void init(String key) {
-        mWeatherNow = mRepository.getSingleWeather(key);
-
-    }
-
-    public LiveData<Weather> getWeatherNow() {
-        return mWeatherNow;
     }
 
     public LiveData<List<Weather>> getAllWeather() {
