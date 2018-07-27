@@ -4,21 +4,27 @@ import android.Manifest;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.location.Address;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.telecom.Connection;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -98,13 +104,24 @@ public class MainActivity extends AppCompatActivity implements
         // Get users location
         findUserLocation();
 
-        // Get data from the json
-        fetchData();
+        // Check if Internet is connected
+        if(!haveNetworkConnection()){
 
-        // Display weather now
-        displayWeatherNow();
+            askForInternetPermission();
+
+
+        }else {
+
+            // Get data from the json
+            fetchData();
+
+            // Display weather now
+            displayWeatherNow();
+        }
 
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
+
+
         mWeatherViewModel.getAllWeather().observe(this, adapter::setWeather);
 
         mWeatherList = new ArrayList<>();
@@ -304,5 +321,37 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
     }
+
+    // Internet availability check
+    private boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = Objects.requireNonNull(cm).getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+//            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+//                if (ni.isConnected())
+//                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi;
+    }
+
+    private void askForInternetPermission() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Connect to wifi or quit")
+                .setCancelable(false)
+                .setPositiveButton("Connect to WIFI", (dialog, id) -> startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS)))
+                .setNegativeButton("Quit", (dialog, id) -> {
+                    askForInternetPermission();
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+
+    }
+
 }
 
