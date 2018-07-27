@@ -251,6 +251,26 @@ public class MainActivity extends AppCompatActivity implements
     // Item click shit, obviously
     @Override
     public void onClick(Weather weather) {
+        launchDetailsActivity(weather);
+    }
+
+    public void currentWeatherClick(View view) {
+        if (mWeatherList.isEmpty()) {
+            return;
+        }
+
+        for (Weather instance : mWeatherList) {
+            if (NormalizeDate.checkIfItIsToday(
+                    NormalizeDate.getHumanFriendlyDateFromDB(
+                            Long.parseLong(instance.getDate())
+                    ))){
+                launchDetailsActivity(instance);
+                return;
+            }
+        }
+    }
+
+    private void launchDetailsActivity(Weather weather){
         Intent startDetailsActivity = new Intent(MainActivity.this, DetailsActivity.class);
         String[] data = {
                 weather.getDate(),
@@ -263,37 +283,6 @@ public class MainActivity extends AppCompatActivity implements
         };
         startDetailsActivity.putExtra(Intent.EXTRA_TEXT, data);
         startActivity(startDetailsActivity);
-    }
-
-    public void currentWeatherClick(View view) {
-        // Implement single item retrieval from db by date
-        if (mWeatherList.isEmpty()) {
-            return;
-        }
-
-        for (Weather instance : mWeatherList) {
-            if (NormalizeDate.checkIfItIsToday(
-                    NormalizeDate.getHumanFriendlyDateFromDB(
-                            Long.parseLong(instance.getDate())
-                    ))){
-                Intent startDetailsActivity = new Intent(MainActivity.this, DetailsActivity.class);
-                String[] data = {
-                        instance.getDate(),
-                        instance.getSummary(),
-                        instance.getTemperatureMax(),
-                        instance.getTemperatureMin(),
-                        instance.getHumidity(),
-                        instance.getPressure(),
-                        instance.getWindSpeed()
-                };
-                startDetailsActivity.putExtra(Intent.EXTRA_TEXT, data);
-                startActivity(startDetailsActivity);
-                return;
-            }
-
-        }
-
-
     }
 
     // Get city name
