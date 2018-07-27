@@ -1,10 +1,9 @@
 package com.example.oleg.weatherapp_demo;
 
 import android.Manifest;
-import android.arch.lifecycle.Observer;
+import android.app.Dialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
@@ -18,13 +17,11 @@ import android.os.Handler;
 import android.os.ResultReceiver;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.telecom.Connection;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -105,19 +102,10 @@ public class MainActivity extends AppCompatActivity implements
         findUserLocation();
 
         // Check if Internet is connected
-        if(!haveNetworkConnection()){
-
-            askForInternetPermission();
 
 
-        }else {
 
-            // Get data from the json
-            fetchData();
 
-            // Display weather now
-            displayWeatherNow();
-        }
 
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
 
@@ -127,7 +115,23 @@ public class MainActivity extends AppCompatActivity implements
         mWeatherList = new ArrayList<>();
         mWeatherViewModel.getAllWeather().observe(this, mWeatherList::addAll);
 
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(haveNetworkConnection()) {
+
+            // Get data from the json
+            fetchData();
+
+            // Display weather now
+            displayWeatherNow();
+
+        }else {
+            askForWifiPermission();
+        }
     }
 
     private void findUserLocation() {
@@ -280,14 +284,14 @@ public class MainActivity extends AppCompatActivity implements
             if (NormalizeDate.checkIfItIsToday(
                     NormalizeDate.getHumanFriendlyDateFromDB(
                             Long.parseLong(instance.getDate())
-                    ))){
+                    ))) {
                 launchDetailsActivity(instance);
                 return;
             }
         }
     }
 
-    private void launchDetailsActivity(Weather weather){
+    private void launchDetailsActivity(Weather weather) {
         Intent startDetailsActivity = new Intent(MainActivity.this, DetailsActivity.class);
         String[] data = {
                 weather.getDate(),
@@ -333,24 +337,21 @@ public class MainActivity extends AppCompatActivity implements
             if (ni.getTypeName().equalsIgnoreCase("WIFI"))
                 if (ni.isConnected())
                     haveConnectedWifi = true;
-//            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
-//                if (ni.isConnected())
-//                    haveConnectedMobile = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
         }
-        return haveConnectedWifi;
+        return haveConnectedWifi || haveConnectedMobile;
     }
 
-    private void askForInternetPermission() {
+    private void askForWifiPermission() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Connect to wifi or quit")
                 .setCancelable(false)
                 .setPositiveButton("Connect to WIFI", (dialog, id) -> startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS)))
-                .setNegativeButton("Quit", (dialog, id) -> {
-                    askForInternetPermission();
-                });
+                .setNegativeButton("Quit", (dialog, id) -> finish());
         AlertDialog alert = builder.create();
         alert.show();
-
     }
 
 }
