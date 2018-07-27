@@ -32,4 +32,7 @@
     <string name="weather_details_humidity">Humidity: %1$s</string>
     <string name="weather_details_pressure">Pressure: %1$s</string>
     <string name="weather_details_wind_speed">Wind speed: %1$s</string>
+    <string name="gps_network_not_enabled">Network not enabled</string>
+    <string name="open_location_settings">Open location settings</string>
+    <string name="Cancel">Cencel</string>
 </resources>

@@ -1,7 +1,6 @@
 package com.example.oleg.weatherapp_demo;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -81,6 +80,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private List<Weather> mWeatherList;
 
+    protected static final int REQUEST_CHECK_SETTINGS = 0x1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,13 +99,9 @@ public class MainActivity extends AppCompatActivity implements
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        // Get users location
-        findUserLocation();
+
 
         // Check if Internet is connected
-
-
-
 
 
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
@@ -121,7 +118,14 @@ public class MainActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
 
-        if(haveNetworkConnection()) {
+        if (haveLocationEnabled()) {
+            // Get users location
+            findUserLocation();
+        } else {
+            askForLocation();
+        }
+
+        if (haveNetworkConnection()) {
 
             // Get data from the json
             fetchData();
@@ -129,8 +133,8 @@ public class MainActivity extends AppCompatActivity implements
             // Display weather now
             displayWeatherNow();
 
-        }else {
-            askForWifiPermission();
+        } else {
+            askForWifi();
         }
     }
 
@@ -344,7 +348,7 @@ public class MainActivity extends AppCompatActivity implements
         return haveConnectedWifi || haveConnectedMobile;
     }
 
-    private void askForWifiPermission() {
+    private void askForWifi() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Connect to wifi or quit")
                 .setCancelable(false)
@@ -352,6 +356,28 @@ public class MainActivity extends AppCompatActivity implements
                 .setNegativeButton("Quit", (dialog, id) -> finish());
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    private boolean haveLocationEnabled() {
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        gps_enabled = Objects.requireNonNull(lm).isProviderEnabled(LocationManager.GPS_PROVIDER);
+        network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        return gps_enabled && network_enabled;
+    }
+
+    private void askForLocation(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("GPS Network not enabled")
+                .setCancelable(false)
+                .setPositiveButton("Open Location Settings", (dialog, id) -> startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
+                .setNegativeButton("Quit", (dialog, id) -> finish());
+        AlertDialog alert = builder.create();
+        alert.show();
+
     }
 
 }
