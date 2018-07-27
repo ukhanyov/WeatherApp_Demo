@@ -276,7 +276,19 @@ public class MainActivity extends AppCompatActivity implements
                     NormalizeDate.getHumanFriendlyDateFromDB(
                             Long.parseLong(instance.getDate())
                     ))){
-
+                Intent startDetailsActivity = new Intent(MainActivity.this, DetailsActivity.class);
+                String[] data = {
+                        instance.getDate(),
+                        instance.getSummary(),
+                        instance.getTemperatureMax(),
+                        instance.getTemperatureMin(),
+                        instance.getHumidity(),
+                        instance.getPressure(),
+                        instance.getWindSpeed()
+                };
+                startDetailsActivity.putExtra(Intent.EXTRA_TEXT, data);
+                startActivity(startDetailsActivity);
+                return;
             }
 
         }
