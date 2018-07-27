@@ -57,30 +57,16 @@ public class MainActivity extends AppCompatActivity implements
     //private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233?units=si&exclude=currently,minutely,hourly,flags";
     private ProgressBar progressBar;
 
-    private static final String ACCESS_KEY = "31b4710c5ae2b750bb6227c0517f84de";
-    private static String LOCATION = "37.8267,-122.4233";
-
-    private static final String QUERY_UTILS = "units";
-    private static final String QUERY_UTILS_FORMAT = "si";
-
-    private static final String QUERY_EXCLUDE = "exclude";
-    private static final String QUERY_EXCLUDE_ALL_BUT_DATE_ARRAY = "currently,minutely,hourly,flags";
-    private static final String QUERY_EXCLUDE_ALL_BUT_CURRENT_WEATHER = "minutely,hourly,flags,daily";
-
     private WeatherViewModel mWeatherViewModel;
 
     // Fancy dataBinding
     ActivityMainBinding mBinding;
-
-    // Permissions
-    private static final int REQUEST_LOCATION = 1;
 
     // Get city name
     AddressResultReceiver mResultReceiver;
 
     private List<Weather> mWeatherList;
 
-    protected static final int REQUEST_CHECK_SETTINGS = 0x1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,12 +134,12 @@ public class MainActivity extends AppCompatActivity implements
                 (MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Constants.REQUEST_LOCATION);
 
         } else {
             assert locationManager != null;
             Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-            LOCATION = String.valueOf(location.getLatitude()) + "," + String.valueOf(location.getLongitude());
+            Constants.LOCATION = String.valueOf(location.getLatitude()) + "," + String.valueOf(location.getLongitude());
 
             // Get city name
             mResultReceiver = new AddressResultReceiver(null);
@@ -172,9 +158,9 @@ public class MainActivity extends AppCompatActivity implements
 
         GetDataService service = RetrofitWeatherInstance.getRetrofitInstance().create(GetDataService.class);
         Map<String, String> data = new HashMap<>();
-        data.put(QUERY_UTILS, QUERY_UTILS_FORMAT);
-        data.put(QUERY_EXCLUDE, QUERY_EXCLUDE_ALL_BUT_DATE_ARRAY);
-        Call<PJWeekly> parsedJSON = service.getAllWeather(ACCESS_KEY, LOCATION, data);
+        data.put(Constants.QUERY_UTILS, Constants.QUERY_UTILS_FORMAT);
+        data.put(Constants.QUERY_EXCLUDE, Constants.QUERY_EXCLUDE_ALL_BUT_DATE_ARRAY);
+        Call<PJWeekly> parsedJSON = service.getAllWeather(Constants.ACCESS_KEY, Constants.LOCATION, data);
 
         parsedJSON.enqueue(new Callback<PJWeekly>() {
             @Override
@@ -209,9 +195,9 @@ public class MainActivity extends AppCompatActivity implements
 
         GetDataService service = RetrofitWeatherInstance.getRetrofitInstance().create(GetDataService.class);
         Map<String, String> data = new HashMap<>();
-        data.put(QUERY_UTILS, QUERY_UTILS_FORMAT);
-        data.put(QUERY_EXCLUDE, QUERY_EXCLUDE_ALL_BUT_CURRENT_WEATHER);
-        Call<PJCurrent> parsedJSON = service.getCurrentWeather(ACCESS_KEY, LOCATION, data);
+        data.put(Constants.QUERY_UTILS, Constants.QUERY_UTILS_FORMAT);
+        data.put(Constants.QUERY_EXCLUDE, Constants.QUERY_EXCLUDE_ALL_BUT_CURRENT_WEATHER);
+        Call<PJCurrent> parsedJSON = service.getCurrentWeather(Constants.ACCESS_KEY, Constants.LOCATION, data);
 
         parsedJSON.enqueue(new Callback<PJCurrent>() {
             @Override
@@ -330,7 +316,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    // Internet availability check
     private boolean haveNetworkConnection() {
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;
