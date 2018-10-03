@@ -1,0 +1,1 @@
+POJOs for json parcer
