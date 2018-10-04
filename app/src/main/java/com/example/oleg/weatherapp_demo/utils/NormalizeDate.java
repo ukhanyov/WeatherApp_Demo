@@ -31,7 +31,7 @@ public class NormalizeDate {
             case 7:
                 return "Sat";
             default:
-                return "NanN";
+                return "NaN";
         }
     }
 
@@ -39,7 +39,7 @@ public class NormalizeDate {
         Calendar currentTime = Calendar.getInstance();
 
         //Divide by 1000 because DarkWeather time is in seconds, not milliseconds
-        String compareDate = getHumanFriendlyDateFromDB(currentTime.getTimeInMillis() / 1000L);
+        String compareDate = getHumanFriendlyDateFromDB(currentTime.getTimeInMillis()  / 1000L  );
         return inputDate.equals(compareDate);
     }
 }
