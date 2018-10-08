@@ -37,6 +37,7 @@ import com.example.oleg.weatherapp_demo.network.PJCurrent;
 import com.example.oleg.weatherapp_demo.network.PJWeekly;
 import com.example.oleg.weatherapp_demo.network.PJWeeklySpecificDay;
 import com.example.oleg.weatherapp_demo.network.RetrofitWeatherInstance;
+import com.example.oleg.weatherapp_demo.settings.SettingsActivity;
 import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 
@@ -84,7 +85,6 @@ public class MainActivity extends AppCompatActivity implements
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
-
 
 
         // Check if Internet is connected
@@ -236,27 +236,50 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        mWeatherViewModel.deleteAll();
+        //mWeatherViewModel.deleteAll();
 
         int id = item.getItemId();
 
-        if (id == R.id.action_drop_table) {
-            mWeatherViewModel.deleteAll();
-            mBinding.ivWeatherNow.setImageResource(R.drawable.ic_weather_default);
+        switch (item.getItemId()) {
+            case R.id.action_drop_table:
+                mWeatherViewModel.deleteAll();
+                mBinding.ivWeatherNow.setImageResource(R.drawable.ic_weather_default);
 
-            mBinding.tvWeatherNowDate.setText(null);
-            mBinding.tvWeatherNowDescription.setText(null);
-            mBinding.tvWeatherNowTemp.setText(null);
-            mBinding.tvWeatherNowHumidity.setText(null);
-            mBinding.tvWeatherNowLocation.setText(null);
-            return true;
-        } else if (id == R.id.action_refresh_table) {
-            displayWeatherNow();
-            fetchData();
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
+                mBinding.tvWeatherNowDate.setText(null);
+                mBinding.tvWeatherNowDescription.setText(null);
+                mBinding.tvWeatherNowTemp.setText(null);
+                mBinding.tvWeatherNowHumidity.setText(null);
+                mBinding.tvWeatherNowLocation.setText(null);
+                return true;
+            case R.id.action_refresh_table:
+                displayWeatherNow();
+                fetchData();
+                return true;
+            case R.id.action_settings:
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
         }
+
+//        if (id == R.id.action_drop_table) {
+//            mWeatherViewModel.deleteAll();
+//            mBinding.ivWeatherNow.setImageResource(R.drawable.ic_weather_default);
+//
+//            mBinding.tvWeatherNowDate.setText(null);
+//            mBinding.tvWeatherNowDescription.setText(null);
+//            mBinding.tvWeatherNowTemp.setText(null);
+//            mBinding.tvWeatherNowHumidity.setText(null);
+//            mBinding.tvWeatherNowLocation.setText(null);
+//            return true;
+//        } else if (id == R.id.action_refresh_table) {
+//            displayWeatherNow();
+//            fetchData();
+//            return true;
+//        } else {
+//            return super.onOptionsItemSelected(item);
+//        }
     }
 
     // Item click shit, obviously
@@ -354,7 +377,7 @@ public class MainActivity extends AppCompatActivity implements
         return gps_enabled && network_enabled;
     }
 
-    private void askForLocation(){
+    private void askForLocation() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("GPS Network not enabled")
                 .setCancelable(false)

@@ -1,6 +1,5 @@
 package com.example.oleg.weatherapp_demo;
 
-import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
