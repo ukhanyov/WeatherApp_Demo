@@ -95,6 +95,18 @@
         <item>3</item>
     </string-array>
 
+    <string-array name="list_preference_location_titles">
+        <item>Location 1</item>
+        <item>Location 2</item>
+        <item>Location 3</item>
+    </string-array>
+
+    <string-array name="list_preference_location_coordinates">
+        <item>Coordinate 1</item>
+        <item>Coordinate 2</item>
+        <item>Coordinate 3</item>
+    </string-array>
+
     <string-array name="multi_select_list_preference_default_value" />
 
     <string name="pref_title_system_sync_settings">System sync settings</string>
@@ -108,4 +120,6 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="connections">Connections</string>
+    <string name="location">Location</string>
 </resources>
