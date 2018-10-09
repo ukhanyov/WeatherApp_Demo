@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.widget.Toast;
 
 import com.example.oleg.weatherapp_demo.R;
 import com.example.oleg.weatherapp_demo.databinding.ActivitySettingsDeleteLocationsBinding;
@@ -38,6 +40,31 @@ public class SettingsDeleteLocations extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
+
+        // Swipe to delete
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(
+                0,
+                ItemTouchHelper.LEFT
+                | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView,
+                                  RecyclerView.ViewHolder viewHolder,
+                                  RecyclerView.ViewHolder target) {
+
+                Toast.makeText(SettingsDeleteLocations.this, "on Move", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                final int position = viewHolder.getAdapterPosition();
+                preferencesRemove(position);
+                adapter.notifyItemRemoved(position);
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     private void preferencesRetrieve() {
@@ -48,5 +75,38 @@ public class SettingsDeleteLocations extends AppCompatActivity {
         SharedPreferences sharedPreferencesCoordinates = getSharedPreferences("COORDINATES_PREF", 0);
         String coordinatesString = sharedPreferencesCoordinates.getString("coordinates", "");
         coordinatesList = new ArrayList<>(Arrays.asList(coordinatesString.split(";")));
+    }
+
+    private void preferencesRemove(int position){
+        locationsList.remove(position);
+        coordinatesList.remove(position);
+        preferenceUpdate();
+    }
+
+    private void preferenceUpdate(){
+        StringBuilder stringBuilderLocations = new StringBuilder();
+        StringBuilder stringBuilderCoordinates = new StringBuilder();
+
+        for (String s : locationsList) {
+            stringBuilderLocations.append(s);
+            stringBuilderLocations.append(";");
+        }
+
+        for (String s : coordinatesList) {
+            stringBuilderCoordinates.append(s);
+            stringBuilderCoordinates.append(";");
+        }
+
+        SharedPreferences sharedPreferencesLocations = getSharedPreferences("LOCATIONS_PREF", 0);
+        SharedPreferences.Editor editorLocations = sharedPreferencesLocations.edit();
+        editorLocations.clear();
+        editorLocations.putString("locations", stringBuilderLocations.toString());
+        editorLocations.apply();
+
+        SharedPreferences sharedPreferencesCoordinates = getSharedPreferences("COORDINATES_PREF", 0);
+        SharedPreferences.Editor editorCoordinates = sharedPreferencesCoordinates.edit();
+        editorCoordinates.clear();
+        editorCoordinates.putString("coordinates", stringBuilderCoordinates.toString());
+        editorCoordinates.apply();
     }
 }

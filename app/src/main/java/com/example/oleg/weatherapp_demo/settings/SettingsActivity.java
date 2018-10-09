@@ -167,6 +167,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             }
             return super.onOptionsItemSelected(item);
         }
+
+
     }
 
     private static Preference expandListOfLocations(ListPreference preference, String[] loc, String[] coord){
