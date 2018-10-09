@@ -142,7 +142,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_location);
             setHasOptionsMenu(true);
 
-            expandListOfLocations((ListPreference) findPreference("location_key"));
+            //expandListOfLocations((ListPreference) findPreference("location_key"));
 
             bindPreferenceSummaryToValue(findPreference("location_key"));
         }

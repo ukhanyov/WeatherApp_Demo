@@ -17,35 +17,6 @@ import java.util.List;
 
 public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder> {
 
-    class WeatherViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-
-        ImageView weatherIcon;
-        TextView weatherDate;
-        TextView weatherSummary;
-        TextView weatherTemperatureHigh;
-        TextView weatherTemperatureLow;
-
-        WeatherViewHolder(View view) {
-            super(view);
-
-            weatherIcon = view.findViewById(R.id.weather_icon);
-            weatherDate = view.findViewById(R.id.tv_weather_date);
-            weatherSummary = view.findViewById(R.id.tv_weather_summary);
-            weatherTemperatureHigh = view.findViewById(R.id.tv_high_temperature);
-            weatherTemperatureLow = view.findViewById(R.id.tv_low_temperature);
-
-            view.setOnClickListener(this);
-        }
-
-        // Item click stuff
-        @Override
-        public void onClick(View v) {
-            int adapterPosition = getAdapterPosition();
-            Weather weather = mWeather.get(adapterPosition);
-            mClickHandler.onClick(weather);
-        }
-    }
-
     private final LayoutInflater mInflater;
     private List<Weather> mWeather; // Cached copy of weather
     private Context mContext;
@@ -113,6 +84,35 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         if (mWeather != null)
             return mWeather.size();
         else return 0;
+    }
+
+    class WeatherViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+
+        ImageView weatherIcon;
+        TextView weatherDate;
+        TextView weatherSummary;
+        TextView weatherTemperatureHigh;
+        TextView weatherTemperatureLow;
+
+        WeatherViewHolder(View view) {
+            super(view);
+
+            weatherIcon = view.findViewById(R.id.weather_icon);
+            weatherDate = view.findViewById(R.id.tv_weather_date);
+            weatherSummary = view.findViewById(R.id.tv_weather_summary);
+            weatherTemperatureHigh = view.findViewById(R.id.tv_high_temperature);
+            weatherTemperatureLow = view.findViewById(R.id.tv_low_temperature);
+
+            view.setOnClickListener(this);
+        }
+
+        // Item click stuff
+        @Override
+        public void onClick(View v) {
+            int adapterPosition = getAdapterPosition();
+            Weather weather = mWeather.get(adapterPosition);
+            mClickHandler.onClick(weather);
+        }
     }
 
 }

@@ -38,6 +38,7 @@ import com.example.oleg.weatherapp_demo.network.PJWeekly;
 import com.example.oleg.weatherapp_demo.network.PJWeeklySpecificDay;
 import com.example.oleg.weatherapp_demo.network.RetrofitWeatherInstance;
 import com.example.oleg.weatherapp_demo.settings.SettingsActivity;
+import com.example.oleg.weatherapp_demo.settings.SettingsDeleteLocations;
 import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 
@@ -259,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                 return true;
             case R.id.action_add_location :
-
+                startActivity(new Intent(MainActivity.this, SettingsDeleteLocations.class));
                 return true;
 
             default:

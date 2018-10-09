@@ -36,6 +36,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.oleg.weatherapp_demo.MainActivity" />
         </activity>
+        <activity android:name=".settings.SettingsDeleteLocations">
+            <intent-filter>
+                <action android:name="com.example.oleg.weatherapp_demo.settings.SettingsDeleteLocations"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
