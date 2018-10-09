@@ -181,9 +181,9 @@ public class MainActivity extends AppCompatActivity implements
         editorCoordinates.apply();
     }
 
-    private void preferenceAddLocationCoordinate(String location, String coordinate){
+    private void preferenceAddLocationCoordinate(String location, String coordinates){
         locationsList.add(location);
-        coordinatesList.add(coordinate);
+        coordinatesList.add(coordinates);
     }
 
     @Override
@@ -226,7 +226,6 @@ public class MainActivity extends AppCompatActivity implements
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             String s = sharedPreferences.getString("location_key", null);
-
             LOCATION = s;
 
             assert s != null;
@@ -242,10 +241,10 @@ public class MainActivity extends AppCompatActivity implements
             intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, lon);
             startService(intent);
 
-            //Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-            //LOCATION = String.valueOf(location.getLatitude()) + "," + String.valueOf(location.getLongitude());
-
-            // Get city name
+//            Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+//            LOCATION = String.valueOf(location.getLatitude()) + "," + String.valueOf(location.getLongitude());
+//
+//            // Get city name
 //            mResultReceiver = new AddressResultReceiver(null);
 //            Intent intent = new Intent(this, GeocodeAddressIntentService.class);
 //            intent.putExtra(Constants.RECEIVER, mResultReceiver);
@@ -370,9 +369,6 @@ public class MainActivity extends AppCompatActivity implements
                     e.printStackTrace();
                 }
 
-//                preferencesRetrieve();
-//                preferenceAddLocationCoordinate();
-//                preferenceUpdate();
                 return true;
 
             default:
@@ -386,8 +382,13 @@ public class MainActivity extends AppCompatActivity implements
         if (requestCode == Constants.PLACE_PICKER_REQUEST) {
             if (resultCode == RESULT_OK) {
                 Place place = PlacePicker.getPlace(this, data);
-                String toastMsg = String.format("Place: %s, Coordinates: %s", place.getName().toString(), place.getLatLng().toString());
-                Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
+
+                preferencesRetrieve();
+                preferenceAddLocationCoordinate(place.getName().toString(),
+                         String.valueOf(place.getLatLng().latitude) + "," +
+                                    String.valueOf(place.getLatLng().longitude));
+                preferenceUpdate();
+
             }
         }
     }
