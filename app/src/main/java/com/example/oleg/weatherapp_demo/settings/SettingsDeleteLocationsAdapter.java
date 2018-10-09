@@ -29,7 +29,7 @@ public class SettingsDeleteLocationsAdapter extends RecyclerView.Adapter<Setting
     @Override
     public SettingsLocationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.location_delete_list_item, parent, false);
-        return new SettingsLocationViewHolder(parent);
+        return new SettingsLocationViewHolder(itemView);
     }
 
     @Override
