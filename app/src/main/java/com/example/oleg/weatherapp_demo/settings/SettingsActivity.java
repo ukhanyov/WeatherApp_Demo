@@ -142,6 +142,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_location);
             setHasOptionsMenu(true);
 
+            expandListOfLocations((ListPreference) findPreference("location_key"));
+
             bindPreferenceSummaryToValue(findPreference("location_key"));
         }
 
@@ -154,5 +156,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             }
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    private static Preference expandListOfLocations(ListPreference preference){
+        if(preference == null) return preference;
+        String[] locations = {"Location 1", "Location 2", "Location 3"};
+        String[] coordinates = {"Coordinate 1", "Coordinate 2", "Coordinate 3"};
+
+        preference.setEntries(locations);
+        preference.setEntryValues(coordinates);
+        return preference;
     }
 }

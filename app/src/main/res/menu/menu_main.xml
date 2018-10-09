@@ -2,6 +2,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.oleg.weatherapp_demo.MainActivity">
+
+    <item
+        android:id="@+id/action_add_location"
+        android:orderInCategory="99"
+        android:title="@string/add_location"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_add_location_black_24dp"/>
+
     <item
         android:id="@+id/action_drop_table"
         android:orderInCategory="100"

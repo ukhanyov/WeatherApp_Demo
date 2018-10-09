@@ -258,28 +258,14 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.action_settings:
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                 return true;
+            case R.id.action_add_location :
+
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
 
         }
-
-//        if (id == R.id.action_drop_table) {
-//            mWeatherViewModel.deleteAll();
-//            mBinding.ivWeatherNow.setImageResource(R.drawable.ic_weather_default);
-//
-//            mBinding.tvWeatherNowDate.setText(null);
-//            mBinding.tvWeatherNowDescription.setText(null);
-//            mBinding.tvWeatherNowTemp.setText(null);
-//            mBinding.tvWeatherNowHumidity.setText(null);
-//            mBinding.tvWeatherNowLocation.setText(null);
-//            return true;
-//        } else if (id == R.id.action_refresh_table) {
-//            displayWeatherNow();
-//            fetchData();
-//            return true;
-//        } else {
-//            return super.onOptionsItemSelected(item);
-//        }
     }
 
     // Item click shit, obviously
