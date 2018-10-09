@@ -4,6 +4,7 @@ import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.location.Address;
@@ -43,6 +44,7 @@ import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,6 +101,52 @@ public class MainActivity extends AppCompatActivity implements
         mWeatherList = new ArrayList<>();
         mWeatherViewModel.getAllWeather().observe(this, mWeatherList::addAll);
 
+        //preferencesSetup();
+
+    }
+
+    private void preferencesSetup() {
+        String[] locations = {"Location 1", "Location 2", "Location 3"};
+        String[] coordinates = {"Coordinate 1", "Coordinate 2", "Coordinate 3"};
+
+        StringBuilder stringBuilderLocations = new StringBuilder();
+        StringBuilder stringBuilderCoordinates = new StringBuilder();
+
+        for (String s : locations) {
+            stringBuilderLocations.append(s);
+            stringBuilderLocations.append(";");
+        }
+
+        for (String s : coordinates) {
+            stringBuilderCoordinates.append(s);
+            stringBuilderCoordinates.append(";");
+        }
+
+        SharedPreferences sharedPreferencesLocations = getSharedPreferences("LOCATIONS_PREF", 0);
+        SharedPreferences.Editor editorLocations = sharedPreferencesLocations.edit();
+        editorLocations.putString("locations", stringBuilderLocations.toString());
+        editorLocations.apply();
+
+        SharedPreferences sharedPreferencesCoordinates = getSharedPreferences("COORDINATES_PREF", 0);
+        SharedPreferences.Editor editorCoordinates = sharedPreferencesCoordinates.edit();
+        editorCoordinates.putString("coordinates", stringBuilderCoordinates.toString());
+        editorCoordinates.apply();
+    }
+
+    private void preferencesRetrieve() {
+        SharedPreferences sharedPreferencesLocations = getSharedPreferences("LOCATIONS_PREF", 0);
+        String locationsString = sharedPreferencesLocations.getString("locations", "");
+        List<String> locationsList = new ArrayList<>(Arrays.asList(locationsString.split(";")));
+        for (int i = 0; i < locationsList.size(); i++) {
+            Log.d("locations: ", locationsList.get(i));
+        }
+
+        SharedPreferences sharedPreferencesCoordinates = getSharedPreferences("COORDINATES_PREF", 0);
+        String coordinatesString = sharedPreferencesCoordinates.getString("coordinates", "");
+        List<String> coordinatesList = new ArrayList<>(Arrays.asList(coordinatesString.split(";")));
+        for (int i = 0; i < coordinatesList.size(); i++) {
+            Log.d("coordinates: ", coordinatesList.get(i));
+        }
     }
 
     @Override
@@ -259,8 +307,8 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.action_settings:
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                 return true;
-            case R.id.action_add_location :
-                startActivity(new Intent(MainActivity.this, SettingsDeleteLocations.class));
+            case R.id.action_add_location:
+                preferencesRetrieve();
                 return true;
 
             default:

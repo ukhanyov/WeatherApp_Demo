@@ -3,6 +3,7 @@ package com.example.oleg.weatherapp_demo.settings;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -23,6 +24,8 @@ import android.support.v4.app.NavUtils;
 
 import com.example.oleg.weatherapp_demo.R;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -142,7 +145,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_location);
             setHasOptionsMenu(true);
 
-            //expandListOfLocations((ListPreference) findPreference("location_key"));
+            SharedPreferences sharedPreferencesLocations = this.getActivity().getSharedPreferences("LOCATIONS_PREF", 0);
+            String locationsString = sharedPreferencesLocations.getString("locations", "");
+            String[] locationsArray = locationsString.split(";");
+
+            SharedPreferences sharedPreferencesCoordinates = this.getActivity().getSharedPreferences("COORDINATES_PREF",0);
+            String coordinatesString = sharedPreferencesCoordinates.getString("coordinates","");
+            String[] coordinatesArray = coordinatesString.split(";");
+
+            expandListOfLocations((ListPreference) findPreference("location_key"), locationsArray, coordinatesArray);
 
             bindPreferenceSummaryToValue(findPreference("location_key"));
         }
@@ -158,13 +169,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     }
 
-    private static Preference expandListOfLocations(ListPreference preference){
+    private static Preference expandListOfLocations(ListPreference preference, String[] loc, String[] coord){
         if(preference == null) return preference;
-        String[] locations = {"Location 1", "Location 2", "Location 3"};
-        String[] coordinates = {"Coordinate 1", "Coordinate 2", "Coordinate 3"};
 
-        preference.setEntries(locations);
-        preference.setEntryValues(coordinates);
+        preference.setEntries(loc);
+        preference.setEntryValues(coord);
         return preference;
     }
 }
