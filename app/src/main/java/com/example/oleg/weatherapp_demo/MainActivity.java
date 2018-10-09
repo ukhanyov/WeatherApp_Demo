@@ -117,8 +117,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void preferencesSetup() {
-        String[] locations = {"Kiev", "New York", "London"};
-        String[] coordinates = {"50.4501,30.5234", "30.5234,74.0060", "51.5074,0.1278"};
+        String[] locations = {"Kiev", "London"};
+        String[] coordinates = {"50.4501,30.5234", "51.5074,0.1278"};
 
         StringBuilder stringBuilderLocations = new StringBuilder();
         StringBuilder stringBuilderCoordinates = new StringBuilder();
@@ -224,34 +224,38 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             assert locationManager != null;
 
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-            String s = sharedPreferences.getString("location_key", null);
-            LOCATION = s;
+            SharedPreferences useCurrentLocationSwitch = PreferenceManager.getDefaultSharedPreferences(this);
+            if(useCurrentLocationSwitch.getBoolean("use_my_current_location", false)){
+                Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+                LOCATION = String.valueOf(location.getLatitude()) + "," + String.valueOf(location.getLongitude());
 
-            assert s != null;
-            String[] ss = s.split(",");
-            double lat = Double.valueOf(ss[0]);
-            double lon = Double.valueOf(ss[1]);
+                // Get city name
+                mResultReceiver = new AddressResultReceiver(null);
+                Intent intent = new Intent(this, GeocodeAddressIntentService.class);
+                intent.putExtra(Constants.RECEIVER, mResultReceiver);
+                intent.putExtra(Constants.FETCH_TYPE_EXTRA, Constants.USE_ADDRESS_LOCATION);
+                intent.putExtra(Constants.LOCATION_LATITUDE_DATA_EXTRA, location.getLatitude());
+                intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, location.getLongitude());
+                startService(intent);
+            }else {
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                String s = sharedPreferences.getString("location_key", null);
+                LOCATION = s;
 
-            mResultReceiver = new AddressResultReceiver(null);
-            Intent intent = new Intent(this, GeocodeAddressIntentService.class);
-            intent.putExtra(Constants.RECEIVER, mResultReceiver);
-            intent.putExtra(Constants.FETCH_TYPE_EXTRA, Constants.USE_ADDRESS_LOCATION);
-            intent.putExtra(Constants.LOCATION_LATITUDE_DATA_EXTRA, lat);
-            intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, lon);
-            startService(intent);
+                assert s != null;
+                String[] ss = s.split(",");
+                double lat = Double.valueOf(ss[0]);
+                double lon = Double.valueOf(ss[1]);
 
-//            Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-//            LOCATION = String.valueOf(location.getLatitude()) + "," + String.valueOf(location.getLongitude());
-//
-//            // Get city name
-//            mResultReceiver = new AddressResultReceiver(null);
-//            Intent intent = new Intent(this, GeocodeAddressIntentService.class);
-//            intent.putExtra(Constants.RECEIVER, mResultReceiver);
-//            intent.putExtra(Constants.FETCH_TYPE_EXTRA, Constants.USE_ADDRESS_LOCATION);
-//            intent.putExtra(Constants.LOCATION_LATITUDE_DATA_EXTRA, location.getLatitude());
-//            intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, location.getLongitude());
-//            startService(intent);
+                mResultReceiver = new AddressResultReceiver(null);
+                Intent intent = new Intent(this, GeocodeAddressIntentService.class);
+                intent.putExtra(Constants.RECEIVER, mResultReceiver);
+                intent.putExtra(Constants.FETCH_TYPE_EXTRA, Constants.USE_ADDRESS_LOCATION);
+                intent.putExtra(Constants.LOCATION_LATITUDE_DATA_EXTRA, lat);
+                intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, lon);
+                startService(intent);
+            }
+
         }
 
     }
@@ -381,6 +385,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.PLACE_PICKER_REQUEST) {
             if (resultCode == RESULT_OK) {
+                cleanViews();
                 Place place = PlacePicker.getPlace(this, data);
 
                 preferencesRetrieve();
@@ -389,11 +394,33 @@ public class MainActivity extends AppCompatActivity implements
                                     String.valueOf(place.getLatLng().longitude));
                 preferenceUpdate();
 
+                LOCATION = String.valueOf(place.getLatLng().latitude) + "," +
+                        String.valueOf(place.getLatLng().longitude);
+
+                mResultReceiver = new AddressResultReceiver(null);
+                Intent intent = new Intent(this, GeocodeAddressIntentService.class);
+                intent.putExtra(Constants.RECEIVER, mResultReceiver);
+                intent.putExtra(Constants.FETCH_TYPE_EXTRA, Constants.USE_ADDRESS_LOCATION);
+                intent.putExtra(Constants.LOCATION_LATITUDE_DATA_EXTRA, place.getLatLng().latitude);
+                intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, place.getLatLng().longitude);
+                startService(intent);
+
+                // Get data from the json
+                fetchData();
+
+                // Display weather now
+                displayWeatherNow();
+
+                SharedPreferences sharedPreferencesSelectedItem = getSharedPreferences("INDEX_PREF", 0);
+                SharedPreferences.Editor editorSelectedItem = sharedPreferencesSelectedItem.edit();
+                editorSelectedItem.clear();
+                editorSelectedItem.putString("coordination_index", LOCATION);
+                editorSelectedItem.apply();
             }
         }
     }
 
-    // Item click shit, obviously
+    // Item click, obviously
     @Override
     public void onClick(Weather weather) {
         launchDetailsActivity(weather);

@@ -41,7 +41,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = (preference, value) -> {
 
         if(preference.getKey().equals("location_key")){
-            //preference.setTitle(((ListPreference) preference).getEntry());
             String stringValue = value.toString();
             preference.setSummary(stringValue);
         }
@@ -182,6 +181,23 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
             preference.setEntries(locationsArray);
             preference.setEntryValues(coordinatesArray);
+
+            SharedPreferences sharedPreferencesSelectedItem = mContext.getSharedPreferences("INDEX_PREF", 0);
+            String s = sharedPreferencesSelectedItem.getString("coordination_index", "");
+
+            if(s.length() != 0){
+                int counter = 0;
+                for(String iterator : coordinatesArray){
+                    if(iterator.equals(s)){
+                        preference.setValueIndex(counter);
+                    }
+                    counter++;
+                }
+                SharedPreferences.Editor editorSelectedItem = sharedPreferencesSelectedItem.edit();
+                editorSelectedItem.clear();
+                editorSelectedItem.apply();
+            }
+
         }
 
     }
