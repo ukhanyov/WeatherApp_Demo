@@ -19,8 +19,11 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.example.oleg.weatherapp_demo.R;
 
@@ -144,6 +147,23 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_location);
             setHasOptionsMenu(true);
+
+            SharedPreferences sharedPreferencesLocations = this.getActivity().getSharedPreferences("LOCATIONS_PREF", 0);
+            String locationsString = sharedPreferencesLocations.getString("locations", "");
+            String[] locationsArray = locationsString.split(";");
+
+            SharedPreferences sharedPreferencesCoordinates = this.getActivity().getSharedPreferences("COORDINATES_PREF",0);
+            String coordinatesString = sharedPreferencesCoordinates.getString("coordinates","");
+            String[] coordinatesArray = coordinatesString.split(";");
+
+            expandListOfLocations((ListPreference) findPreference("location_key"), locationsArray, coordinatesArray);
+
+            bindPreferenceSummaryToValue(findPreference("location_key"));
+        }
+
+        @Override
+        public void onStart() {
+            super.onStart();
 
             SharedPreferences sharedPreferencesLocations = this.getActivity().getSharedPreferences("LOCATIONS_PREF", 0);
             String locationsString = sharedPreferencesLocations.getString("locations", "");
