@@ -179,8 +179,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             String coordinatesString = sharedPreferencesCoordinates.getString("coordinates","");
             String[] coordinatesArray = coordinatesString.split(";");
 
-            preference.setEntries(locationsArray);
-            preference.setEntryValues(coordinatesArray);
+            if(coordinatesArray.length != 0 && locationsArray.length != 0){
+                preference.setEntries(locationsArray);
+                preference.setEntryValues(coordinatesArray);
+            }
 
             SharedPreferences sharedPreferencesSelectedItem = mContext.getSharedPreferences("INDEX_PREF", 0);
             String s = sharedPreferencesSelectedItem.getString("coordination_index", "");

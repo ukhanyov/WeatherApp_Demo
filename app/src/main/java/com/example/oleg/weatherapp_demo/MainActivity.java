@@ -117,15 +117,27 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void preferencesSetup() {
+        preferencesRetrieve();
+
         String[] locations = {"Kiev", "London"};
         String[] coordinates = {"50.4501,30.5234", "51.5074,0.1278"};
 
         StringBuilder stringBuilderLocations = new StringBuilder();
         StringBuilder stringBuilderCoordinates = new StringBuilder();
 
+        for (String s : locationsList) {
+            stringBuilderLocations.append(s);
+            stringBuilderLocations.append(";");
+        }
+
         for (String s : locations) {
             stringBuilderLocations.append(s);
             stringBuilderLocations.append(";");
+        }
+
+        for (String s : coordinatesList) {
+            stringBuilderCoordinates.append(s);
+            stringBuilderCoordinates.append(";");
         }
 
         for (String s : coordinates) {
@@ -135,11 +147,13 @@ public class MainActivity extends AppCompatActivity implements
 
         SharedPreferences sharedPreferencesLocations = getSharedPreferences("LOCATIONS_PREF", 0);
         SharedPreferences.Editor editorLocations = sharedPreferencesLocations.edit();
+        editorLocations.clear();
         editorLocations.putString("locations", stringBuilderLocations.toString());
         editorLocations.apply();
 
         SharedPreferences sharedPreferencesCoordinates = getSharedPreferences("COORDINATES_PREF", 0);
         SharedPreferences.Editor editorCoordinates = sharedPreferencesCoordinates.edit();
+        editorCoordinates.clear();
         editorCoordinates.putString("coordinates", stringBuilderCoordinates.toString());
         editorCoordinates.apply();
     }
@@ -154,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements
         coordinatesList = new ArrayList<>(Arrays.asList(coordinatesString.split(";")));
     }
 
-    private void preferenceUpdate(){
+    private void preferenceUpdate() {
         StringBuilder stringBuilderLocations = new StringBuilder();
         StringBuilder stringBuilderCoordinates = new StringBuilder();
 
@@ -181,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements
         editorCoordinates.apply();
     }
 
-    private void preferenceAddLocationCoordinate(String location, String coordinates){
+    private void preferenceAddLocationCoordinate(String location, String coordinates) {
         locationsList.add(location);
         coordinatesList.add(coordinates);
     }
@@ -225,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements
             assert locationManager != null;
 
             SharedPreferences useCurrentLocationSwitch = PreferenceManager.getDefaultSharedPreferences(this);
-            if(useCurrentLocationSwitch.getBoolean("use_my_current_location", false)){
+            if (useCurrentLocationSwitch.getBoolean("use_my_current_location", false)) {
                 Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
                 LOCATION = String.valueOf(location.getLatitude()) + "," + String.valueOf(location.getLongitude());
 
@@ -237,23 +251,27 @@ public class MainActivity extends AppCompatActivity implements
                 intent.putExtra(Constants.LOCATION_LATITUDE_DATA_EXTRA, location.getLatitude());
                 intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, location.getLongitude());
                 startService(intent);
-            }else {
+            } else {
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
                 String s = sharedPreferences.getString("location_key", null);
                 LOCATION = s;
 
-                assert s != null;
-                String[] ss = s.split(",");
-                double lat = Double.valueOf(ss[0]);
-                double lon = Double.valueOf(ss[1]);
+                if (s.length() != 0) {
+                    String[] ss = s.split(",");
+                    double lat = Double.valueOf(ss[0]);
+                    double lon = Double.valueOf(ss[1]);
 
-                mResultReceiver = new AddressResultReceiver(null);
-                Intent intent = new Intent(this, GeocodeAddressIntentService.class);
-                intent.putExtra(Constants.RECEIVER, mResultReceiver);
-                intent.putExtra(Constants.FETCH_TYPE_EXTRA, Constants.USE_ADDRESS_LOCATION);
-                intent.putExtra(Constants.LOCATION_LATITUDE_DATA_EXTRA, lat);
-                intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, lon);
-                startService(intent);
+                    mResultReceiver = new AddressResultReceiver(null);
+                    Intent intent = new Intent(this, GeocodeAddressIntentService.class);
+                    intent.putExtra(Constants.RECEIVER, mResultReceiver);
+                    intent.putExtra(Constants.FETCH_TYPE_EXTRA, Constants.USE_ADDRESS_LOCATION);
+                    intent.putExtra(Constants.LOCATION_LATITUDE_DATA_EXTRA, lat);
+                    intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, lon);
+                    startService(intent);
+                } else {
+                    Toast.makeText(this, "Choose location to forecast", Toast.LENGTH_LONG).show();
+                }
+
             }
 
         }
@@ -261,40 +279,42 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void fetchData() {
-        progressBar.setVisibility(View.VISIBLE);
+        if (LOCATION.length() != 0) {
+            progressBar.setVisibility(View.VISIBLE);
 
-        GetDataService service = RetrofitWeatherInstance.getRetrofitInstance().create(GetDataService.class);
-        Map<String, String> data = new HashMap<>();
-        data.put(Constants.QUERY_UTILS, Constants.QUERY_UTILS_FORMAT);
-        data.put(Constants.QUERY_EXCLUDE, Constants.QUERY_EXCLUDE_ALL_BUT_DATE_ARRAY);
-        Call<PJWeekly> parsedJSON = service.getAllWeather(Constants.ACCESS_KEY, LOCATION, data);
+            GetDataService service = RetrofitWeatherInstance.getRetrofitInstance().create(GetDataService.class);
+            Map<String, String> data = new HashMap<>();
+            data.put(Constants.QUERY_UTILS, Constants.QUERY_UTILS_FORMAT);
+            data.put(Constants.QUERY_EXCLUDE, Constants.QUERY_EXCLUDE_ALL_BUT_DATE_ARRAY);
+            Call<PJWeekly> parsedJSON = service.getAllWeather(Constants.ACCESS_KEY, LOCATION, data);
 
-        parsedJSON.enqueue(new Callback<PJWeekly>() {
-            @Override
-            public void onResponse(@NonNull Call<PJWeekly> call, @NonNull Response<PJWeekly> response) {
-                PJWeekly pj = response.body();
-                for (PJWeeklySpecificDay item : Objects.requireNonNull(pj).getPJWeeklyArray().getData()) {
-                    Weather weather = new Weather(
-                            item.getTime().toString(),
-                            item.getIcon(),
-                            item.getTemperatureMax().toString(),
-                            item.getTemperatureMin().toString(),
-                            item.getHumidity().toString(),
-                            item.getPressure().toString(),
-                            item.getWindSpeed().toString());
+            parsedJSON.enqueue(new Callback<PJWeekly>() {
+                @Override
+                public void onResponse(@NonNull Call<PJWeekly> call, @NonNull Response<PJWeekly> response) {
+                    PJWeekly pj = response.body();
+                    for (PJWeeklySpecificDay item : Objects.requireNonNull(pj).getPJWeeklyArray().getData()) {
+                        Weather weather = new Weather(
+                                item.getTime().toString(),
+                                item.getIcon(),
+                                item.getTemperatureMax().toString(),
+                                item.getTemperatureMin().toString(),
+                                item.getHumidity().toString(),
+                                item.getPressure().toString(),
+                                item.getWindSpeed().toString());
 
-                    mWeatherViewModel.insert(weather);
+                        mWeatherViewModel.insert(weather);
+                    }
+                    progressBar.setVisibility(View.INVISIBLE);
                 }
-                progressBar.setVisibility(View.INVISIBLE);
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<PJWeekly> call, @NonNull Throwable t) {
-                Log.d("Error: ", t.getMessage());
-                Toast.makeText(MainActivity.this, "Oh no... Error fetching all data!", Toast.LENGTH_SHORT).show();
-                progressBar.setVisibility(View.INVISIBLE);
-            }
-        });
+                @Override
+                public void onFailure(@NonNull Call<PJWeekly> call, @NonNull Throwable t) {
+                    Log.d("Error: ", t.getMessage());
+                    Toast.makeText(MainActivity.this, "Oh no... Error fetching all data!", Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+            });
+        }
     }
 
     private void displayWeatherNow() {
@@ -375,6 +395,10 @@ public class MainActivity extends AppCompatActivity implements
 
                 return true;
 
+            case R.id.action_add_dummy_location:
+                preferencesSetup();
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
 
@@ -390,8 +414,8 @@ public class MainActivity extends AppCompatActivity implements
 
                 preferencesRetrieve();
                 preferenceAddLocationCoordinate(place.getName().toString(),
-                         String.valueOf(place.getLatLng().latitude) + "," +
-                                    String.valueOf(place.getLatLng().longitude));
+                        String.valueOf(place.getLatLng().latitude) + "," +
+                                String.valueOf(place.getLatLng().longitude));
                 preferenceUpdate();
 
                 LOCATION = String.valueOf(place.getLatLng().latitude) + "," +
@@ -526,7 +550,7 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    private void cleanViews(){
+    private void cleanViews() {
         mWeatherViewModel.deleteAll();
         mBinding.ivWeatherNow.setImageResource(R.drawable.ic_weather_default);
 
