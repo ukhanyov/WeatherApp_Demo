@@ -39,7 +39,6 @@ import com.example.oleg.weatherapp_demo.network.PJWeekly;
 import com.example.oleg.weatherapp_demo.network.PJWeeklySpecificDay;
 import com.example.oleg.weatherapp_demo.network.RetrofitWeatherInstance;
 import com.example.oleg.weatherapp_demo.settings.SettingsActivity;
-import com.example.oleg.weatherapp_demo.settings.SettingsDeleteLocations;
 import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 
@@ -70,6 +69,10 @@ public class MainActivity extends AppCompatActivity implements
     AddressResultReceiver mResultReceiver;
 
     private List<Weather> mWeatherList;
+
+    // Preferences lists
+    private List<String> locationsList;
+    private List<String> coordinatesList;
 
 
     @Override
@@ -136,17 +139,41 @@ public class MainActivity extends AppCompatActivity implements
     private void preferencesRetrieve() {
         SharedPreferences sharedPreferencesLocations = getSharedPreferences("LOCATIONS_PREF", 0);
         String locationsString = sharedPreferencesLocations.getString("locations", "");
-        List<String> locationsList = new ArrayList<>(Arrays.asList(locationsString.split(";")));
-        for (int i = 0; i < locationsList.size(); i++) {
-            Log.d("locations: ", locationsList.get(i));
-        }
+        locationsList = new ArrayList<>(Arrays.asList(locationsString.split(";")));
 
         SharedPreferences sharedPreferencesCoordinates = getSharedPreferences("COORDINATES_PREF", 0);
         String coordinatesString = sharedPreferencesCoordinates.getString("coordinates", "");
-        List<String> coordinatesList = new ArrayList<>(Arrays.asList(coordinatesString.split(";")));
-        for (int i = 0; i < coordinatesList.size(); i++) {
-            Log.d("coordinates: ", coordinatesList.get(i));
+        coordinatesList = new ArrayList<>(Arrays.asList(coordinatesString.split(";")));
+    }
+
+    private void preferenceUpdate(){
+        StringBuilder stringBuilderLocations = new StringBuilder();
+        StringBuilder stringBuilderCoordinates = new StringBuilder();
+
+        for (String s : locationsList) {
+            stringBuilderLocations.append(s);
+            stringBuilderLocations.append(";");
         }
+
+        for (String s : coordinatesList) {
+            stringBuilderCoordinates.append(s);
+            stringBuilderCoordinates.append(";");
+        }
+
+        SharedPreferences sharedPreferencesLocations = getSharedPreferences("LOCATIONS_PREF", 0);
+        SharedPreferences.Editor editorLocations = sharedPreferencesLocations.edit();
+        editorLocations.putString("locations", stringBuilderLocations.toString());
+        editorLocations.apply();
+
+        SharedPreferences sharedPreferencesCoordinates = getSharedPreferences("COORDINATES_PREF", 0);
+        SharedPreferences.Editor editorCoordinates = sharedPreferencesCoordinates.edit();
+        editorCoordinates.putString("coordinates", stringBuilderCoordinates.toString());
+        editorCoordinates.apply();
+    }
+
+    private void preferenceAddLocationCoordinate(){
+        locationsList.add("Location 5");
+        coordinatesList.add("Coordinates 5");
     }
 
     @Override
@@ -300,15 +327,20 @@ public class MainActivity extends AppCompatActivity implements
                 mBinding.tvWeatherNowHumidity.setText(null);
                 mBinding.tvWeatherNowLocation.setText(null);
                 return true;
+
             case R.id.action_refresh_table:
                 displayWeatherNow();
                 fetchData();
                 return true;
+
             case R.id.action_settings:
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                 return true;
+
             case R.id.action_add_location:
                 preferencesRetrieve();
+                preferenceAddLocationCoordinate();
+                preferenceUpdate();
                 return true;
 
             default:
