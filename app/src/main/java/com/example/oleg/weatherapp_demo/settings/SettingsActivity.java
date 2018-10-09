@@ -40,7 +40,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = (preference, value) -> {
 
-        if(preference.getKey().equals("location_key")){
+        if (preference.getKey().equals("location_key")) {
             String stringValue = value.toString();
             preference.setSummary(stringValue);
         }
@@ -136,7 +136,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class LocationPreferenceFragment extends PreferenceFragment{
+    public static class LocationPreferenceFragment extends PreferenceFragment {
 
         private static Context mContext;
 
@@ -151,6 +151,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             expandListOfLocations((ListPreference) findPreference("location_key"));
 
             bindPreferenceSummaryToValue(findPreference("location_key"));
+
+            // TODO: Make something with empty list
         }
 
         @Override
@@ -170,16 +172,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             return super.onOptionsItemSelected(item);
         }
 
-        private static void expandListOfLocations(ListPreference preference){
+        private static void expandListOfLocations(ListPreference preference) {
             SharedPreferences sharedPreferencesLocations = mContext.getSharedPreferences("LOCATIONS_PREF", 0);
             String locationsString = sharedPreferencesLocations.getString("locations", "");
             String[] locationsArray = locationsString.split(";");
 
-            SharedPreferences sharedPreferencesCoordinates = mContext.getSharedPreferences("COORDINATES_PREF",0);
-            String coordinatesString = sharedPreferencesCoordinates.getString("coordinates","");
+            SharedPreferences sharedPreferencesCoordinates = mContext.getSharedPreferences("COORDINATES_PREF", 0);
+            String coordinatesString = sharedPreferencesCoordinates.getString("coordinates", "");
             String[] coordinatesArray = coordinatesString.split(";");
 
-            if(coordinatesArray.length != 0 && locationsArray.length != 0){
+            if (coordinatesArray.length != 0 && locationsArray.length != 0) {
                 preference.setEntries(locationsArray);
                 preference.setEntryValues(coordinatesArray);
             }
@@ -187,10 +189,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             SharedPreferences sharedPreferencesSelectedItem = mContext.getSharedPreferences("INDEX_PREF", 0);
             String s = sharedPreferencesSelectedItem.getString("coordination_index", "");
 
-            if(s.length() != 0){
+            if (s.length() != 0) {
                 int counter = 0;
-                for(String iterator : coordinatesArray){
-                    if(iterator.equals(s)){
+                for (String iterator : coordinatesArray) {
+                    if (iterator.equals(s)) {
                         preference.setValueIndex(counter);
                     }
                     counter++;

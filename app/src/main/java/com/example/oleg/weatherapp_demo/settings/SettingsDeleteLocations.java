@@ -41,6 +41,8 @@ public class SettingsDeleteLocations extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
+        Toast.makeText(this, "Swipe left or right to delete", Toast.LENGTH_LONG).show();
+
         // Swipe to delete
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(
                 0,

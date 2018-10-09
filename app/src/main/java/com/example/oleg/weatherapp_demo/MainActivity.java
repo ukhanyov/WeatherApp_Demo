@@ -112,8 +112,9 @@ public class MainActivity extends AppCompatActivity implements
         mWeatherList = new ArrayList<>();
         mWeatherViewModel.getAllWeather().observe(this, mWeatherList::addAll);
 
-        //preferencesSetup();
-        //preferencesRetrieve();
+        // TODO : Implement offline functionality
+        // TODO : Refactor MainActivity
+        // TODO : Look into returning from empty list preferences yields last selected result
     }
 
     private void preferencesSetup() {
@@ -256,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements
                 String s = sharedPreferences.getString("location_key", null);
                 LOCATION = s;
 
-                if (s.length() != 0) {
+                if (s != null) {
                     String[] ss = s.split(",");
                     double lat = Double.valueOf(ss[0]);
                     double lon = Double.valueOf(ss[1]);
