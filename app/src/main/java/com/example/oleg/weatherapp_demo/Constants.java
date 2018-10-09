@@ -22,7 +22,11 @@ public class Constants {
     static final String QUERY_EXCLUDE = "exclude";
     static final String QUERY_EXCLUDE_ALL_BUT_DATE_ARRAY = "currently,minutely,hourly,flags";
     static final String QUERY_EXCLUDE_ALL_BUT_CURRENT_WEATHER = "minutely,hourly,flags,daily";
+
     // Permissions
     static final int REQUEST_LOCATION = 1;
-    static String LOCATION = "37.8267,-122.4233";
+
+    // Requests
+    static final int PLACE_PICKER_REQUEST = 101;
+
 }

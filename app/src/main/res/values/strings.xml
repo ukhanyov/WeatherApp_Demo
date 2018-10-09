@@ -40,4 +40,6 @@
     <string name="connections">Connections</string>
     <string name="location">Location</string>
     <string name="add_location">Add Location</string>
+
+    <string name="google_api_key">AIzaSyA0n0DFRQUqBe5l3GO6kTPSHYyWOQEGqvY</string>
 </resources>
