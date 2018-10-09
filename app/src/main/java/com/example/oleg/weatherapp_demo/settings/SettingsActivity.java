@@ -4,31 +4,21 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.SwitchPreference;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.RingtonePreference;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.example.oleg.weatherapp_demo.R;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -49,8 +39,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      * to reflect its new value.
      */
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = (preference, value) -> {
-        String stringValue = value.toString();
+
+        if(preference.getKey().equals("location_key")){
+            //preference.setTitle(((ListPreference) preference).getEntry());
+            String stringValue = value.toString();
             preference.setSummary(stringValue);
+        }
+
+
         return true;
     };
 
@@ -142,21 +138,18 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class LocationPreferenceFragment extends PreferenceFragment{
+
+        private static Context mContext;
+
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_location);
             setHasOptionsMenu(true);
 
-            SharedPreferences sharedPreferencesLocations = this.getActivity().getSharedPreferences("LOCATIONS_PREF", 0);
-            String locationsString = sharedPreferencesLocations.getString("locations", "");
-            String[] locationsArray = locationsString.split(";");
+            mContext = this.getActivity();
 
-            SharedPreferences sharedPreferencesCoordinates = this.getActivity().getSharedPreferences("COORDINATES_PREF",0);
-            String coordinatesString = sharedPreferencesCoordinates.getString("coordinates","");
-            String[] coordinatesArray = coordinatesString.split(";");
-
-            expandListOfLocations((ListPreference) findPreference("location_key"), locationsArray, coordinatesArray);
+            expandListOfLocations((ListPreference) findPreference("location_key"));
 
             bindPreferenceSummaryToValue(findPreference("location_key"));
         }
@@ -165,17 +158,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         public void onStart() {
             super.onStart();
 
-            SharedPreferences sharedPreferencesLocations = this.getActivity().getSharedPreferences("LOCATIONS_PREF", 0);
-            String locationsString = sharedPreferencesLocations.getString("locations", "");
-            String[] locationsArray = locationsString.split(";");
-
-            SharedPreferences sharedPreferencesCoordinates = this.getActivity().getSharedPreferences("COORDINATES_PREF",0);
-            String coordinatesString = sharedPreferencesCoordinates.getString("coordinates","");
-            String[] coordinatesArray = coordinatesString.split(";");
-
-            expandListOfLocations((ListPreference) findPreference("location_key"), locationsArray, coordinatesArray);
-
-            bindPreferenceSummaryToValue(findPreference("location_key"));
+            expandListOfLocations((ListPreference) findPreference("location_key"));
         }
 
         @Override
@@ -188,14 +171,18 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             return super.onOptionsItemSelected(item);
         }
 
+        private static void expandListOfLocations(ListPreference preference){
+            SharedPreferences sharedPreferencesLocations = mContext.getSharedPreferences("LOCATIONS_PREF", 0);
+            String locationsString = sharedPreferencesLocations.getString("locations", "");
+            String[] locationsArray = locationsString.split(";");
 
-    }
+            SharedPreferences sharedPreferencesCoordinates = mContext.getSharedPreferences("COORDINATES_PREF",0);
+            String coordinatesString = sharedPreferencesCoordinates.getString("coordinates","");
+            String[] coordinatesArray = coordinatesString.split(";");
 
-    private static Preference expandListOfLocations(ListPreference preference, String[] loc, String[] coord){
-        if(preference == null) return preference;
+            preference.setEntries(locationsArray);
+            preference.setEntryValues(coordinatesArray);
+        }
 
-        preference.setEntries(loc);
-        preference.setEntryValues(coord);
-        return preference;
     }
 }

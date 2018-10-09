@@ -2,15 +2,13 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <ListPreference
-        android:defaultValue="Location 1"
         android:key="location_key"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
-        android:title="Location" />
+        android:title="Current weather for" />
 
     <Preference android:title="Delete known locations">
-        <intent
-            android:action="com.example.oleg.weatherapp_demo.settings.SettingsDeleteLocations" />
+        <intent android:action="com.example.oleg.weatherapp_demo.settings.SettingsDeleteLocations" />
     </Preference>
 
 </PreferenceScreen>
