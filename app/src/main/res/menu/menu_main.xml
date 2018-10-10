@@ -23,8 +23,14 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_save_current_location"
         android:orderInCategory="102"
+        android:title="@string/save_current_location"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="104"
         android:title="@string/settings"
         app:showAsAction="never"/>
 

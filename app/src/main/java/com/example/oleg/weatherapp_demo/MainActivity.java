@@ -219,6 +219,14 @@ public class MainActivity extends AppCompatActivity implements
             // Display weather now
             displayWeatherNow();
 
+            // Proper selection in list item
+
+            SharedPreferences sharedPreferencesSelectedItem = getSharedPreferences("INDEX_PREF", 0);
+            SharedPreferences.Editor editorSelectedItem = sharedPreferencesSelectedItem.edit();
+            editorSelectedItem.clear();
+            editorSelectedItem.putString("coordination_index", LOCATION);
+            editorSelectedItem.apply();
+
         } else {
             askForWifi();
         }
@@ -378,6 +386,27 @@ public class MainActivity extends AppCompatActivity implements
 
                 displayWeatherNow();
                 fetchData();
+                return true;
+
+            case R.id.action_save_current_location:
+
+                if(LOCATION.length() != 0 && mBinding.tvWeatherNowLocation.getText().length() != 0){
+                    preferencesRetrieve();
+
+                    if(!locationsList.contains(mBinding.tvWeatherNowLocation.getText().toString())){
+                        preferenceAddLocationCoordinate(mBinding.tvWeatherNowLocation.getText().toString(),
+                                LOCATION);
+                    }
+
+                    preferenceUpdate();
+
+                    SharedPreferences sharedPreferencesSelectedItem = getSharedPreferences("INDEX_PREF", 0);
+                    SharedPreferences.Editor editorSelectedItem = sharedPreferencesSelectedItem.edit();
+                    editorSelectedItem.clear();
+                    editorSelectedItem.putString("coordination_index", LOCATION);
+                    editorSelectedItem.apply();
+                }
+
                 return true;
 
             case R.id.action_settings:
