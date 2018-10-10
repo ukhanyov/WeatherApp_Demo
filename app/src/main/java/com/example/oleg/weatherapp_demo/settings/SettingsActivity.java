@@ -164,7 +164,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
             expandListOfLocations((ListPreference) findPreference("location_key"));
 
-            Toast.makeText(mContext, "Hey Hey HEy", Toast.LENGTH_SHORT).show();
         }
 
         @Override

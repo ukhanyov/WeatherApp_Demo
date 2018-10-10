@@ -114,8 +114,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // TODO : Implement offline functionality
         // TODO : Refactor MainActivity
-        // TODO : Look into returning from empty list preferences yields last selected result
-        // TODO : Add cleanup of empty list preference
+
     }
 
     private void preferencesSetup() {
@@ -174,32 +173,49 @@ public class MainActivity extends AppCompatActivity implements
         StringBuilder stringBuilderLocations = new StringBuilder();
         StringBuilder stringBuilderCoordinates = new StringBuilder();
 
+        locationsList.remove("");
         for (String s : locationsList) {
             stringBuilderLocations.append(s);
             stringBuilderLocations.append(";");
         }
 
+        coordinatesList.remove("");
         for (String s : coordinatesList) {
             stringBuilderCoordinates.append(s);
             stringBuilderCoordinates.append(";");
         }
 
-        SharedPreferences sharedPreferencesLocations = getSharedPreferences("LOCATIONS_PREF", 0);
-        SharedPreferences.Editor editorLocations = sharedPreferencesLocations.edit();
-        editorLocations.clear();
-        editorLocations.putString("locations", stringBuilderLocations.toString());
-        editorLocations.apply();
+        if (locationsList.size() == coordinatesList.size()) {
+            SharedPreferences sharedPreferencesLocations = getSharedPreferences("LOCATIONS_PREF", 0);
+            SharedPreferences.Editor editorLocations = sharedPreferencesLocations.edit();
+            editorLocations.clear();
+            editorLocations.putString("locations", stringBuilderLocations.toString());
+            editorLocations.apply();
 
-        SharedPreferences sharedPreferencesCoordinates = getSharedPreferences("COORDINATES_PREF", 0);
-        SharedPreferences.Editor editorCoordinates = sharedPreferencesCoordinates.edit();
-        editorCoordinates.clear();
-        editorCoordinates.putString("coordinates", stringBuilderCoordinates.toString());
-        editorCoordinates.apply();
+            SharedPreferences sharedPreferencesCoordinates = getSharedPreferences("COORDINATES_PREF", 0);
+            SharedPreferences.Editor editorCoordinates = sharedPreferencesCoordinates.edit();
+            editorCoordinates.clear();
+            editorCoordinates.putString("coordinates", stringBuilderCoordinates.toString());
+            editorCoordinates.apply();
+        } else {
+            Log.e(MainActivity.class.getSimpleName(), "Error updating preferences");
+        }
+
     }
 
     private void preferenceAddLocationCoordinate(String location, String coordinates) {
         locationsList.add(location);
         coordinatesList.add(coordinates);
+    }
+
+    private boolean sanityCheck() {
+        preferencesRetrieve();
+        preferenceUpdate();
+        if (!(locationsList == null) && !locationsList.contains("")
+                && !(coordinatesList == null) && !coordinatesList.contains("")) {
+            return !(locationsList.size() == 0) || !(coordinatesList.size() == 0);
+        }
+        else return false;
     }
 
     @Override
@@ -208,26 +224,42 @@ public class MainActivity extends AppCompatActivity implements
 
         if (haveLocationEnabled()) {
             // Get users location
-            findUserLocation();
+            SharedPreferences useCurrentLocationSwitch = PreferenceManager.getDefaultSharedPreferences(this);
+            if (useCurrentLocationSwitch.getBoolean("use_my_current_location", false)) {
+                findUserLocation();
+            } else if (sanityCheck()) {
+                findUserLocation();
+            }
         } else {
             askForLocation();
         }
 
         if (haveNetworkConnection()) {
-            // Get data from the json
-            fetchData();
+            SharedPreferences useCurrentLocationSwitch = PreferenceManager.getDefaultSharedPreferences(this);
+            if (useCurrentLocationSwitch.getBoolean("use_my_current_location", false)) {
+                fetchData();
+                // Display weather now
+                displayWeatherNow();
 
-            // Display weather now
-            displayWeatherNow();
+                // Proper selection in list item
+                SharedPreferences sharedPreferencesSelectedItem = getSharedPreferences("INDEX_PREF", 0);
+                SharedPreferences.Editor editorSelectedItem = sharedPreferencesSelectedItem.edit();
+                editorSelectedItem.clear();
+                editorSelectedItem.putString("coordination_index", LOCATION);
+                editorSelectedItem.apply();
+            } else if (sanityCheck()) {
+                // Get data from the json
+                fetchData();
+                // Display weather now
+                displayWeatherNow();
 
-            // Proper selection in list item
-
-            SharedPreferences sharedPreferencesSelectedItem = getSharedPreferences("INDEX_PREF", 0);
-            SharedPreferences.Editor editorSelectedItem = sharedPreferencesSelectedItem.edit();
-            editorSelectedItem.clear();
-            editorSelectedItem.putString("coordination_index", LOCATION);
-            editorSelectedItem.apply();
-
+                // Proper selection in list item
+                SharedPreferences sharedPreferencesSelectedItem = getSharedPreferences("INDEX_PREF", 0);
+                SharedPreferences.Editor editorSelectedItem = sharedPreferencesSelectedItem.edit();
+                editorSelectedItem.clear();
+                editorSelectedItem.putString("coordination_index", LOCATION);
+                editorSelectedItem.apply();
+            }
         } else {
             askForWifi();
         }
@@ -262,12 +294,13 @@ public class MainActivity extends AppCompatActivity implements
                 intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, location.getLongitude());
                 startService(intent);
             } else {
-                // TODO : Here is a bug with empty list having selected last selected item
-                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                String s = sharedPreferences.getString("location_key", null);
-                LOCATION = s;
+                preferencesRetrieve();
+                if (locationsList.size() != 0 && coordinatesList.size() != 0) {
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                    String s = sharedPreferences.getString("location_key", null);
+                    LOCATION = s;
 
-                if (!s.equals("")) {
+                    assert s != null;
                     String[] ss = s.split(",");
                     double lat = Double.valueOf(ss[0]);
                     double lon = Double.valueOf(ss[1]);
@@ -282,8 +315,8 @@ public class MainActivity extends AppCompatActivity implements
                 } else {
                     Toast.makeText(this, "Choose location to forecast", Toast.LENGTH_LONG).show();
                 }
-
             }
+
 
         }
 
@@ -329,41 +362,45 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void displayWeatherNow() {
-        progressBar.setVisibility(View.VISIBLE);
+        if (LOCATION.length() != 0) {
 
-        GetDataService service = RetrofitWeatherInstance.getRetrofitInstance().create(GetDataService.class);
-        Map<String, String> data = new HashMap<>();
-        data.put(Constants.QUERY_UTILS, Constants.QUERY_UTILS_FORMAT);
-        data.put(Constants.QUERY_EXCLUDE, Constants.QUERY_EXCLUDE_ALL_BUT_CURRENT_WEATHER);
-        Call<PJCurrent> parsedJSON = service.getCurrentWeather(Constants.ACCESS_KEY, LOCATION, data);
 
-        parsedJSON.enqueue(new Callback<PJCurrent>() {
-            @Override
-            public void onResponse(@NonNull Call<PJCurrent> call, @NonNull Response<PJCurrent> response) {
-                PJCurrent pj = response.body();
-                if (pj != null) {
-                    mBinding.ivWeatherNow.setImageResource(WeatherIconInterpreter.interpretIcon(pj.getCurrently().getIcon()));
+            progressBar.setVisibility(View.VISIBLE);
 
-                    String currentTime = NormalizeDate.getHumanFriendlyDateFromDB(pj.getCurrently().getTime());
+            GetDataService service = RetrofitWeatherInstance.getRetrofitInstance().create(GetDataService.class);
+            Map<String, String> data = new HashMap<>();
+            data.put(Constants.QUERY_UTILS, Constants.QUERY_UTILS_FORMAT);
+            data.put(Constants.QUERY_EXCLUDE, Constants.QUERY_EXCLUDE_ALL_BUT_CURRENT_WEATHER);
+            Call<PJCurrent> parsedJSON = service.getCurrentWeather(Constants.ACCESS_KEY, LOCATION, data);
 
-                    if (NormalizeDate.checkIfItIsToday(currentTime)) {
-                        mBinding.tvWeatherNowDate.setText(R.string.weather_now);
+            parsedJSON.enqueue(new Callback<PJCurrent>() {
+                @Override
+                public void onResponse(@NonNull Call<PJCurrent> call, @NonNull Response<PJCurrent> response) {
+                    PJCurrent pj = response.body();
+                    if (pj != null) {
+                        mBinding.ivWeatherNow.setImageResource(WeatherIconInterpreter.interpretIcon(pj.getCurrently().getIcon()));
+
+                        String currentTime = NormalizeDate.getHumanFriendlyDateFromDB(pj.getCurrently().getTime());
+
+                        if (NormalizeDate.checkIfItIsToday(currentTime)) {
+                            mBinding.tvWeatherNowDate.setText(R.string.weather_now);
+                        }
+
+                        mBinding.tvWeatherNowDescription.setText(WeatherIconInterpreter.interpretDescription(pj.getCurrently().getIcon()));
+                        mBinding.tvWeatherNowTemp.setText(getString(R.string.weather_now_current_temp, pj.getCurrently().getTemperature().toString(), getString(R.string.degrees_celsius)));
+                        mBinding.tvWeatherNowHumidity.setText(getString(R.string.weather_now_humidity_level, pj.getCurrently().getHumidity().toString()));
                     }
-
-                    mBinding.tvWeatherNowDescription.setText(WeatherIconInterpreter.interpretDescription(pj.getCurrently().getIcon()));
-                    mBinding.tvWeatherNowTemp.setText(getString(R.string.weather_now_current_temp, pj.getCurrently().getTemperature().toString(), getString(R.string.degrees_celsius)));
-                    mBinding.tvWeatherNowHumidity.setText(getString(R.string.weather_now_humidity_level, pj.getCurrently().getHumidity().toString()));
+                    progressBar.setVisibility(View.INVISIBLE);
                 }
-                progressBar.setVisibility(View.INVISIBLE);
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<PJCurrent> call, @NonNull Throwable t) {
-                Log.d("Error: ", t.getMessage());
-                Toast.makeText(MainActivity.this, "Oh no... Error fetching today's data!", Toast.LENGTH_SHORT).show();
-                progressBar.setVisibility(View.INVISIBLE);
-            }
-        });
+                @Override
+                public void onFailure(@NonNull Call<PJCurrent> call, @NonNull Throwable t) {
+                    Log.d("Error: ", t.getMessage());
+                    Toast.makeText(MainActivity.this, "Oh no... Error fetching today's data!", Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+            });
+        }
     }
 
     @Override
@@ -386,16 +423,18 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.action_refresh_table:
                 cleanViews();
 
-                displayWeatherNow();
-                fetchData();
+                if (sanityCheck()) {
+                    displayWeatherNow();
+                    fetchData();
+                }
                 return true;
 
             case R.id.action_save_current_location:
 
-                if(LOCATION.length() != 0 && mBinding.tvWeatherNowLocation.getText().length() != 0){
+                if (LOCATION.length() != 0 && mBinding.tvWeatherNowLocation.getText().length() != 0) {
                     preferencesRetrieve();
 
-                    if(!locationsList.contains(mBinding.tvWeatherNowLocation.getText().toString())){
+                    if (!locationsList.contains(mBinding.tvWeatherNowLocation.getText().toString())) {
                         preferenceAddLocationCoordinate(mBinding.tvWeatherNowLocation.getText().toString(),
                                 LOCATION);
                     }
