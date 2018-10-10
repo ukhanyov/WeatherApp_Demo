@@ -15,7 +15,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.preference.ListPreference;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -100,12 +99,7 @@ public class MainActivity extends AppCompatActivity implements
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-
-        // Check if Internet is connected
-
-
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
-
 
         mWeatherViewModel.getAllWeather().observe(this, adapter::setWeather);
 
@@ -113,115 +107,12 @@ public class MainActivity extends AppCompatActivity implements
         mWeatherViewModel.getAllWeather().observe(this, mWeatherList::addAll);
 
         // TODO : Implement offline functionality
-        // TODO : Refactor MainActivity
-
-    }
-
-    private void preferencesSetup() {
-        preferencesRetrieve();
-
-        String[] locations = {"Kiev", "London"};
-        String[] coordinates = {"50.4501,30.5234", "51.5074,0.1278"};
-
-        StringBuilder stringBuilderLocations = new StringBuilder();
-        StringBuilder stringBuilderCoordinates = new StringBuilder();
-
-        for (String s : locationsList) {
-            stringBuilderLocations.append(s);
-            stringBuilderLocations.append(";");
-        }
-
-        for (String s : locations) {
-            stringBuilderLocations.append(s);
-            stringBuilderLocations.append(";");
-        }
-
-        for (String s : coordinatesList) {
-            stringBuilderCoordinates.append(s);
-            stringBuilderCoordinates.append(";");
-        }
-
-        for (String s : coordinates) {
-            stringBuilderCoordinates.append(s);
-            stringBuilderCoordinates.append(";");
-        }
-
-        SharedPreferences sharedPreferencesLocations = getSharedPreferences("LOCATIONS_PREF", 0);
-        SharedPreferences.Editor editorLocations = sharedPreferencesLocations.edit();
-        editorLocations.clear();
-        editorLocations.putString("locations", stringBuilderLocations.toString());
-        editorLocations.apply();
-
-        SharedPreferences sharedPreferencesCoordinates = getSharedPreferences("COORDINATES_PREF", 0);
-        SharedPreferences.Editor editorCoordinates = sharedPreferencesCoordinates.edit();
-        editorCoordinates.clear();
-        editorCoordinates.putString("coordinates", stringBuilderCoordinates.toString());
-        editorCoordinates.apply();
-    }
-
-    private void preferencesRetrieve() {
-        SharedPreferences sharedPreferencesLocations = getSharedPreferences("LOCATIONS_PREF", 0);
-        String locationsString = sharedPreferencesLocations.getString("locations", "");
-        locationsList = new ArrayList<>(Arrays.asList(locationsString.split(";")));
-
-        SharedPreferences sharedPreferencesCoordinates = getSharedPreferences("COORDINATES_PREF", 0);
-        String coordinatesString = sharedPreferencesCoordinates.getString("coordinates", "");
-        coordinatesList = new ArrayList<>(Arrays.asList(coordinatesString.split(";")));
-    }
-
-    private void preferenceUpdate() {
-        StringBuilder stringBuilderLocations = new StringBuilder();
-        StringBuilder stringBuilderCoordinates = new StringBuilder();
-
-        locationsList.remove("");
-        for (String s : locationsList) {
-            stringBuilderLocations.append(s);
-            stringBuilderLocations.append(";");
-        }
-
-        coordinatesList.remove("");
-        for (String s : coordinatesList) {
-            stringBuilderCoordinates.append(s);
-            stringBuilderCoordinates.append(";");
-        }
-
-        if (locationsList.size() == coordinatesList.size()) {
-            SharedPreferences sharedPreferencesLocations = getSharedPreferences("LOCATIONS_PREF", 0);
-            SharedPreferences.Editor editorLocations = sharedPreferencesLocations.edit();
-            editorLocations.clear();
-            editorLocations.putString("locations", stringBuilderLocations.toString());
-            editorLocations.apply();
-
-            SharedPreferences sharedPreferencesCoordinates = getSharedPreferences("COORDINATES_PREF", 0);
-            SharedPreferences.Editor editorCoordinates = sharedPreferencesCoordinates.edit();
-            editorCoordinates.clear();
-            editorCoordinates.putString("coordinates", stringBuilderCoordinates.toString());
-            editorCoordinates.apply();
-        } else {
-            Log.e(MainActivity.class.getSimpleName(), "Error updating preferences");
-        }
-
-    }
-
-    private void preferenceAddLocationCoordinate(String location, String coordinates) {
-        locationsList.add(location);
-        coordinatesList.add(coordinates);
-    }
-
-    private boolean sanityCheck() {
-        preferencesRetrieve();
-        preferenceUpdate();
-        if (!(locationsList == null) && !locationsList.contains("")
-                && !(coordinatesList == null) && !coordinatesList.contains("")) {
-            return !(locationsList.size() == 0) || !(coordinatesList.size() == 0);
-        }
-        else return false;
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
+        mBinding.flOffline.setVisibility(View.INVISIBLE);
         if (haveLocationEnabled()) {
             // Get users location
             SharedPreferences useCurrentLocationSwitch = PreferenceManager.getDefaultSharedPreferences(this);
@@ -231,7 +122,9 @@ public class MainActivity extends AppCompatActivity implements
                 findUserLocation();
             }
         } else {
-            askForLocation();
+            mBinding.flOffline.setVisibility(View.VISIBLE);
+            mBinding.tvOffline.setText(R.string.offline_turn_on_location);
+            //askForLocation();
         }
 
         if (haveNetworkConnection()) {
@@ -261,7 +154,9 @@ public class MainActivity extends AppCompatActivity implements
                 editorSelectedItem.apply();
             }
         } else {
-            askForWifi();
+            mBinding.flOffline.setVisibility(View.VISIBLE);
+            mBinding.tvOffline.setText(R.string.offline_turn_on_internet);
+            //askForWifi();
         }
     }
 
@@ -630,6 +525,107 @@ public class MainActivity extends AppCompatActivity implements
         mBinding.tvWeatherNowTemp.setText(null);
         mBinding.tvWeatherNowHumidity.setText(null);
         mBinding.tvWeatherNowLocation.setText(null);
+    }
+
+    private void preferencesSetup() {
+        preferencesRetrieve();
+
+        String[] locations = {"Kiev", "London"};
+        String[] coordinates = {"50.4501,30.5234", "51.5074,0.1278"};
+
+        StringBuilder stringBuilderLocations = new StringBuilder();
+        StringBuilder stringBuilderCoordinates = new StringBuilder();
+
+        for (String s : locationsList) {
+            stringBuilderLocations.append(s);
+            stringBuilderLocations.append(";");
+        }
+
+        for (String s : locations) {
+            stringBuilderLocations.append(s);
+            stringBuilderLocations.append(";");
+        }
+
+        for (String s : coordinatesList) {
+            stringBuilderCoordinates.append(s);
+            stringBuilderCoordinates.append(";");
+        }
+
+        for (String s : coordinates) {
+            stringBuilderCoordinates.append(s);
+            stringBuilderCoordinates.append(";");
+        }
+
+        SharedPreferences sharedPreferencesLocations = getSharedPreferences("LOCATIONS_PREF", 0);
+        SharedPreferences.Editor editorLocations = sharedPreferencesLocations.edit();
+        editorLocations.clear();
+        editorLocations.putString("locations", stringBuilderLocations.toString());
+        editorLocations.apply();
+
+        SharedPreferences sharedPreferencesCoordinates = getSharedPreferences("COORDINATES_PREF", 0);
+        SharedPreferences.Editor editorCoordinates = sharedPreferencesCoordinates.edit();
+        editorCoordinates.clear();
+        editorCoordinates.putString("coordinates", stringBuilderCoordinates.toString());
+        editorCoordinates.apply();
+    }
+
+    private void preferencesRetrieve() {
+        SharedPreferences sharedPreferencesLocations = getSharedPreferences("LOCATIONS_PREF", 0);
+        String locationsString = sharedPreferencesLocations.getString("locations", "");
+        locationsList = new ArrayList<>(Arrays.asList(locationsString.split(";")));
+
+        SharedPreferences sharedPreferencesCoordinates = getSharedPreferences("COORDINATES_PREF", 0);
+        String coordinatesString = sharedPreferencesCoordinates.getString("coordinates", "");
+        coordinatesList = new ArrayList<>(Arrays.asList(coordinatesString.split(";")));
+    }
+
+    private void preferenceUpdate() {
+        StringBuilder stringBuilderLocations = new StringBuilder();
+        StringBuilder stringBuilderCoordinates = new StringBuilder();
+
+        locationsList.remove("");
+        for (String s : locationsList) {
+            stringBuilderLocations.append(s);
+            stringBuilderLocations.append(";");
+        }
+
+        coordinatesList.remove("");
+        for (String s : coordinatesList) {
+            stringBuilderCoordinates.append(s);
+            stringBuilderCoordinates.append(";");
+        }
+
+        if (locationsList.size() == coordinatesList.size()) {
+            SharedPreferences sharedPreferencesLocations = getSharedPreferences("LOCATIONS_PREF", 0);
+            SharedPreferences.Editor editorLocations = sharedPreferencesLocations.edit();
+            editorLocations.clear();
+            editorLocations.putString("locations", stringBuilderLocations.toString());
+            editorLocations.apply();
+
+            SharedPreferences sharedPreferencesCoordinates = getSharedPreferences("COORDINATES_PREF", 0);
+            SharedPreferences.Editor editorCoordinates = sharedPreferencesCoordinates.edit();
+            editorCoordinates.clear();
+            editorCoordinates.putString("coordinates", stringBuilderCoordinates.toString());
+            editorCoordinates.apply();
+        } else {
+            Log.e(MainActivity.class.getSimpleName(), "Error updating preferences");
+        }
+
+    }
+
+    private void preferenceAddLocationCoordinate(String location, String coordinates) {
+        locationsList.add(location);
+        coordinatesList.add(coordinates);
+    }
+
+    private boolean sanityCheck() {
+        preferencesRetrieve();
+        preferenceUpdate();
+        if (!(locationsList == null) && !locationsList.contains("")
+                && !(coordinatesList == null) && !coordinatesList.contains("")) {
+            return !(locationsList.size() == 0) || !(coordinatesList.size() == 0);
+        }
+        else return false;
     }
 
 }
