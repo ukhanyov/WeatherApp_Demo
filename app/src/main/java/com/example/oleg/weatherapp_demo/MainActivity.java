@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements
         // TODO : Implement offline functionality
         // TODO : Refactor MainActivity
         // TODO : Look into returning from empty list preferences yields last selected result
+        // TODO : Add cleanup of empty list preference
     }
 
     private void preferencesSetup() {
@@ -261,11 +262,12 @@ public class MainActivity extends AppCompatActivity implements
                 intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, location.getLongitude());
                 startService(intent);
             } else {
+                // TODO : Here is a bug with empty list having selected last selected item
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
                 String s = sharedPreferences.getString("location_key", null);
                 LOCATION = s;
 
-                if (s != null) {
+                if (!s.equals("")) {
                     String[] ss = s.split(",");
                     double lat = Double.valueOf(ss[0]);
                     double lon = Double.valueOf(ss[1]);

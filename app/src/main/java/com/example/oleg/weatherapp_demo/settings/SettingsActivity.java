@@ -16,9 +16,12 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
+import android.widget.Toast;
 
 import com.example.oleg.weatherapp_demo.R;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -43,8 +46,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         if (preference.getKey().equals("location_key")) {
             String stringValue = value.toString();
             preference.setSummary(stringValue);
+            // TODO : look into editing title
         }
-
 
         return true;
     };
@@ -151,15 +154,17 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             expandListOfLocations((ListPreference) findPreference("location_key"));
 
             bindPreferenceSummaryToValue(findPreference("location_key"));
-
-            // TODO: Make something with empty list
         }
+
+
 
         @Override
         public void onStart() {
             super.onStart();
 
             expandListOfLocations((ListPreference) findPreference("location_key"));
+
+            Toast.makeText(mContext, "Hey Hey HEy", Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -175,15 +180,32 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private static void expandListOfLocations(ListPreference preference) {
             SharedPreferences sharedPreferencesLocations = mContext.getSharedPreferences("LOCATIONS_PREF", 0);
             String locationsString = sharedPreferencesLocations.getString("locations", "");
-            String[] locationsArray = locationsString.split(";");
+            List<String> locationsList = new ArrayList<>(Arrays.asList(locationsString.split(";")));
+            locationsList.remove("");
+            String[] locationsArray = new String[locationsList.size()];
+            for(int i = 0; i < locationsList.size(); i++){
+                locationsArray[i] = locationsList.get(i);
+            }
+
 
             SharedPreferences sharedPreferencesCoordinates = mContext.getSharedPreferences("COORDINATES_PREF", 0);
             String coordinatesString = sharedPreferencesCoordinates.getString("coordinates", "");
-            String[] coordinatesArray = coordinatesString.split(";");
+            List<String> coordinatesList = new ArrayList<>(Arrays.asList(coordinatesString.split(";")));
+            coordinatesList.remove("");
+            String[] coordinatesArray = new String[coordinatesList.size()];
+            for(int i = 0; i < locationsList.size(); i++){
+                coordinatesArray[i] = coordinatesList.get(i);
+            }
 
-            if (coordinatesArray.length != 0 && locationsArray.length != 0) {
+            if(coordinatesList.size() == locationsList.size()){
                 preference.setEntries(locationsArray);
                 preference.setEntryValues(coordinatesArray);
+            }
+
+
+
+            if (coordinatesArray.length == 0 || locationsArray.length == 0) {
+                preference.setSummary("");
             }
 
             SharedPreferences sharedPreferencesSelectedItem = mContext.getSharedPreferences("INDEX_PREF", 0);
