@@ -46,7 +46,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         if (preference.getKey().equals("location_key")) {
             String stringValue = value.toString();
             preference.setSummary(stringValue);
-            // TODO : look into editing title
+
+            ListPreference listPreference = (ListPreference)preference;
+            CharSequence[] list = listPreference.getEntryValues();
+            for(int i = 0; i< list.length; i++){
+                if(list[i].equals(preference.getSummary())){
+                    preference.setTitle("Forecast for: " +
+                            listPreference.getEntries()[i].toString());
+                }
+            }
         }
 
         return true;
@@ -152,7 +160,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             mContext = this.getActivity();
 
             expandListOfLocations((ListPreference) findPreference("location_key"));
-
             bindPreferenceSummaryToValue(findPreference("location_key"));
         }
 
@@ -163,7 +170,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onStart();
 
             expandListOfLocations((ListPreference) findPreference("location_key"));
-
+            bindPreferenceSummaryToValue(findPreference("location_key"));
         }
 
         @Override
@@ -222,6 +229,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 editorSelectedItem.clear();
                 editorSelectedItem.apply();
             }
+
+            if((preference.getEntry() == null)){
+                preference.setTitle(mContext.getString(R.string.pref_location_list_title) + preference.getEntry().toString());
+            }
+
 
         }
 
