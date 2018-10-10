@@ -105,8 +105,6 @@ public class MainActivity extends AppCompatActivity implements
 
         mWeatherList = new ArrayList<>();
         mWeatherViewModel.getAllWeather().observe(this, mWeatherList::addAll);
-
-        // TODO : Implement offline functionality
     }
 
     @Override
@@ -484,16 +482,6 @@ public class MainActivity extends AppCompatActivity implements
         return haveConnectedWifi || haveConnectedMobile;
     }
 
-    private void askForWifi() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Connect to wifi or quit")
-                .setCancelable(false)
-                .setPositiveButton("Connect to WIFI", (dialog, id) -> startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS)))
-                .setNegativeButton("Quit", (dialog, id) -> finish());
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-
     private boolean haveLocationEnabled() {
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         boolean gps_enabled = false;
@@ -503,17 +491,6 @@ public class MainActivity extends AppCompatActivity implements
         network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
         return gps_enabled && network_enabled;
-    }
-
-    private void askForLocation() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("GPS Network not enabled")
-                .setCancelable(false)
-                .setPositiveButton("Open Location Settings", (dialog, id) -> startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
-                .setNegativeButton("Quit", (dialog, id) -> finish());
-        AlertDialog alert = builder.create();
-        alert.show();
-
     }
 
     private void cleanViews() {
