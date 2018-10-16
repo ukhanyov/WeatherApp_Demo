@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements
 
     //private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233?units=si&exclude=currently,minutely,hourly,flags";
     private ProgressBar progressBar;
-
     private WeatherViewModel mWeatherViewModel;
 
     // Fancy dataBinding
@@ -107,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements
 
         mWeatherList = new ArrayList<>();
         mWeatherViewModel.getAllWeather().observe(this, mWeatherList::addAll);
-        //preferencesSetup();
     }
 
     @Override
@@ -116,12 +114,9 @@ public class MainActivity extends AppCompatActivity implements
         mBinding.flOffline.setVisibility(View.INVISIBLE);
         if (haveLocationEnabled()) {
             // Get users location
-            SharedPreferences useCurrentLocationSwitch = PreferenceManager.getDefaultSharedPreferences(this);
-            if (useCurrentLocationSwitch.getBoolean("use_my_current_location", false)) {
-                findUserLocation();
-            } else if (sanityCheck()) {
-                findUserLocation();
-            }
+
+            findUserLocation();
+
         } else {
             mBinding.flOffline.setVisibility(View.VISIBLE);
             mBinding.tvOffline.setText(R.string.offline_turn_on_location);
@@ -129,31 +124,31 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         if (haveNetworkConnection()) {
-            SharedPreferences useCurrentLocationSwitch = PreferenceManager.getDefaultSharedPreferences(this);
-            if (useCurrentLocationSwitch.getBoolean("use_my_current_location", false)) {
+            //SharedPreferences useCurrentLocationSwitch = PreferenceManager.getDefaultSharedPreferences(this);
+            //if (useCurrentLocationSwitch.getBoolean("use_my_current_location", false)) {
                 fetchData();
                 // Display weather now
                 displayWeatherNow();
 
                 // Proper selection in list item
-                SharedPreferences sharedPreferencesSelectedItem = getSharedPreferences("INDEX_PREF", 0);
-                SharedPreferences.Editor editorSelectedItem = sharedPreferencesSelectedItem.edit();
-                editorSelectedItem.clear();
-                editorSelectedItem.putString("coordination_index", LOCATION);
-                editorSelectedItem.apply();
-            } else if (sanityCheck()) {
-                // Get data from the json
-                fetchData();
-                // Display weather now
-                displayWeatherNow();
-
-                // Proper selection in list item
-                SharedPreferences sharedPreferencesSelectedItem = getSharedPreferences("INDEX_PREF", 0);
-                SharedPreferences.Editor editorSelectedItem = sharedPreferencesSelectedItem.edit();
-                editorSelectedItem.clear();
-                editorSelectedItem.putString("coordination_index", LOCATION);
-                editorSelectedItem.apply();
-            }
+//                SharedPreferences sharedPreferencesSelectedItem = getSharedPreferences("INDEX_PREF", 0);
+//                SharedPreferences.Editor editorSelectedItem = sharedPreferencesSelectedItem.edit();
+//                editorSelectedItem.clear();
+//                editorSelectedItem.putString("coordination_index", LOCATION);
+//                editorSelectedItem.apply();
+//            } else {
+//                // Get data from the json
+//                fetchData();
+//                // Display weather now
+//                displayWeatherNow();
+//
+//                // Proper selection in list item
+//                SharedPreferences sharedPreferencesSelectedItem = getSharedPreferences("INDEX_PREF", 0);
+//                SharedPreferences.Editor editorSelectedItem = sharedPreferencesSelectedItem.edit();
+//                editorSelectedItem.clear();
+//                editorSelectedItem.putString("coordination_index", LOCATION);
+//                editorSelectedItem.apply();
+//            }
         } else {
             mBinding.flOffline.setVisibility(View.VISIBLE);
             mBinding.tvOffline.setText(R.string.offline_turn_on_internet);
@@ -176,42 +171,17 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             assert locationManager != null;
 
-            SharedPreferences useCurrentLocationSwitch = PreferenceManager.getDefaultSharedPreferences(this);
-            if (useCurrentLocationSwitch.getBoolean("use_my_current_location", false)) {
-                Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-                LOCATION = String.valueOf(location.getLatitude()) + "," + String.valueOf(location.getLongitude());
+            Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+            LOCATION = String.valueOf(location.getLatitude()) + "," + String.valueOf(location.getLongitude());
 
-                // Get city name
-                mResultReceiver = new AddressResultReceiver(null);
-                Intent intent = new Intent(this, GeocodeAddressIntentService.class);
-                intent.putExtra(Constants.RECEIVER, mResultReceiver);
-                intent.putExtra(Constants.FETCH_TYPE_EXTRA, Constants.USE_ADDRESS_LOCATION);
-                intent.putExtra(Constants.LOCATION_LATITUDE_DATA_EXTRA, location.getLatitude());
-                intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, location.getLongitude());
-                startService(intent);
-            } else {
-                preferencesRetrieve();
-                if (locationsList.size() != 0 && coordinatesList.size() != 0) {
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                    String s = sharedPreferences.getString("location_key", null);
-                    LOCATION = s;
-
-                    assert s != null;
-                    String[] ss = s.split(",");
-                    double lat = Double.valueOf(ss[0]);
-                    double lon = Double.valueOf(ss[1]);
-
-                    mResultReceiver = new AddressResultReceiver(null);
-                    Intent intent = new Intent(this, GeocodeAddressIntentService.class);
-                    intent.putExtra(Constants.RECEIVER, mResultReceiver);
-                    intent.putExtra(Constants.FETCH_TYPE_EXTRA, Constants.USE_ADDRESS_LOCATION);
-                    intent.putExtra(Constants.LOCATION_LATITUDE_DATA_EXTRA, lat);
-                    intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, lon);
-                    startService(intent);
-                } else {
-                    Toast.makeText(this, "Choose location to forecast", Toast.LENGTH_LONG).show();
-                }
-            }
+            // Get city name
+            mResultReceiver = new AddressResultReceiver(null);
+            Intent intent = new Intent(this, GeocodeAddressIntentService.class);
+            intent.putExtra(Constants.RECEIVER, mResultReceiver);
+            intent.putExtra(Constants.FETCH_TYPE_EXTRA, Constants.USE_ADDRESS_LOCATION);
+            intent.putExtra(Constants.LOCATION_LATITUDE_DATA_EXTRA, location.getLatitude());
+            intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, location.getLongitude());
+            startService(intent);
 
 
         }
@@ -258,8 +228,8 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void fetchHourlyData(){
-        if(LOCATION.length() != 0){
+    private void fetchHourlyData() {
+        if (LOCATION.length() != 0) {
             progressBar.setVisibility(View.VISIBLE);
 
             GetDataService service = RetrofitWeatherInstance.getRetrofitInstance().create(GetDataService.class);
@@ -274,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements
                 @Override
                 public void onResponse(@NonNull Call<PJHourly> call, @NonNull Response<PJHourly> response) {
                     PJHourly pj = response.body();
-                    for(PJHourlyInstance item : Objects.requireNonNull(pj).getHourlyList()){
+                    for (PJHourlyInstance item : Objects.requireNonNull(pj).getHourlyList()) {
                         someWeatherList.add(new Weather(
                                 item.getTime().toString(),
                                 item.getIcon(),
@@ -357,38 +327,37 @@ public class MainActivity extends AppCompatActivity implements
 
             case R.id.action_refresh_table:
                 cleanViews();
-
-                if (sanityCheck()) {
-                    displayWeatherNow();
-                    fetchData();
-                }
+                displayWeatherNow();
+                fetchData();
                 return true;
 
             case R.id.action_save_current_location:
 
-                if (LOCATION.length() != 0 && mBinding.tvWeatherNowLocation.getText().length() != 0) {
-                    preferencesRetrieve();
+                Toast.makeText(this, "Beep", Toast.LENGTH_SHORT).show();
 
-                    if (!locationsList.contains(mBinding.tvWeatherNowLocation.getText().toString())) {
-                        preferenceAddLocationCoordinate(mBinding.tvWeatherNowLocation.getText().toString(),
-                                LOCATION);
-                    }
-
-                    preferenceUpdate();
-
-                    SharedPreferences sharedPreferencesSelectedItem = getSharedPreferences("INDEX_PREF", 0);
-                    SharedPreferences.Editor editorSelectedItem = sharedPreferencesSelectedItem.edit();
-                    editorSelectedItem.clear();
-                    editorSelectedItem.putString("coordination_index", LOCATION);
-                    editorSelectedItem.apply();
-                }
+//                if (LOCATION.length() != 0 && mBinding.tvWeatherNowLocation.getText().length() != 0) {
+//                    preferencesRetrieve();
+//
+//                    if (!locationsList.contains(mBinding.tvWeatherNowLocation.getText().toString())) {
+//                        preferenceAddLocationCoordinate(mBinding.tvWeatherNowLocation.getText().toString(),
+//                                LOCATION);
+//                    }
+//
+//                    preferenceUpdate();
+//
+//                    SharedPreferences sharedPreferencesSelectedItem = getSharedPreferences("INDEX_PREF", 0);
+//                    SharedPreferences.Editor editorSelectedItem = sharedPreferencesSelectedItem.edit();
+//                    editorSelectedItem.clear();
+//                    editorSelectedItem.putString("coordination_index", LOCATION);
+//                    editorSelectedItem.apply();
+//                }
 
                 return true;
 
-            case R.id.action_settings:
-                cleanViews();
-                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-                return true;
+//            case R.id.action_settings:
+//                cleanViews();
+//                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+//                return true;
 
             case R.id.action_add_location:
                 // Start picking place on the map
@@ -402,7 +371,8 @@ public class MainActivity extends AppCompatActivity implements
                 return true;
 
             case R.id.action_add_dummy_location:
-                preferencesSetup();
+                Toast.makeText(this, "Beep", Toast.LENGTH_SHORT).show();
+                // preferencesSetup();
                 return true;
 
             default:
@@ -418,11 +388,11 @@ public class MainActivity extends AppCompatActivity implements
                 cleanViews();
                 Place place = PlacePicker.getPlace(this, data);
 
-                preferencesRetrieve();
-                preferenceAddLocationCoordinate(place.getName().toString(),
-                        String.valueOf(place.getLatLng().latitude) + "," +
-                                String.valueOf(place.getLatLng().longitude));
-                preferenceUpdate();
+//                preferencesRetrieve();
+//                preferenceAddLocationCoordinate(place.getName().toString(),
+//                        String.valueOf(place.getLatLng().latitude) + "," +
+//                                String.valueOf(place.getLatLng().longitude));
+//                preferenceUpdate();
 
                 LOCATION = String.valueOf(place.getLatLng().latitude) + "," +
                         String.valueOf(place.getLatLng().longitude);
@@ -441,11 +411,11 @@ public class MainActivity extends AppCompatActivity implements
                 // Display weather now
                 displayWeatherNow();
 
-                SharedPreferences sharedPreferencesSelectedItem = getSharedPreferences("INDEX_PREF", 0);
-                SharedPreferences.Editor editorSelectedItem = sharedPreferencesSelectedItem.edit();
-                editorSelectedItem.clear();
-                editorSelectedItem.putString("coordination_index", LOCATION);
-                editorSelectedItem.apply();
+//                SharedPreferences sharedPreferencesSelectedItem = getSharedPreferences("INDEX_PREF", 0);
+//                SharedPreferences.Editor editorSelectedItem = sharedPreferencesSelectedItem.edit();
+//                editorSelectedItem.clear();
+//                editorSelectedItem.putString("coordination_index", LOCATION);
+//                editorSelectedItem.apply();
             }
         }
     }
@@ -546,106 +516,106 @@ public class MainActivity extends AppCompatActivity implements
         mBinding.tvWeatherNowLocation.setText(null);
     }
 
-    private void preferencesSetup() {
-        preferencesRetrieve();
-
-        String[] locations = {"Kiev", "London"};
-        String[] coordinates = {"50.4501,30.5234", "51.5074,0.1278"};
-
-        StringBuilder stringBuilderLocations = new StringBuilder();
-        StringBuilder stringBuilderCoordinates = new StringBuilder();
-
-        for (String s : locationsList) {
-            stringBuilderLocations.append(s);
-            stringBuilderLocations.append(";");
-        }
-
-        for (String s : locations) {
-            stringBuilderLocations.append(s);
-            stringBuilderLocations.append(";");
-        }
-
-        for (String s : coordinatesList) {
-            stringBuilderCoordinates.append(s);
-            stringBuilderCoordinates.append(";");
-        }
-
-        for (String s : coordinates) {
-            stringBuilderCoordinates.append(s);
-            stringBuilderCoordinates.append(";");
-        }
-
-        SharedPreferences sharedPreferencesLocations = getSharedPreferences("LOCATIONS_PREF", 0);
-        SharedPreferences.Editor editorLocations = sharedPreferencesLocations.edit();
-        editorLocations.clear();
-        editorLocations.putString("locations", stringBuilderLocations.toString());
-        editorLocations.apply();
-
-        SharedPreferences sharedPreferencesCoordinates = getSharedPreferences("COORDINATES_PREF", 0);
-        SharedPreferences.Editor editorCoordinates = sharedPreferencesCoordinates.edit();
-        editorCoordinates.clear();
-        editorCoordinates.putString("coordinates", stringBuilderCoordinates.toString());
-        editorCoordinates.apply();
-    }
-
-    private void preferencesRetrieve() {
-        SharedPreferences sharedPreferencesLocations = getSharedPreferences("LOCATIONS_PREF", 0);
-        String locationsString = sharedPreferencesLocations.getString("locations", "");
-        locationsList = new ArrayList<>(Arrays.asList(locationsString.split(";")));
-
-        SharedPreferences sharedPreferencesCoordinates = getSharedPreferences("COORDINATES_PREF", 0);
-        String coordinatesString = sharedPreferencesCoordinates.getString("coordinates", "");
-        coordinatesList = new ArrayList<>(Arrays.asList(coordinatesString.split(";")));
-    }
-
-    private void preferenceUpdate() {
-        StringBuilder stringBuilderLocations = new StringBuilder();
-        StringBuilder stringBuilderCoordinates = new StringBuilder();
-
-        locationsList.remove("");
-        for (String s : locationsList) {
-            stringBuilderLocations.append(s);
-            stringBuilderLocations.append(";");
-        }
-
-        coordinatesList.remove("");
-        for (String s : coordinatesList) {
-            stringBuilderCoordinates.append(s);
-            stringBuilderCoordinates.append(";");
-        }
-
-        if (locationsList.size() == coordinatesList.size()) {
-            SharedPreferences sharedPreferencesLocations = getSharedPreferences("LOCATIONS_PREF", 0);
-            SharedPreferences.Editor editorLocations = sharedPreferencesLocations.edit();
-            editorLocations.clear();
-            editorLocations.putString("locations", stringBuilderLocations.toString());
-            editorLocations.apply();
-
-            SharedPreferences sharedPreferencesCoordinates = getSharedPreferences("COORDINATES_PREF", 0);
-            SharedPreferences.Editor editorCoordinates = sharedPreferencesCoordinates.edit();
-            editorCoordinates.clear();
-            editorCoordinates.putString("coordinates", stringBuilderCoordinates.toString());
-            editorCoordinates.apply();
-        } else {
-            Log.e(MainActivity.class.getSimpleName(), "Error updating preferences");
-        }
-
-    }
-
-    private void preferenceAddLocationCoordinate(String location, String coordinates) {
-        locationsList.add(location);
-        coordinatesList.add(coordinates);
-    }
-
-    private boolean sanityCheck() {
-        preferencesRetrieve();
-        preferenceUpdate();
-        if (!(locationsList == null) && !locationsList.contains("")
-                && !(coordinatesList == null) && !coordinatesList.contains("")) {
-            return !(locationsList.size() == 0) || !(coordinatesList.size() == 0);
-        }
-        else return false;
-    }
+//    private void preferencesSetup() {
+//        preferencesRetrieve();
+//
+//        String[] locations = {"Kiev", "London"};
+//        String[] coordinates = {"50.4501,30.5234", "51.5074,0.1278"};
+//
+//        StringBuilder stringBuilderLocations = new StringBuilder();
+//        StringBuilder stringBuilderCoordinates = new StringBuilder();
+//
+//        for (String s : locationsList) {
+//            stringBuilderLocations.append(s);
+//            stringBuilderLocations.append(";");
+//        }
+//
+//        for (String s : locations) {
+//            stringBuilderLocations.append(s);
+//            stringBuilderLocations.append(";");
+//        }
+//
+//        for (String s : coordinatesList) {
+//            stringBuilderCoordinates.append(s);
+//            stringBuilderCoordinates.append(";");
+//        }
+//
+//        for (String s : coordinates) {
+//            stringBuilderCoordinates.append(s);
+//            stringBuilderCoordinates.append(";");
+//        }
+//
+//        SharedPreferences sharedPreferencesLocations = getSharedPreferences("LOCATIONS_PREF", 0);
+//        SharedPreferences.Editor editorLocations = sharedPreferencesLocations.edit();
+//        editorLocations.clear();
+//        editorLocations.putString("locations", stringBuilderLocations.toString());
+//        editorLocations.apply();
+//
+//        SharedPreferences sharedPreferencesCoordinates = getSharedPreferences("COORDINATES_PREF", 0);
+//        SharedPreferences.Editor editorCoordinates = sharedPreferencesCoordinates.edit();
+//        editorCoordinates.clear();
+//        editorCoordinates.putString("coordinates", stringBuilderCoordinates.toString());
+//        editorCoordinates.apply();
+//    }
+//
+//    private void preferencesRetrieve() {
+//        SharedPreferences sharedPreferencesLocations = getSharedPreferences("LOCATIONS_PREF", 0);
+//        String locationsString = sharedPreferencesLocations.getString("locations", "");
+//        locationsList = new ArrayList<>(Arrays.asList(locationsString.split(";")));
+//
+//        SharedPreferences sharedPreferencesCoordinates = getSharedPreferences("COORDINATES_PREF", 0);
+//        String coordinatesString = sharedPreferencesCoordinates.getString("coordinates", "");
+//        coordinatesList = new ArrayList<>(Arrays.asList(coordinatesString.split(";")));
+//    }
+//
+//    private void preferenceUpdate() {
+//        StringBuilder stringBuilderLocations = new StringBuilder();
+//        StringBuilder stringBuilderCoordinates = new StringBuilder();
+//
+//        locationsList.remove("");
+//        for (String s : locationsList) {
+//            stringBuilderLocations.append(s);
+//            stringBuilderLocations.append(";");
+//        }
+//
+//        coordinatesList.remove("");
+//        for (String s : coordinatesList) {
+//            stringBuilderCoordinates.append(s);
+//            stringBuilderCoordinates.append(";");
+//        }
+//
+//        if (locationsList.size() == coordinatesList.size()) {
+//            SharedPreferences sharedPreferencesLocations = getSharedPreferences("LOCATIONS_PREF", 0);
+//            SharedPreferences.Editor editorLocations = sharedPreferencesLocations.edit();
+//            editorLocations.clear();
+//            editorLocations.putString("locations", stringBuilderLocations.toString());
+//            editorLocations.apply();
+//
+//            SharedPreferences sharedPreferencesCoordinates = getSharedPreferences("COORDINATES_PREF", 0);
+//            SharedPreferences.Editor editorCoordinates = sharedPreferencesCoordinates.edit();
+//            editorCoordinates.clear();
+//            editorCoordinates.putString("coordinates", stringBuilderCoordinates.toString());
+//            editorCoordinates.apply();
+//        } else {
+//            Log.e(MainActivity.class.getSimpleName(), "Error updating preferences");
+//        }
+//
+//    }
+//
+//    private void preferenceAddLocationCoordinate(String location, String coordinates) {
+//        locationsList.add(location);
+//        coordinatesList.add(coordinates);
+//    }
+//
+//    private boolean sanityCheck() {
+//        preferencesRetrieve();
+//        preferenceUpdate();
+//        if (!(locationsList == null) && !locationsList.contains("")
+//                && !(coordinatesList == null) && !coordinatesList.contains("")) {
+//            return !(locationsList.size() == 0) || !(coordinatesList.size() == 0);
+//        }
+//        else return false;
+//    }
 
 }
 
