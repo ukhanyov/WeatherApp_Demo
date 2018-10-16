@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements
 
         mWeatherList = new ArrayList<>();
         mWeatherViewModel.getAllWeather().observe(this, mWeatherList::addAll);
+        //preferencesSetup();
     }
 
     @Override
