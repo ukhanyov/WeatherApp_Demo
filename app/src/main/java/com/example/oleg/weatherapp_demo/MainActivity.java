@@ -240,7 +240,8 @@ public class MainActivity extends AppCompatActivity implements
                                 item.getTemperatureMin().toString(),
                                 item.getHumidity().toString(),
                                 item.getPressure().toString(),
-                                item.getWindSpeed().toString());
+                                item.getWindSpeed().toString(),
+                                Constants.DB_WEATHER_TYPE_DAILY);
 
                         mWeatherViewModel.insert(weather);
                     }
@@ -281,7 +282,8 @@ public class MainActivity extends AppCompatActivity implements
                                 item.getTemperatureMin().toString(),
                                 item.getHumidity().toString(),
                                 item.getPressure().toString(),
-                                item.getWindSpeed().toString()));
+                                item.getWindSpeed().toString(),
+                                Constants.DB_WEATHER_TYPE_HOURLY));
                     }
                     progressBar.setVisibility(View.INVISIBLE);
                 }

@@ -11,6 +11,7 @@ import java.util.List;
 
 public class WeatherRepository {
 
+    // Weather daily
     private WeatherDao mWeatherDao;
     private LiveData<List<Weather>> mAllWeather;
     private static LiveData<Weather> mWeatherInstance;
@@ -19,6 +20,8 @@ public class WeatherRepository {
         WeatherRoomDatabase db = WeatherRoomDatabase.getDatabase(application);
         mWeatherDao = db.weatherDao();
         mAllWeather = mWeatherDao.getAllWeather();
+
+
     }
 
     LiveData<List<Weather>> getAllWeather() {

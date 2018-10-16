@@ -33,7 +33,18 @@ public class Weather {
     @ColumnInfo(name = "wind_speed")
     private String mWindSpeed;
 
-    public Weather(@NonNull String date, String summary, String temperatureMax, String temperatureMin, String humidity, String pressure, String windSpeed) {
+    @ColumnInfo(name = "type_of_day")
+    private String mTypeOfDay;
+
+    public Weather(@NonNull String date,
+                   String summary,
+                   String temperatureMax,
+                   String temperatureMin,
+                   String humidity,
+                   String pressure,
+                   String windSpeed,
+                   String typeOfDay) {
+
         this.mDate = date;
         this.mSummary = summary;
         this.mTemperatureMax = temperatureMax;
@@ -41,6 +52,7 @@ public class Weather {
         this.mHumidity = humidity;
         this.mPressure = pressure;
         this.mWindSpeed = windSpeed;
+        this.mTypeOfDay = typeOfDay;
     }
 
     @NonNull
@@ -70,5 +82,13 @@ public class Weather {
 
     public String getWindSpeed() {
         return mWindSpeed;
+    }
+
+    public String getTypeOfDay() {
+        return mTypeOfDay;
+    }
+
+    public void setTypeOfDay(String mTypeOfDay) {
+        this.mTypeOfDay = mTypeOfDay;
     }
 }
