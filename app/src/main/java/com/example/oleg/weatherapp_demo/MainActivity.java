@@ -36,6 +36,8 @@ import com.example.oleg.weatherapp_demo.databinding.ActivityMainBinding;
 import com.example.oleg.weatherapp_demo.geo.GeocodeAddressIntentService;
 import com.example.oleg.weatherapp_demo.network.GetDataService;
 import com.example.oleg.weatherapp_demo.network.PJCurrent;
+import com.example.oleg.weatherapp_demo.network.PJHourly;
+import com.example.oleg.weatherapp_demo.network.PJHourlyInstance;
 import com.example.oleg.weatherapp_demo.network.PJWeekly;
 import com.example.oleg.weatherapp_demo.network.PJWeeklySpecificDay;
 import com.example.oleg.weatherapp_demo.network.RetrofitWeatherInstance;
@@ -255,6 +257,45 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    private void fetchHourlyData(){
+        if(LOCATION.length() != 0){
+            progressBar.setVisibility(View.VISIBLE);
+
+            GetDataService service = RetrofitWeatherInstance.getRetrofitInstance().create(GetDataService.class);
+            Map<String, String> data = new HashMap<>();
+            data.put(Constants.QUERY_UTILS, Constants.QUERY_UTILS_FORMAT);
+            data.put(Constants.QUERY_EXCLUDE, Constants.QUERY_EXCLUDE_ALL_BUT_HOURLY_WEATHER);
+            Call<PJHourly> parsedJSON = service.getHourlyWeather(Constants.ACCESS_KEY, LOCATION, data);
+
+            List<Weather> someWeatherList = new ArrayList<>();
+
+            parsedJSON.enqueue(new Callback<PJHourly>() {
+                @Override
+                public void onResponse(@NonNull Call<PJHourly> call, @NonNull Response<PJHourly> response) {
+                    PJHourly pj = response.body();
+                    for(PJHourlyInstance item : Objects.requireNonNull(pj).getHourlyList()){
+                        someWeatherList.add(new Weather(
+                                item.getTime().toString(),
+                                item.getIcon(),
+                                item.getTemperatureMax().toString(),
+                                item.getTemperatureMin().toString(),
+                                item.getHumidity().toString(),
+                                item.getPressure().toString(),
+                                item.getWindSpeed().toString()));
+                    }
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<PJHourly> call, @NonNull Throwable t) {
+                    Log.d("Error: ", t.getMessage());
+                    Toast.makeText(MainActivity.this, "Oh no... Error fetching all data!", Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+            });
+        }
+    }
+
     private void displayWeatherNow() {
         if (LOCATION.length() != 0) {
 
@@ -305,8 +346,6 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //mWeatherViewModel.deleteAll();
-
         int id = item.getItemId();
 
         switch (item.getItemId()) {
