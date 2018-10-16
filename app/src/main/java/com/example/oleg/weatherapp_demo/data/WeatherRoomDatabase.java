@@ -21,6 +21,7 @@ public abstract class WeatherRoomDatabase extends RoomDatabase{
                     // Create data base here
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             WeatherRoomDatabase.class, "weather_database")
+                            .fallbackToDestructiveMigration()
                             .build();
                 }
             }
