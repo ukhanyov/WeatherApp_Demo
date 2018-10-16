@@ -25,12 +25,11 @@ public class PJHourlyInstance {
     @Expose
     private Double windSpeed;
 
-
-    @SerializedName("temperatureMin")
+    @SerializedName("apparentTemperature")
     @Expose
     private Double temperatureMin;
 
-    @SerializedName("temperatureMax")
+    @SerializedName("temperature")
     @Expose
     private Double temperatureMax;
 

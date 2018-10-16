@@ -18,10 +18,10 @@ public class Weather {
     @ColumnInfo(name = "summary")
     private String mSummary;
 
-    @ColumnInfo(name = "temp_max")
+    @ColumnInfo(name = "temperature")
     private String mTemperatureMax;
 
-    @ColumnInfo(name = "temp_min")
+    @ColumnInfo(name = "apparentTemperature")
     private String mTemperatureMin;
 
     @ColumnInfo(name = "humidity")

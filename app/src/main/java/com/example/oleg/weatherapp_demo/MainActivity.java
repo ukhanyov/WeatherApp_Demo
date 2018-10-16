@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements
             mBinding.tvOffline.setText(R.string.offline_turn_on_internet);
             //askForWifi();
         }
+        fetchHourlyData();
     }
 
     private void findUserLocation() {
@@ -217,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements
                 @Override
                 public void onResponse(@NonNull Call<PJHourly> call, @NonNull Response<PJHourly> response) {
                     PJHourly pj = response.body();
-                    for (PJHourlyInstance item : Objects.requireNonNull(pj).getHourlyList()) {
+                    for (PJHourlyInstance item : Objects.requireNonNull(pj).getHourlyArray().getData()) {
                         someWeatherList.add(new Weather(
                                 item.getTime().toString(),
                                 item.getIcon(),
@@ -234,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements
                 @Override
                 public void onFailure(@NonNull Call<PJHourly> call, @NonNull Throwable t) {
                     Log.d("Error: ", t.getMessage());
-                    Toast.makeText(MainActivity.this, "Oh no... Error fetching all data!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Oh no... Error fetching hourly data!", Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.INVISIBLE);
                 }
             });
@@ -304,11 +305,6 @@ public class MainActivity extends AppCompatActivity implements
                 fetchData();
                 return true;
 
-            case R.id.action_save_current_location:
-
-                Toast.makeText(this, "Beep", Toast.LENGTH_SHORT).show();
-                return true;
-
             case R.id.action_add_location:
                 // Start picking place on the map
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
@@ -317,12 +313,6 @@ public class MainActivity extends AppCompatActivity implements
                 } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                     e.printStackTrace();
                 }
-
-                return true;
-
-            case R.id.action_add_dummy_location:
-                Toast.makeText(this, "Beep", Toast.LENGTH_SHORT).show();
-                // preferencesSetup();
                 return true;
 
             default:

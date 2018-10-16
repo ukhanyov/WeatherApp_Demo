@@ -22,22 +22,4 @@
         android:title="@string/action_refresh_table"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/action_save_current_location"
-        android:orderInCategory="102"
-        android:title="@string/save_current_location"
-        app:showAsAction="never"/>
-
-    <!--<item-->
-        <!--android:id="@+id/action_settings"-->
-        <!--android:orderInCategory="104"-->
-        <!--android:title="@string/settings"-->
-        <!--app:showAsAction="never"/>-->
-
-    <item
-        android:id="@+id/action_add_dummy_location"
-        android:orderInCategory="105"
-        android:title="@string/add_dummy_data"
-        app:showAsAction="never"/>
-
 </menu>
