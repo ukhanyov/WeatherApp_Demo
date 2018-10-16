@@ -13,122 +13,120 @@
             android:layout_height="wrap_content"
             android:background="@color/dark_red"
             android:visibility="invisible">
+
             <TextView
                 android:id="@+id/tv_offline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textColor="@color/white"
-                android:textSize="12sp"
-                android:gravity="center"/>
+                android:textSize="12sp" />
         </FrameLayout>
 
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/cl_weather_now"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:onClick="currentWeatherClick">
 
-            <android.support.constraint.ConstraintLayout
-                android:id="@+id/cl_weather_now"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:onClick="currentWeatherClick">
-
-                <ImageView
-                    android:id="@+id/iv_weather_now"
-                    android:layout_width="136dp"
-                    android:layout_height="135dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:src="@drawable/ic_weather_default"
-                    app:layout_constraintEnd_toStartOf="@+id/guideline_horizontal_weather_now"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <android.support.constraint.Guideline
-                    android:id="@+id/guideline_horizontal_weather_now"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintGuide_percent="0.4"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-                <TextView
-                    android:id="@+id/tv_weather_now_date"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:hint="@string/weather_now_date_hint"
-                    app:layout_constraintBottom_toTopOf="@+id/tv_weather_now_description"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_weather_now"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:textColor="?attr/primaryTextColor"/>
-
-                <TextView
-                    android:id="@+id/tv_weather_now_description"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="4dp"
-                    android:hint="@string/weather_now_description_hint"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_weather_now"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_date"
-                    android:textColor="?attr/primaryTextColor"/>
-
-                <TextView
-                    android:id="@+id/tv_weather_now_temp"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="4dp"
-                    android:hint="@string/weather_now_current_temp_hint"
-                    app:layout_constraintBottom_toTopOf="@+id/tv_weather_now_humidity"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_weather_now"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_description"
-                    android:textColor="?attr/primaryTextColor"/>
-
-                <TextView
-                    android:id="@+id/tv_weather_now_humidity"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="4dp"
-                    android:hint="@string/weather_now_humidity_level_hint"
-                    app:layout_constraintBottom_toTopOf="@+id/tv_weather_now_location"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_weather_now"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_temp"
-                    android:textColor="?attr/primaryTextColor"/>
-
-                <TextView
-                    android:id="@+id/tv_weather_now_location"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="4dp"
-                    android:hint="@string/weather_now_location_hint"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_weather_now"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_humidity"
-                    android:textColor="?attr/primaryTextColor"/>
-
-
-            </android.support.constraint.ConstraintLayout>
+            <ImageView
+                android:id="@+id/iv_weather_now"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:contentDescription="@string/current_weather_icon"
+                android:src="@drawable/ic_weather_default"
+                app:layout_constraintBottom_toTopOf="@+id/guideline_horizontal_layout_first"
+                app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_weather_now"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <android.support.constraint.Guideline
-                android:id="@+id/guideline_vertical_layout"
+                android:id="@+id/guideline_vertical_weather_now"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintGuide_percent="0.4"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_weather_now_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="4dp"
+                android:hint="@string/weather_now_date_hint"
+                android:textColor="?attr/primaryTextColor"
+                app:layout_constraintBottom_toTopOf="@+id/tv_weather_now_description"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline_vertical_weather_now"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_weather_now_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:hint="@string/weather_now_description_hint"
+                android:textColor="?attr/primaryTextColor"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline_vertical_weather_now"
+                app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_date" />
+
+            <TextView
+                android:id="@+id/tv_weather_now_temp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="4dp"
+                android:hint="@string/weather_now_current_temp_hint"
+                android:textColor="?attr/primaryTextColor"
+                app:layout_constraintBottom_toTopOf="@+id/tv_weather_now_humidity"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline_vertical_weather_now"
+                app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_description" />
+
+            <TextView
+                android:id="@+id/tv_weather_now_humidity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="4dp"
+                android:hint="@string/weather_now_humidity_level_hint"
+                android:textColor="?attr/primaryTextColor"
+                app:layout_constraintBottom_toTopOf="@+id/tv_weather_now_location"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline_vertical_weather_now"
+                app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_temp" />
+
+            <TextView
+                android:id="@+id/tv_weather_now_location"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:hint="@string/weather_now_location_hint"
+                android:textColor="?attr/primaryTextColor"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline_vertical_weather_now"
+                app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_humidity" />
+
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guideline_horizontal_layout_first"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -137,18 +135,45 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_weather"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
+                android:layout_height="0dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 android:clipToPadding="false"
                 android:paddingBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/guideline_horizontal_layout_second"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/guideline_vertical_layout" />
+                app:layout_constraintTop_toTopOf="@+id/guideline_horizontal_layout_first">
 
+            </android.support.v7.widget.RecyclerView>
+
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guideline_horizontal_layout_second"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintGuide_percent="0.4"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_weather"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:clipToPadding="false"
+                android:paddingBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/guideline_horizontal_layout_second" />
+            
         </android.support.constraint.ConstraintLayout>
 
         <ProgressBar
