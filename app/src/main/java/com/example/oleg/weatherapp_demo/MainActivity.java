@@ -74,6 +74,9 @@ public class MainActivity extends AppCompatActivity implements
     private List<String> locationsList;
     private List<String> coordinatesList;
 
+    // Weather instance for weather now
+    private Weather weatherNow;
+
     private String LOCATION = "37.8267,-122.4233";
 
 
@@ -106,28 +109,30 @@ public class MainActivity extends AppCompatActivity implements
     protected void onStart() {
         super.onStart();
         mBinding.flOffline.setVisibility(View.INVISIBLE);
+
         if (haveLocationEnabled()) {
             // Get users location
-
             findUserLocation();
 
         } else {
             mBinding.flOffline.setVisibility(View.VISIBLE);
             mBinding.tvOffline.setText(R.string.offline_turn_on_location);
-            //askForLocation();
         }
 
         if (haveNetworkConnection()) {
-                fetchData();
-                // Display weather now
-                displayWeatherNow();
+            // Daily data
+            fetchDailyData();
+
+            // Hourly data
+            fetchHourlyData();
+
+            // Now data
+            fetchNowData();
 
         } else {
             mBinding.flOffline.setVisibility(View.VISIBLE);
             mBinding.tvOffline.setText(R.string.offline_turn_on_internet);
-            //askForWifi();
         }
-        fetchHourlyData();
     }
 
     private void findUserLocation() {
@@ -162,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    private void fetchData() {
+    private void fetchDailyData() {
         if (LOCATION.length() != 0) {
             progressBar.setVisibility(View.VISIBLE);
 
@@ -242,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void displayWeatherNow() {
+    private void fetchNowData() {
         if (LOCATION.length() != 0) {
 
 
@@ -259,17 +264,18 @@ public class MainActivity extends AppCompatActivity implements
                 public void onResponse(@NonNull Call<PJCurrent> call, @NonNull Response<PJCurrent> response) {
                     PJCurrent pj = response.body();
                     if (pj != null) {
-                        mBinding.ivWeatherNow.setImageResource(WeatherIconInterpreter.interpretIcon(pj.getCurrently().getIcon()));
 
-                        String currentTime = NormalizeDate.getHumanFriendlyDateFromDB(pj.getCurrently().getTime());
+                        weatherNow = new Weather(
+                                pj.getCurrently().getTime().toString(),
+                                pj.getCurrently().getIcon(),
+                                pj.getCurrently().getTemperatureMax().toString(),
+                                pj.getCurrently().getTemperatureMin().toString(),
+                                pj.getCurrently().getHumidity().toString(),
+                                pj.getCurrently().getPressure().toString(),
+                                pj.getCurrently().getWindSpeed().toString(),
+                                Constants.DB_WEATHER_TYPE_NOW);
 
-                        if (NormalizeDate.checkIfItIsToday(currentTime)) {
-                            mBinding.tvWeatherNowDate.setText(R.string.weather_now);
-                        }
-
-                        mBinding.tvWeatherNowDescription.setText(WeatherIconInterpreter.interpretDescription(pj.getCurrently().getIcon()));
-                        mBinding.tvWeatherNowTemp.setText(getString(R.string.weather_now_current_temp, pj.getCurrently().getTemperature().toString(), getString(R.string.degrees_celsius)));
-                        mBinding.tvWeatherNowHumidity.setText(getString(R.string.weather_now_humidity_level, pj.getCurrently().getHumidity().toString()));
+                        setWeatherNowViews(weatherNow);
                     }
                     progressBar.setVisibility(View.INVISIBLE);
                 }
@@ -281,6 +287,22 @@ public class MainActivity extends AppCompatActivity implements
                     progressBar.setVisibility(View.INVISIBLE);
                 }
             });
+        }
+    }
+
+    private void setWeatherNowViews(Weather weather) {
+
+        if(weather != null){
+            mBinding.ivWeatherNow.setImageResource(
+                    WeatherIconInterpreter.interpretIcon(weather.getSummary()));
+            mBinding.tvWeatherNowDate.setText(
+                    NormalizeDate.getHumanFriendlyDateFromDB(Long.valueOf(weather.getDate())));
+            mBinding.tvWeatherNowDescription.setText(
+                    WeatherIconInterpreter.interpretDescription(weather.getSummary()));
+            mBinding.tvWeatherNowTemp.setText(getString(R.string.weather_now_current_temp,
+                    weather.getTemperatureMax(), getString(R.string.degrees_celsius)));
+            mBinding.tvWeatherNowHumidity.setText(getString(R.string.weather_now_humidity_level,
+                    weather.getHumidity()));
         }
     }
 
@@ -301,8 +323,9 @@ public class MainActivity extends AppCompatActivity implements
 
             case R.id.action_refresh_table:
                 cleanViews();
-                displayWeatherNow();
-                fetchData();
+                fetchNowData();
+                fetchDailyData();
+                fetchHourlyData();
                 return true;
 
             case R.id.action_add_location:
@@ -339,12 +362,9 @@ public class MainActivity extends AppCompatActivity implements
                 intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, place.getLatLng().longitude);
                 startService(intent);
 
-                // Get data from the json
-                fetchData();
-
-                // Display weather now
-                displayWeatherNow();
-
+                fetchNowData();
+                fetchHourlyData();
+                fetchDailyData();
             }
         }
     }
