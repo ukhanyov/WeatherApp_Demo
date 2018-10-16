@@ -1,4 +1,4 @@
-package com.example.oleg.weatherapp_demo.network;
+package com.example.oleg.weatherapp_demo.network.retrofit;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

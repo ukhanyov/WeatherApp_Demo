@@ -1,9 +1,7 @@
-package com.example.oleg.weatherapp_demo.network;
+package com.example.oleg.weatherapp_demo.network.pojo;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
-import java.util.List;
 
 public class PJHourly {
 

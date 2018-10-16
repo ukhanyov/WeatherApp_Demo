@@ -1,4 +1,8 @@
-package com.example.oleg.weatherapp_demo.network;
+package com.example.oleg.weatherapp_demo.network.retrofit;
+
+import com.example.oleg.weatherapp_demo.network.pojo.PJCurrent;
+import com.example.oleg.weatherapp_demo.network.pojo.PJHourly;
+import com.example.oleg.weatherapp_demo.network.pojo.PJWeekly;
 
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package com.example.oleg.weatherapp_demo.network;
+package com.example.oleg.weatherapp_demo.network.pojo;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;

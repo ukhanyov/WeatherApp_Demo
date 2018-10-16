@@ -1,9 +1,9 @@
-package com.example.oleg.weatherapp_demo.network;
+package com.example.oleg.weatherapp_demo.network.pojo;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class PJWeeklySpecificDay {
+public class PJHourlyInstance {
 
     @SerializedName("time")
     @Expose
@@ -25,11 +25,11 @@ public class PJWeeklySpecificDay {
     @Expose
     private Double windSpeed;
 
-    @SerializedName("temperatureMin")
+    @SerializedName("apparentTemperature")
     @Expose
     private Double temperatureMin;
 
-    @SerializedName("temperatureMax")
+    @SerializedName("temperature")
     @Expose
     private Double temperatureMax;
 
@@ -88,5 +88,4 @@ public class PJWeeklySpecificDay {
     public void setTemperatureMax(Double temperatureMax) {
         this.temperatureMax = temperatureMax;
     }
-
 }
