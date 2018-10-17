@@ -312,12 +312,19 @@ public class MainActivity extends AppCompatActivity implements
         if(weather != null){
             mBinding.ivWeatherNow.setImageResource(
                     WeatherIconInterpreter.interpretIcon(weather.getSummary()));
+
             mBinding.tvWeatherNowDate.setText(
                     NormalizeDate.getHumanFriendlyDateFromDB(Long.valueOf(weather.getDate())));
+
             mBinding.tvWeatherNowDescription.setText(
                     WeatherIconInterpreter.interpretDescription(weather.getSummary()));
+
             mBinding.tvWeatherNowTemp.setText(getString(R.string.weather_now_current_temp,
                     weather.getTemperatureMax(), getString(R.string.degrees_celsius)));
+
+            mBinding.tvWeatherNowTmpApparent.setText(getString(R.string.how_it_feels,
+                    weather.getTemperatureMin(), getString(R.string.degrees_celsius)));
+
             mBinding.tvWeatherNowHumidity.setText(getString(R.string.weather_now_humidity_level,
                     weather.getHumidity()));
         }
@@ -478,6 +485,7 @@ public class MainActivity extends AppCompatActivity implements
         mBinding.tvWeatherNowDate.setText(null);
         mBinding.tvWeatherNowDescription.setText(null);
         mBinding.tvWeatherNowTemp.setText(null);
+        mBinding.tvWeatherNowTmpApparent.setText(null);
         mBinding.tvWeatherNowHumidity.setText(null);
         mBinding.tvWeatherNowLocation.setText(null);
     }
