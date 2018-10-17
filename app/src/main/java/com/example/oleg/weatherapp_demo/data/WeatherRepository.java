@@ -89,21 +89,21 @@ public class WeatherRepository implements AsyncResultWeather {
         }
     }
 
-    void deleteSpecificWeatherByDate(String deleteKey) {
-        new deleteSpecificWeatherByDate(mWeatherDao).execute(deleteKey);
+    void deleteWeatherByCoordinates(String deleteKey) {
+        new deleteWeatherByCoordinates(mWeatherDao).execute(deleteKey);
     }
 
-    private static class deleteSpecificWeatherByDate extends AsyncTask<String, Void, Void> {
+    private static class deleteWeatherByCoordinates extends AsyncTask<String, Void, Void> {
 
         private WeatherDao mAsyncDao;
 
-        deleteSpecificWeatherByDate(WeatherDao dao) {
+        deleteWeatherByCoordinates(WeatherDao dao) {
             mAsyncDao = dao;
         }
 
         @Override
         protected Void doInBackground(String... strings) {
-            mAsyncDao.deleteSpecificWeatherByDate(strings[0]);
+            mAsyncDao.deleteWeatherByCoordinates(strings[0]);
             return null;
         }
     }

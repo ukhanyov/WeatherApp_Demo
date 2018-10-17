@@ -22,6 +22,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -115,12 +116,15 @@ public class MainActivity extends AppCompatActivity implements
         // LiveData/viewModels
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
 
-        mWeatherViewModel.getAllDailyWeather().observe(this, adapter::setWeather);
+        //mWeatherViewModel.getAllDailyWeather().observe(this, adapter::setWeather);
+        mWeatherViewModel.getWeatherByCoordinatesAndType(LOCATION_COORDINATES, Constants.DB_WEATHER_TYPE_DAILY).observe(this, adapter::setWeather);
 
         mWeatherList = new ArrayList<>();
         mWeatherViewModel.getAllDailyWeather().observe(this, mWeatherList::addAll);
 
-        mWeatherViewModel.getAllHourlyWeather().observe(this, horizontalAdapter::setWeather);
+        // TODO : deal with it
+        //mWeatherViewModel.getAllHourlyWeather().observe(this, horizontalAdapter::setWeather);
+        mWeatherViewModel.getWeatherByCoordinatesAndType(LOCATION_COORDINATES, Constants.DB_WEATHER_TYPE_HOURLY).observe(this, horizontalAdapter::setWeather);
 
         mHourlyWeatherList = new ArrayList<>();
         mWeatherViewModel.getAllHourlyWeather().observe(this, mHourlyWeatherList::addAll);
@@ -208,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements
                 @Override
                 public void onResponse(@NonNull Call<PJWeekly> call, @NonNull Response<PJWeekly> response) {
                     PJWeekly pj = response.body();
-                    mWeatherViewModel.deleteSpecificWeatherByType(Constants.DB_WEATHER_TYPE_DAILY);
+                    mWeatherViewModel.deleteWeatherByCoordinates(LOCATION_COORDINATES);
                     for (PJWeeklySpecificDay item : Objects.requireNonNull(pj).getPJWeeklyArray().getData()) {
                         Weather weather = new Weather(
                                 item.getTime().toString(),
@@ -250,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements
                 @Override
                 public void onResponse(@NonNull Call<PJHourly> call, @NonNull Response<PJHourly> response) {
                     PJHourly pj = response.body();
-                    mWeatherViewModel.deleteSpecificWeatherByType(Constants.DB_WEATHER_TYPE_HOURLY);
+                    mWeatherViewModel.deleteWeatherByCoordinates(LOCATION_COORDINATES);
                     for (PJHourlyInstance item : Objects.requireNonNull(pj).getHourlyArray().getData()) {
                         Weather weather = new Weather(
                                 item.getTime().toString(),

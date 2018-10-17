@@ -43,7 +43,7 @@ public class WeatherViewModel extends AndroidViewModel {
         mRepository.deleteAll();
     }
 
-    public void deleteSpecificWeatherByDate(String deleteKey) {mRepository.deleteSpecificWeatherByDate(deleteKey);}
+    public void deleteWeatherByCoordinates(String deleteKey) {mRepository.deleteWeatherByCoordinates(deleteKey);}
 
     public void deleteSpecificWeatherByType(String deleteKey) {mRepository.deleteSpecificWeatherByType(deleteKey);}
 
