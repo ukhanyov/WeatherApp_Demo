@@ -26,6 +26,8 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.oleg.weatherapp_demo.data.MyLocation;
+import com.example.oleg.weatherapp_demo.data.MyLocationViewModel;
 import com.example.oleg.weatherapp_demo.data.Weather;
 import com.example.oleg.weatherapp_demo.data.WeatherViewModel;
 import com.example.oleg.weatherapp_demo.databinding.ActivityMainBinding;
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements
     //private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233?units=si&exclude=currently,minutely,hourly,flags";
     private ProgressBar progressBar;
     private WeatherViewModel mWeatherViewModel;
+    private MyLocationViewModel mMyLocationViewModel;
 
     // Fancy dataBinding
     ActivityMainBinding mBinding;
@@ -71,14 +74,14 @@ public class MainActivity extends AppCompatActivity implements
     private List<Weather> mWeatherList;
     private List<Weather> mHourlyWeatherList;
 
-    // Preferences lists
-    private List<String> locationsList;
-    private List<String> coordinatesList;
-
     // Weather instance for weather now
-    private Weather weatherNow;
+    private Weather mWeatherNow;
 
-    private String LOCATION = "37.8267,-122.4233";
+    // MyLocation instance for location
+    private MyLocation mMyLocation;
+    private List<MyLocation> mMyLocationList;
+
+    private String LOCATION_COORDINATES = "37.8267,-122.4233";
 
 
     @Override
@@ -108,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements
         recyclerViewHorizontal.setLayoutManager(layoutManagerHorizontal);
         recyclerViewHorizontal.setHasFixedSize(true);
 
+        // LiveData/viewModels
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
 
         mWeatherViewModel.getAllDailyWeather().observe(this, adapter::setWeather);
@@ -119,6 +123,10 @@ public class MainActivity extends AppCompatActivity implements
 
         mHourlyWeatherList = new ArrayList<>();
         mWeatherViewModel.getAllHourlyWeather().observe(this, mHourlyWeatherList::addAll);
+
+        mMyLocationViewModel = ViewModelProviders.of(this).get(MyLocationViewModel.class);
+        mMyLocationList = new ArrayList<>();
+        mMyLocationViewModel.getmAllLocations().observe(this, mMyLocationList::addAll);
     }
 
     @Override
@@ -167,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements
             assert locationManager != null;
 
             Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-            LOCATION = String.valueOf(location.getLatitude()) + "," + String.valueOf(location.getLongitude());
+            LOCATION_COORDINATES = String.valueOf(location.getLatitude()) + "," + String.valueOf(location.getLongitude());
 
             // Get city name
             mResultReceiver = new AddressResultReceiver(null);
@@ -176,27 +184,26 @@ public class MainActivity extends AppCompatActivity implements
             intent.putExtra(Constants.FETCH_TYPE_EXTRA, Constants.USE_ADDRESS_LOCATION);
             intent.putExtra(Constants.LOCATION_LATITUDE_DATA_EXTRA, location.getLatitude());
             intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, location.getLongitude());
+
             startService(intent);
-
-
         }
-
     }
 
     private void fetchDailyData() {
-        if (LOCATION.length() != 0) {
+        if (LOCATION_COORDINATES.length() != 0) {
             progressBar.setVisibility(View.VISIBLE);
 
             GetDataService service = RetrofitWeatherInstance.getRetrofitInstance().create(GetDataService.class);
             Map<String, String> data = new HashMap<>();
             data.put(Constants.QUERY_UTILS, Constants.QUERY_UTILS_FORMAT);
             data.put(Constants.QUERY_EXCLUDE, Constants.QUERY_EXCLUDE_ALL_BUT_DATE_ARRAY);
-            Call<PJWeekly> parsedJSON = service.getAllWeather(Constants.ACCESS_KEY, LOCATION, data);
+            Call<PJWeekly> parsedJSON = service.getAllWeather(Constants.ACCESS_KEY, LOCATION_COORDINATES, data);
 
             parsedJSON.enqueue(new Callback<PJWeekly>() {
                 @Override
                 public void onResponse(@NonNull Call<PJWeekly> call, @NonNull Response<PJWeekly> response) {
                     PJWeekly pj = response.body();
+                    mWeatherViewModel.deleteSpecificWeatherByType(Constants.DB_WEATHER_TYPE_DAILY);
                     for (PJWeeklySpecificDay item : Objects.requireNonNull(pj).getPJWeeklyArray().getData()) {
                         Weather weather = new Weather(
                                 item.getTime().toString(),
@@ -224,14 +231,14 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void fetchHourlyData() {
-        if (LOCATION.length() != 0) {
+        if (LOCATION_COORDINATES.length() != 0) {
             progressBar.setVisibility(View.VISIBLE);
 
             GetDataService service = RetrofitWeatherInstance.getRetrofitInstance().create(GetDataService.class);
             Map<String, String> data = new HashMap<>();
             data.put(Constants.QUERY_UTILS, Constants.QUERY_UTILS_FORMAT);
             data.put(Constants.QUERY_EXCLUDE, Constants.QUERY_EXCLUDE_ALL_BUT_HOURLY_WEATHER);
-            Call<PJHourly> parsedJSON = service.getHourlyWeather(Constants.ACCESS_KEY, LOCATION, data);
+            Call<PJHourly> parsedJSON = service.getHourlyWeather(Constants.ACCESS_KEY, LOCATION_COORDINATES, data);
 
             parsedJSON.enqueue(new Callback<PJHourly>() {
                 @Override
@@ -265,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void fetchNowData() {
-        if (LOCATION.length() != 0) {
+        if (LOCATION_COORDINATES.length() != 0) {
 
 
             progressBar.setVisibility(View.VISIBLE);
@@ -274,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements
             Map<String, String> data = new HashMap<>();
             data.put(Constants.QUERY_UTILS, Constants.QUERY_UTILS_FORMAT);
             data.put(Constants.QUERY_EXCLUDE, Constants.QUERY_EXCLUDE_ALL_BUT_CURRENT_WEATHER);
-            Call<PJCurrent> parsedJSON = service.getCurrentWeather(Constants.ACCESS_KEY, LOCATION, data);
+            Call<PJCurrent> parsedJSON = service.getCurrentWeather(Constants.ACCESS_KEY, LOCATION_COORDINATES, data);
 
             parsedJSON.enqueue(new Callback<PJCurrent>() {
                 @Override
@@ -282,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements
                     PJCurrent pj = response.body();
                     if (pj != null) {
 
-                        weatherNow = new Weather(
+                        mWeatherNow = new Weather(
                                 pj.getCurrently().getTime().toString(),
                                 pj.getCurrently().getIcon(),
                                 pj.getCurrently().getTemperatureMax().toString(),
@@ -292,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements
                                 pj.getCurrently().getWindSpeed().toString(),
                                 Constants.DB_WEATHER_TYPE_NOW);
 
-                        setWeatherNowViews(weatherNow);
+                        setWeatherNowViews(mWeatherNow);
                     }
                     progressBar.setVisibility(View.INVISIBLE);
                 }
@@ -309,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void setWeatherNowViews(Weather weather) {
 
-        if(weather != null){
+        if (weather != null) {
             mBinding.ivWeatherNow.setImageResource(
                     WeatherIconInterpreter.interpretIcon(weather.getSummary()));
 
@@ -375,7 +382,7 @@ public class MainActivity extends AppCompatActivity implements
                 cleanViews();
                 Place place = PlacePicker.getPlace(this, data);
 
-                LOCATION = String.valueOf(place.getLatLng().latitude) + "," +
+                LOCATION_COORDINATES = String.valueOf(place.getLatLng().latitude) + "," +
                         String.valueOf(place.getLatLng().longitude);
 
                 mResultReceiver = new AddressResultReceiver(null);
@@ -443,10 +450,25 @@ public class MainActivity extends AppCompatActivity implements
                 runOnUiThread(() -> {
                     assert address != null;
                     mBinding.tvWeatherNowLocation.setText(address.getLocality());
+                    saveCurrentLocation();
                 });
             } else {
                 Toast.makeText(MainActivity.this, "Error parsing location", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    private void saveCurrentLocation() {
+        if (LOCATION_COORDINATES.length() > 0) {
+
+            String[] coordinates = LOCATION_COORDINATES.split(",");
+
+            mMyLocationViewModel.insert(new MyLocation(
+                    mBinding.tvWeatherNowLocation.getText().toString(),
+                    LOCATION_COORDINATES,
+                    Double.valueOf(coordinates[0]),
+                    Double.valueOf(coordinates[1])
+            ));
         }
     }
 

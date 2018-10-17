@@ -33,13 +33,13 @@ public class MyLocation {
         this.mLongitude = longitude;
     }
 
-//    public Integer getId() {
-//        return mId;
-//    }
-//
-//    public void setId(Integer mId) {
-//        this.mId = mId;
-//    }
+    public void setLocationName(@NonNull String mLocationName) {
+        this.mLocationName = mLocationName;
+    }
+
+    public void setLocationCoordinates(String mLocationCoordinates) {
+        this.mLocationCoordinates = mLocationCoordinates;
+    }
 
     public String getLocationName() {
         return mLocationName;
