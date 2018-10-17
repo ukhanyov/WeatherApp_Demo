@@ -70,7 +70,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
                         mContext.getString(R.string.temperature_view_holder_degrees_celsius,
                         String.valueOf(Math.round(Double.parseDouble(current.getTemperatureMin())))));
         } else {
-            throw new IllegalArgumentException("Some error with binding data");
+            throw new IllegalArgumentException("Some error with binding data for vertical recycler view");
         }
     }
 

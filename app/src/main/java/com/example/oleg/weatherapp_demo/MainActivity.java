@@ -56,7 +56,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements
         // item click shit
-        WeatherAdapter.WeatherAdapterOnClickHandler {
+        WeatherAdapter.WeatherAdapterOnClickHandler, WeatherHorizontalAdapter.WeatherHorizontalAdapterOnClickHandler {
 
     //private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233?units=si&exclude=currently,minutely,hourly,flags";
     private ProgressBar progressBar;
@@ -89,14 +89,24 @@ public class MainActivity extends AppCompatActivity implements
         // Fancy dataBinding
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        RecyclerView recyclerView = mBinding.rvWeather;
+        RecyclerView recyclerViewVertical = mBinding.rvWeather;
+        RecyclerView recyclerViewHorizontal = mBinding.rvWeatherHoryzontal;
         progressBar = mBinding.pbLoadingIndicator;
 
-        // Second this is for item click
+        // Second "this" is for item click
         final WeatherAdapter adapter = new WeatherAdapter(this, this);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(true);
+        recyclerViewVertical.setAdapter(adapter);
+        recyclerViewVertical.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewVertical.setHasFixedSize(true);
+
+        // Setup horizontal recyclerView
+        final WeatherHorizontalAdapter horizontalAdapter =
+                new WeatherHorizontalAdapter(this, this);
+        recyclerViewHorizontal.setAdapter(horizontalAdapter);
+        LinearLayoutManager layoutManagerHorizontal
+                = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerViewHorizontal.setLayoutManager(layoutManagerHorizontal);
+        recyclerViewHorizontal.setHasFixedSize(true);
 
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
 
@@ -104,6 +114,8 @@ public class MainActivity extends AppCompatActivity implements
 
         mWeatherList = new ArrayList<>();
         mWeatherViewModel.getAllDailyWeather().observe(this, mWeatherList::addAll);
+
+        mWeatherViewModel.getAllHourlyWeather().observe(this, horizontalAdapter::setWeather);
 
         mHourlyWeatherList = new ArrayList<>();
         mWeatherViewModel.getAllHourlyWeather().observe(this, mHourlyWeatherList::addAll);
