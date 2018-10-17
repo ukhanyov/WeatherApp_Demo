@@ -20,6 +20,7 @@
     <color name="mintButtonText">#FFFFFF</color>
     <color name="dark_red">#8B0000</color>
     <color name="white">#ffffff</color>
+    <color name="location_background">#C6FF00</color>
 
 
 </resources>

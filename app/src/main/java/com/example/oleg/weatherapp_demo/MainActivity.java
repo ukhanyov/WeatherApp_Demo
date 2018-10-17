@@ -124,14 +124,14 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        mBinding.flOffline.setVisibility(View.INVISIBLE);
+        mBinding.tvOffline.setVisibility(View.GONE);
 
         if (haveLocationEnabled()) {
             // Get users location
             findUserLocation();
 
         } else {
-            mBinding.flOffline.setVisibility(View.VISIBLE);
+            mBinding.tvOffline.setVisibility(View.VISIBLE);
             mBinding.tvOffline.setText(R.string.offline_turn_on_location);
         }
 
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements
             fetchNowData();
 
         } else {
-            mBinding.flOffline.setVisibility(View.VISIBLE);
+            mBinding.tvOffline.setVisibility(View.VISIBLE);
             mBinding.tvOffline.setText(R.string.offline_turn_on_internet);
         }
     }

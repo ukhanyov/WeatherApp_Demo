@@ -49,4 +49,6 @@
     <string name="offline_turn_on_location">Offline. Turn on LOCATION</string>
     <string name="current_weather_icon">Current weather icon</string>
     <string name="now">Now</string>
+    <string name="apparent_temperature">Apparent temperature</string>
+    <string name="offline">Offline</string>
 </resources>
