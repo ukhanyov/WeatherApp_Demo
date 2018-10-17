@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private List<Weather> mWeatherList;
     private List<Weather> mHourlyWeatherList;
+    private List<Weather> mWeatherListSpecific;
 
     // Weather instance for weather now
     private Weather mWeatherNow;
@@ -124,6 +125,10 @@ public class MainActivity extends AppCompatActivity implements
         mHourlyWeatherList = new ArrayList<>();
         mWeatherViewModel.getAllHourlyWeather().observe(this, mHourlyWeatherList::addAll);
 
+        mWeatherListSpecific = new ArrayList<>();
+        mWeatherViewModel.getWeatherByCoordinatesAndType(LOCATION_COORDINATES, Constants.DB_WEATHER_TYPE_HOURLY).observe(this, mWeatherListSpecific::addAll);
+
+        // Location viewModel stuff
         mMyLocationViewModel = ViewModelProviders.of(this).get(MyLocationViewModel.class);
         mMyLocationList = new ArrayList<>();
         mMyLocationViewModel.getmAllLocations().observe(this, mMyLocationList::addAll);
@@ -213,6 +218,7 @@ public class MainActivity extends AppCompatActivity implements
                                 item.getHumidity().toString(),
                                 item.getPressure().toString(),
                                 item.getWindSpeed().toString(),
+                                LOCATION_COORDINATES,
                                 Constants.DB_WEATHER_TYPE_DAILY);
 
                         mWeatherViewModel.insert(weather);
@@ -254,6 +260,7 @@ public class MainActivity extends AppCompatActivity implements
                                 item.getHumidity().toString(),
                                 item.getPressure().toString(),
                                 item.getWindSpeed().toString(),
+                                LOCATION_COORDINATES,
                                 Constants.DB_WEATHER_TYPE_HOURLY);
 
                         mWeatherViewModel.insert(weather);
@@ -297,6 +304,7 @@ public class MainActivity extends AppCompatActivity implements
                                 pj.getCurrently().getHumidity().toString(),
                                 pj.getCurrently().getPressure().toString(),
                                 pj.getCurrently().getWindSpeed().toString(),
+                                LOCATION_COORDINATES,
                                 Constants.DB_WEATHER_TYPE_NOW);
 
                         setWeatherNowViews(mWeatherNow);

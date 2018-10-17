@@ -3,6 +3,7 @@ package com.example.oleg.weatherapp_demo.data;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class WeatherViewModel extends AndroidViewModel {
     private LiveData<List<Weather>> mAllWeather;
     private LiveData<List<Weather>> mAllDailyWeather;
     private LiveData<List<Weather>> mAllHourlyWeather;
+    private MutableLiveData<List<Weather>> mWeatherCoordinatesAndType;
 
     public WeatherViewModel(@NonNull Application application) {
         super(application);
@@ -22,6 +24,7 @@ public class WeatherViewModel extends AndroidViewModel {
         mAllWeather = mRepository.getAllWeather();
         mAllDailyWeather = mRepository.getAllDailyWeather();
         mAllHourlyWeather = mRepository.getAllHourlyWeather();
+        mWeatherCoordinatesAndType = mRepository.getSearchResults();
     }
 
     public LiveData<List<Weather>> getAllWeather() {
@@ -43,5 +46,10 @@ public class WeatherViewModel extends AndroidViewModel {
     public void deleteSpecificWeatherByDate(String deleteKey) {mRepository.deleteSpecificWeatherByDate(deleteKey);}
 
     public void deleteSpecificWeatherByType(String deleteKey) {mRepository.deleteSpecificWeatherByType(deleteKey);}
+
+    public MutableLiveData<List<Weather>> getWeatherByCoordinatesAndType(String coordinates, String type){
+        mRepository.queryByCoordinatesAndType(coordinates, type);
+        return mWeatherCoordinatesAndType;
+    }
 
 }

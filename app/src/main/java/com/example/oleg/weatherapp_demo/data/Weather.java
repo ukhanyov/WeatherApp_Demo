@@ -35,6 +35,9 @@ public class Weather {
     @ColumnInfo(name = "wind_speed")
     private String mWindSpeed;
 
+    @ColumnInfo(name = "coordinates")
+    private String mCoordinates;
+
     @ColumnInfo(name = "type_of_day")
     private String mTypeOfDay;
 
@@ -45,6 +48,7 @@ public class Weather {
                    String humidity,
                    String pressure,
                    String windSpeed,
+                   String coordinates,
                    String typeOfDay) {
 
         this.mDate = date;
@@ -54,6 +58,7 @@ public class Weather {
         this.mHumidity = humidity;
         this.mPressure = pressure;
         this.mWindSpeed = windSpeed;
+        this.mCoordinates = coordinates;
         this.mTypeOfDay = typeOfDay;
     }
 
@@ -90,6 +95,10 @@ public class Weather {
     }
 
     public Integer getId() { return mId;}
+
+    public String getCoordinates() {
+        return mCoordinates;
+    }
 
     public void setId(Integer id) { this.mId = id; }
 }

@@ -6,7 +6,7 @@ import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 
-@Database(entities = {Weather.class, MyLocation.class}, version = 4)
+@Database(entities = {Weather.class, MyLocation.class}, version = 5)
 public abstract class RoomDatabase extends android.arch.persistence.room.RoomDatabase {
 
     public abstract WeatherDao weatherDao();

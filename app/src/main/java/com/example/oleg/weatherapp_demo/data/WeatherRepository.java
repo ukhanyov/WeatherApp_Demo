@@ -154,4 +154,28 @@ public class WeatherRepository implements AsyncResultWeather {
             delegate.asyncFinished(weathers);
         }
     }
+
+    void queryByCoordinatesAndType(String coordinates, String type) {
+        getWeatherByCoordinatesAndTypeAsyncTask task = new getWeatherByCoordinatesAndTypeAsyncTask(mWeatherDao);
+        task.delegate = this;
+        task.execute(coordinates, type);
+    }
+
+    private static class getWeatherByCoordinatesAndTypeAsyncTask extends AsyncTask<String, Void, List<Weather>>{
+
+        private WeatherDao mAsyncDao;
+        private WeatherRepository delegate = null;
+
+        getWeatherByCoordinatesAndTypeAsyncTask(WeatherDao dao) { mAsyncDao = dao;}
+
+        @Override
+        protected List<Weather> doInBackground(String... strings) {
+            return mAsyncDao.getAllWeatherByCoordinatesAndType(strings[0], strings[1]);
+        }
+
+        @Override
+        protected void onPostExecute(List<Weather> weathers) {
+            delegate.asyncFinished(weathers);
+        }
+    }
 }
