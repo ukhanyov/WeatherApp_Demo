@@ -1,6 +1,7 @@
 package com.example.oleg.weatherapp_demo;
 
 import android.Manifest;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -115,22 +117,18 @@ public class MainActivity extends AppCompatActivity implements
 
         // LiveData/viewModels
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
-
-        //mWeatherViewModel.getAllDailyWeather().observe(this, adapter::setWeather);
-        mWeatherViewModel.getWeatherByCoordinatesAndType(LOCATION_COORDINATES, Constants.DB_WEATHER_TYPE_DAILY).observe(this, adapter::setWeather);
+        mWeatherViewModel.getAllDailyWeather().observe(this, adapter::setWeather);
+        //mWeatherViewModel.getWeatherByCoordinatesAndType(LOCATION_COORDINATES, Constants.DB_WEATHER_TYPE_DAILY).observe(this, adapter::setWeather);
 
         mWeatherList = new ArrayList<>();
         mWeatherViewModel.getAllDailyWeather().observe(this, mWeatherList::addAll);
 
-        // TODO : deal with it
-        //mWeatherViewModel.getAllHourlyWeather().observe(this, horizontalAdapter::setWeather);
-        mWeatherViewModel.getWeatherByCoordinatesAndType(LOCATION_COORDINATES, Constants.DB_WEATHER_TYPE_HOURLY).observe(this, horizontalAdapter::setWeather);
-
-        mHourlyWeatherList = new ArrayList<>();
-        mWeatherViewModel.getAllHourlyWeather().observe(this, mHourlyWeatherList::addAll);
+        mWeatherViewModel.getAllHourlyWeather().observe(this, horizontalAdapter::setWeather);
+        //mWeatherViewModel.getWeatherByCoordinatesAndType(LOCATION_COORDINATES, Constants.DB_WEATHER_TYPE_HOURLY).observe(this, horizontalAdapter::setWeather);
 
         mWeatherListSpecific = new ArrayList<>();
-        mWeatherViewModel.getWeatherByCoordinatesAndType(LOCATION_COORDINATES, Constants.DB_WEATHER_TYPE_HOURLY).observe(this, mWeatherListSpecific::addAll);
+        mWeatherViewModel.queryWeatherByCoordinatesAndType(LOCATION_COORDINATES, Constants.DB_WEATHER_TYPE_HOURLY);
+        mWeatherViewModel.getWeatherByCoordinatesAndType().observe(this, mWeatherListSpecific::addAll);
 
         // Location viewModel stuff
         mMyLocationViewModel = ViewModelProviders.of(this).get(MyLocationViewModel.class);
@@ -208,11 +206,13 @@ public class MainActivity extends AppCompatActivity implements
             data.put(Constants.QUERY_EXCLUDE, Constants.QUERY_EXCLUDE_ALL_BUT_DATE_ARRAY);
             Call<PJWeekly> parsedJSON = service.getAllWeather(Constants.ACCESS_KEY, LOCATION_COORDINATES, data);
 
+            mWeatherViewModel.deleteSpecificWeatherByType(Constants.DB_WEATHER_TYPE_DAILY);
+            //mWeatherViewModel.deleteWeatherByCoordinates(LOCATION_COORDINATES);
+
             parsedJSON.enqueue(new Callback<PJWeekly>() {
                 @Override
                 public void onResponse(@NonNull Call<PJWeekly> call, @NonNull Response<PJWeekly> response) {
                     PJWeekly pj = response.body();
-                    mWeatherViewModel.deleteWeatherByCoordinates(LOCATION_COORDINATES);
                     for (PJWeeklySpecificDay item : Objects.requireNonNull(pj).getPJWeeklyArray().getData()) {
                         Weather weather = new Weather(
                                 item.getTime().toString(),
@@ -250,11 +250,14 @@ public class MainActivity extends AppCompatActivity implements
             data.put(Constants.QUERY_EXCLUDE, Constants.QUERY_EXCLUDE_ALL_BUT_HOURLY_WEATHER);
             Call<PJHourly> parsedJSON = service.getHourlyWeather(Constants.ACCESS_KEY, LOCATION_COORDINATES, data);
 
+            mWeatherViewModel.deleteSpecificWeatherByType(Constants.DB_WEATHER_TYPE_HOURLY);
+            //mWeatherViewModel.deleteWeatherByCoordinates(LOCATION_COORDINATES);
+
             parsedJSON.enqueue(new Callback<PJHourly>() {
                 @Override
                 public void onResponse(@NonNull Call<PJHourly> call, @NonNull Response<PJHourly> response) {
                     PJHourly pj = response.body();
-                    mWeatherViewModel.deleteWeatherByCoordinates(LOCATION_COORDINATES);
+
                     for (PJHourlyInstance item : Objects.requireNonNull(pj).getHourlyArray().getData()) {
                         Weather weather = new Weather(
                                 item.getTime().toString(),
@@ -284,7 +287,6 @@ public class MainActivity extends AppCompatActivity implements
 
     private void fetchNowData() {
         if (LOCATION_COORDINATES.length() != 0) {
-
 
             progressBar.setVisibility(View.VISIBLE);
 
@@ -379,6 +381,12 @@ public class MainActivity extends AppCompatActivity implements
                 } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                     e.printStackTrace();
                 }
+                return true;
+
+            case R.id.action_check:
+                List<Weather> custom = new ArrayList<>();
+                custom.addAll(mWeatherListSpecific);
+                Toast.makeText(this, custom.get(0).getSummary(), Toast.LENGTH_SHORT).show();
                 return true;
 
             default:

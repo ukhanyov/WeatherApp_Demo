@@ -34,6 +34,6 @@ public interface WeatherDao {
     @Query("SELECT * FROM weather_table WHERE type_of_day = :typeOfDay")
     LiveData<List<Weather>> getAllWeatherSpecifiedByDayType(String typeOfDay);
 
-    @Query("SELECT * FROM weather_table WHERE coordinates = :coordinates AND type_of_day =:typeOfDay")
-    List<Weather> getAllWeatherByCoordinatesAndType(String coordinates, String typeOfDay);
+    @Query("SELECT * FROM weather_table WHERE coordinates = :coordinatesKey AND type_of_day =:typeOfDay")
+    List<Weather> getAllWeatherByCoordinatesAndType(String coordinatesKey, String typeOfDay);
 }

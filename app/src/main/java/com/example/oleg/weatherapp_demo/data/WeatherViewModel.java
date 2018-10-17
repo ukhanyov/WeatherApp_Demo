@@ -47,8 +47,11 @@ public class WeatherViewModel extends AndroidViewModel {
 
     public void deleteSpecificWeatherByType(String deleteKey) {mRepository.deleteSpecificWeatherByType(deleteKey);}
 
-    public MutableLiveData<List<Weather>> getWeatherByCoordinatesAndType(String coordinates, String type){
+    public void queryWeatherByCoordinatesAndType(String coordinates, String type){
         mRepository.queryByCoordinatesAndType(coordinates, type);
+    }
+
+    public MutableLiveData<List<Weather>> getWeatherByCoordinatesAndType(){
         return mWeatherCoordinatesAndType;
     }
 
