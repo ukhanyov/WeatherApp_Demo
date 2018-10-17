@@ -10,8 +10,10 @@ import android.support.annotation.NonNull;
 @Entity(tableName = "weather_table")
 public class Weather {
 
-    @PrimaryKey
-    @NonNull
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "weatherId")
+    private Integer mId;
+
     @ColumnInfo(name = "date")
     private String mDate;
 
@@ -36,7 +38,7 @@ public class Weather {
     @ColumnInfo(name = "type_of_day")
     private String mTypeOfDay;
 
-    public Weather(@NonNull String date,
+    public Weather(String date,
                    String summary,
                    String temperatureMax,
                    String temperatureMin,
@@ -55,7 +57,6 @@ public class Weather {
         this.mTypeOfDay = typeOfDay;
     }
 
-    @NonNull
     public String getDate() {
         return mDate;
     }
@@ -88,7 +89,7 @@ public class Weather {
         return mTypeOfDay;
     }
 
-    public void setTypeOfDay(String mTypeOfDay) {
-        this.mTypeOfDay = mTypeOfDay;
-    }
+    public Integer getId() { return mId;}
+
+    public void setId(Integer id) { this.mId = id; }
 }

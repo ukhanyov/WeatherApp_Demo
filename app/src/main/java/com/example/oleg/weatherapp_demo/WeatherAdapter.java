@@ -33,7 +33,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
     }
 
     public interface WeatherAdapterOnClickHandler {
-        void onClick(Weather date);
+        void onClick(Weather id);
     }
 
     @NonNull
