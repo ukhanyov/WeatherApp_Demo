@@ -14,6 +14,13 @@ public class NormalizeDate {
                 calendar.get(Calendar.YEAR);
     }
 
+    public static String getHumanFriendlyTimeFromDB(long dbDate){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(dbDate * 1000L);
+        return calendar.get(Calendar.HOUR_OF_DAY) + ":" +
+                calendar.get(Calendar.MINUTE) + "0";
+    }
+
     private static String getFriendlyDayOfTheWeek(int key) {
         switch (key) {
             case 1:
@@ -72,5 +79,14 @@ public class NormalizeDate {
         //Divide by 1000 because DarkWeather time is in seconds, not milliseconds
         String compareDate = getHumanFriendlyDateFromDB(currentTime.getTimeInMillis()  / 1000L  );
         return inputDate.equals(compareDate);
+    }
+
+    public static boolean checkIfTimeIsNow(long dbDate){
+        Calendar calendarFromDb = Calendar.getInstance();
+        calendarFromDb.setTimeInMillis(dbDate * 1000L);
+
+        Calendar currentTime = Calendar.getInstance();
+        return (calendarFromDb.get(Calendar.HOUR_OF_DAY) == currentTime.get(Calendar.HOUR_OF_DAY) &&
+                calendarFromDb.get(Calendar.DAY_OF_MONTH) == currentTime.get(Calendar.DAY_OF_MONTH));
     }
 }

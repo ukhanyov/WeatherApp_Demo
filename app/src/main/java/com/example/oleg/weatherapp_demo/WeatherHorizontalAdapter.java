@@ -56,8 +56,14 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
                     WeatherIconInterpreter.interpretIcon(current.getSummary()));
 
             // Set time
-            holder.weatherTime.setText(
-                    NormalizeDate.getHumanFriendlyDateFromDB(Long.parseLong(current.getDate())));
+//            holder.weatherTime.setText(
+//                    NormalizeDate.getHumanFriendlyDateFromDB(Long.parseLong(current.getDate())));
+            if(NormalizeDate.checkIfTimeIsNow(Long.parseLong(current.getDate()))){
+                holder.weatherTime.setText(R.string.now);
+            }else{
+                holder.weatherTime.setText(
+                        NormalizeDate.getHumanFriendlyTimeFromDB(Long.parseLong(current.getDate())));
+            }
 
             // Set temperature
             holder.weatherTemperature.setText(
