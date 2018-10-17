@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void findUserLocation() {
 
-        // Acquire a reference to the system Location Manager
+        // Acquire a reference to the system MyLocation Manager
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
         if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)

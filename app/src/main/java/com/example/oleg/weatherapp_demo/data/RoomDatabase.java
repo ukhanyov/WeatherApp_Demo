@@ -4,23 +4,23 @@ package com.example.oleg.weatherapp_demo.data;
 
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-@Database(entities = {Weather.class}, version = 3)
-public abstract class WeatherRoomDatabase extends RoomDatabase{
+@Database(entities = {Weather.class, MyLocation.class}, version = 4)
+public abstract class RoomDatabase extends android.arch.persistence.room.RoomDatabase {
 
     public abstract WeatherDao weatherDao();
+    public abstract MyLocationDao myLocationDao();
 
-    private static WeatherRoomDatabase INSTANCE;
+    private static RoomDatabase INSTANCE;
 
-    public static WeatherRoomDatabase getDatabase(final Context context){
+    public static RoomDatabase getDatabase(final Context context){
         if(INSTANCE == null){
-            synchronized (WeatherRoomDatabase.class){
+            synchronized (RoomDatabase.class){
                 if(INSTANCE == null){
                     // Create data base here
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            WeatherRoomDatabase.class, "weather_database")
+                            RoomDatabase.class, "weather_database")
                             .fallbackToDestructiveMigration()
                             .build();
                 }

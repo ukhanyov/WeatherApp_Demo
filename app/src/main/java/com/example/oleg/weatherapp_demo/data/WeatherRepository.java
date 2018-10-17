@@ -11,9 +11,8 @@ import java.util.List;
 
 // Timeline 4
 
-public class WeatherRepository implements AsyncResult {
+public class WeatherRepository implements AsyncResultWeather {
 
-    // Weather daily
     private WeatherDao mWeatherDao;
     private LiveData<List<Weather>> mAllWeather;
     private LiveData<List<Weather>> mAllDailyWeather;
@@ -21,7 +20,7 @@ public class WeatherRepository implements AsyncResult {
     private MutableLiveData<List<Weather>> searchResults = new MutableLiveData<>();
 
     WeatherRepository(Application application) {
-        WeatherRoomDatabase db = WeatherRoomDatabase.getDatabase(application);
+        RoomDatabase db = RoomDatabase.getDatabase(application);
         mWeatherDao = db.weatherDao();
         mAllWeather = mWeatherDao.getAllWeather();
         mAllDailyWeather = mWeatherDao.getAllWeatherSpecifiedByDayType(Constants.DB_WEATHER_TYPE_DAILY);

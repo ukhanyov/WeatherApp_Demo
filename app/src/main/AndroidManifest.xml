@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <uses-feature android:name="android.hardware.location.gps" />
+    <uses-feature android:name="android.hardware.myLocation.gps" />
 
     <application
         android:allowBackup="true"
@@ -33,21 +33,6 @@
             android:name=".geo.GeocodeAddressIntentService"
             android:exported="false" />
 
-        <activity
-            android:name=".settings.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.oleg.weatherapp_demo.MainActivity" />
-        </activity>
-        <activity android:name=".settings.SettingsDeleteLocations">
-            <intent-filter>
-                <action android:name="com.example.oleg.weatherapp_demo.settings.SettingsDeleteLocations"/>
-
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>
