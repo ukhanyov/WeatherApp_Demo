@@ -20,7 +20,10 @@ public interface WeatherDao {
     void deleteAll();
 
     @Query("DELETE FROM weather_table WHERE date = :deleteString")
-    void deleteSpecificWeather(String deleteString);
+    void deleteSpecificWeatherByDate(String deleteString);
+
+    @Query("DELETE FROM weather_table WHERE type_of_day = :deleteTypeString")
+    void deleteSpecificfWeatherByType(String deleteTypeString);
 
     @Query("SELECT * FROM weather_table ORDER BY date ASC")
     LiveData<List<Weather>> getAllWeather();

@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements
     AddressResultReceiver mResultReceiver;
 
     private List<Weather> mWeatherList;
+    private List<Weather> mHourlyWeatherList;
 
     // Preferences lists
     private List<String> locationsList;
@@ -99,10 +100,13 @@ public class MainActivity extends AppCompatActivity implements
 
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
 
-        mWeatherViewModel.getAllWeather().observe(this, adapter::setWeather);
+        mWeatherViewModel.getAllDailyWeather().observe(this, adapter::setWeather);
 
         mWeatherList = new ArrayList<>();
-        mWeatherViewModel.getAllWeather().observe(this, mWeatherList::addAll);
+        mWeatherViewModel.getAllDailyWeather().observe(this, mWeatherList::addAll);
+
+        mHourlyWeatherList = new ArrayList<>();
+        mWeatherViewModel.getAllHourlyWeather().observe(this, mHourlyWeatherList::addAll);
     }
 
     @Override
@@ -217,14 +221,13 @@ public class MainActivity extends AppCompatActivity implements
             data.put(Constants.QUERY_EXCLUDE, Constants.QUERY_EXCLUDE_ALL_BUT_HOURLY_WEATHER);
             Call<PJHourly> parsedJSON = service.getHourlyWeather(Constants.ACCESS_KEY, LOCATION, data);
 
-            List<Weather> someWeatherList = new ArrayList<>();
-
             parsedJSON.enqueue(new Callback<PJHourly>() {
                 @Override
                 public void onResponse(@NonNull Call<PJHourly> call, @NonNull Response<PJHourly> response) {
                     PJHourly pj = response.body();
+                    mWeatherViewModel.deleteSpecificWeatherByType(Constants.DB_WEATHER_TYPE_HOURLY);
                     for (PJHourlyInstance item : Objects.requireNonNull(pj).getHourlyArray().getData()) {
-                        someWeatherList.add(new Weather(
+                        Weather weather = new Weather(
                                 item.getTime().toString(),
                                 item.getIcon(),
                                 item.getTemperatureMax().toString(),
@@ -232,7 +235,9 @@ public class MainActivity extends AppCompatActivity implements
                                 item.getHumidity().toString(),
                                 item.getPressure().toString(),
                                 item.getWindSpeed().toString(),
-                                Constants.DB_WEATHER_TYPE_HOURLY));
+                                Constants.DB_WEATHER_TYPE_HOURLY);
+
+                        mWeatherViewModel.insert(weather);
                     }
                     progressBar.setVisibility(View.INVISIBLE);
                 }

@@ -90,21 +90,40 @@ public class WeatherRepository implements AsyncResult {
         }
     }
 
-    void deleteSpecificWeather(String deleteKey) {
-        new deleteSpecificWeather(mWeatherDao).execute(deleteKey);
+    void deleteSpecificWeatherByDate(String deleteKey) {
+        new deleteSpecificWeatherByDate(mWeatherDao).execute(deleteKey);
     }
 
-    private static class deleteSpecificWeather extends AsyncTask<String, Void, Void> {
+    private static class deleteSpecificWeatherByDate extends AsyncTask<String, Void, Void> {
 
         private WeatherDao mAsyncDao;
 
-        deleteSpecificWeather(WeatherDao dao) {
+        deleteSpecificWeatherByDate(WeatherDao dao) {
             mAsyncDao = dao;
         }
 
         @Override
         protected Void doInBackground(String... strings) {
-            mAsyncDao.deleteSpecificWeather(strings[0]);
+            mAsyncDao.deleteSpecificWeatherByDate(strings[0]);
+            return null;
+        }
+    }
+
+    void deleteSpecificWeatherByType(String deleteKey){
+        new deleteSpecificWeatherByType(mWeatherDao).execute(deleteKey);
+    }
+
+    private static class deleteSpecificWeatherByType extends AsyncTask<String, Void, Void>{
+
+        private WeatherDao mAsyncDao;
+
+        deleteSpecificWeatherByType(WeatherDao dao){
+            mAsyncDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            mAsyncDao.deleteSpecificfWeatherByType(strings[0]);
             return null;
         }
     }
