@@ -76,7 +76,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private List<Weather> mWeatherList;
     private List<Weather> mHourlyWeatherList;
-    private List<Weather> mWeatherListSpecific;
+    private List<Weather> mWeatherListSpecificDaily;
+    private List<Weather> mWeatherListSpecificHourly;
 
     // Weather instance for weather now
     private Weather mWeatherNow;
@@ -126,9 +127,10 @@ public class MainActivity extends AppCompatActivity implements
         mWeatherViewModel.getAllHourlyWeather().observe(this, horizontalAdapter::setWeather);
         //mWeatherViewModel.getWeatherByCoordinatesAndType(LOCATION_COORDINATES, Constants.DB_WEATHER_TYPE_HOURLY).observe(this, horizontalAdapter::setWeather);
 
-        mWeatherListSpecific = new ArrayList<>();
-        mWeatherViewModel.queryWeatherByCoordinatesAndType(LOCATION_COORDINATES, Constants.DB_WEATHER_TYPE_HOURLY);
-        mWeatherViewModel.getWeatherByCoordinatesAndType().observe(this, mWeatherListSpecific::addAll);
+        // TODO: Add another one mutable data for hourly fetches
+        // TODO: Replace assigments to adapter with specific data
+        mWeatherListSpecificDaily = new ArrayList<>();
+        mWeatherViewModel.getWeatherByCoordinatesAndType().observe(this, mWeatherListSpecificDaily::addAll);
 
         // Location viewModel stuff
         mMyLocationViewModel = ViewModelProviders.of(this).get(MyLocationViewModel.class);
@@ -227,6 +229,9 @@ public class MainActivity extends AppCompatActivity implements
 
                         mWeatherViewModel.insert(weather);
                     }
+
+                    mWeatherViewModel.queryWeatherByCoordinatesAndType(LOCATION_COORDINATES, Constants.DB_WEATHER_TYPE_DAILY);
+
                     progressBar.setVisibility(View.INVISIBLE);
                 }
 
@@ -272,6 +277,10 @@ public class MainActivity extends AppCompatActivity implements
 
                         mWeatherViewModel.insert(weather);
                     }
+
+                    //mWeatherListSpecificHourly = new ArrayList<>();
+                    //mWeatherViewModel.queryWeatherByCoordinatesAndType(LOCATION_COORDINATES, Constants.DB_WEATHER_TYPE_HOURLY);
+
                     progressBar.setVisibility(View.INVISIBLE);
                 }
 
@@ -385,7 +394,7 @@ public class MainActivity extends AppCompatActivity implements
 
             case R.id.action_check:
                 List<Weather> custom = new ArrayList<>();
-                custom.addAll(mWeatherListSpecific);
+                custom.addAll(mWeatherListSpecificDaily);
                 Toast.makeText(this, custom.get(0).getSummary(), Toast.LENGTH_SHORT).show();
                 return true;
 
