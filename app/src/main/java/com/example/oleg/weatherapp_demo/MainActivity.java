@@ -15,39 +15,37 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.oleg.weatherapp_demo.adapters.MyLocationAdapter;
 import com.example.oleg.weatherapp_demo.adapters.WeatherAdapter;
 import com.example.oleg.weatherapp_demo.adapters.WeatherHorizontalAdapter;
-import com.example.oleg.weatherapp_demo.data.entities.MyLocation;
 import com.example.oleg.weatherapp_demo.data.MyLocationViewModel;
-import com.example.oleg.weatherapp_demo.data.entities.Weather;
 import com.example.oleg.weatherapp_demo.data.WeatherViewModel;
+import com.example.oleg.weatherapp_demo.data.entities.MyLocation;
+import com.example.oleg.weatherapp_demo.data.entities.Weather;
 import com.example.oleg.weatherapp_demo.databinding.ActivityMainBinding;
 import com.example.oleg.weatherapp_demo.geo.GeocodeAddressIntentService;
-import com.example.oleg.weatherapp_demo.network.retrofit.GetDataService;
 import com.example.oleg.weatherapp_demo.network.pojo.PJCurrent;
 import com.example.oleg.weatherapp_demo.network.pojo.PJHourly;
 import com.example.oleg.weatherapp_demo.network.pojo.PJHourlyInstance;
 import com.example.oleg.weatherapp_demo.network.pojo.PJWeekly;
 import com.example.oleg.weatherapp_demo.network.pojo.PJWeeklySpecificDay;
+import com.example.oleg.weatherapp_demo.network.retrofit.GetDataService;
 import com.example.oleg.weatherapp_demo.network.retrofit.RetrofitWeatherInstance;
 import com.example.oleg.weatherapp_demo.utils.Constants;
 import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
@@ -57,7 +55,6 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,12 +64,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
-
 public class MainActivity extends AppCompatActivity implements
         // item click stuff
         WeatherAdapter.WeatherAdapterOnClickHandler,
-        WeatherHorizontalAdapter.WeatherHorizontalAdapterOnClickHandler{
+        WeatherHorizontalAdapter.WeatherHorizontalAdapterOnClickHandler {
 
     //private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233?units=si&exclude=currently,minutely,hourly,flags";
     private ProgressBar progressBar;
@@ -151,18 +146,19 @@ public class MainActivity extends AppCompatActivity implements
 
         final GestureDetector mGestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
 
-            @Override public boolean onSingleTapUp(MotionEvent e) {
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
                 return true;
             }
         });
-
+        toggle.syncState();
         recyclerViewNavView.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
 
-                View child = recyclerView.findChildViewUnder(motionEvent.getX(),motionEvent.getY());
+                View child = recyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
 
-                if(child!=null && mGestureDetector.onTouchEvent(motionEvent)){
+                if (child != null && mGestureDetector.onTouchEvent(motionEvent)) {
                     mDrawer.closeDrawers();
 
                     MyLocation myLocation = myLocationAdapter.getItem(recyclerView.getChildAdapterPosition(child));
@@ -178,7 +174,23 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
-        toggle.syncState();
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+
+                return true;// true if moved, false otherwise
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                //Remove swiped item from list and notify the RecyclerView
+                myLocationAdapter.notifyItemRemoved(viewHolder.getLayoutPosition());
+                // this is wanky, think arround later
+                MyLocation myLocation = myLocationAdapter.getItem(viewHolder.getLayoutPosition());
+                mMyLocationViewModel.deleteSpecificLocation(myLocation.getLocationName());
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerViewNavView);
 
         // Location viewModel stuff
         mMyLocationViewModel = ViewModelProviders.of(this).get(MyLocationViewModel.class);
