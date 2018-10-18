@@ -4,6 +4,7 @@ import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.location.Address;
@@ -73,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements
     private ProgressBar progressBar;
     private WeatherViewModel mWeatherViewModel;
     private MyLocationViewModel mMyLocationViewModel;
-    private DrawerLayout mDrawerLayout;
 
     // Fancy dataBinding
     ActivityMainBinding mBinding;
@@ -88,8 +88,7 @@ public class MainActivity extends AppCompatActivity implements
     DrawerLayout mDrawer;
 
     // MyLocation instance for location
-    private MyLocation mMyLocation;
-    private List<MyLocation> mMyLocationList;
+    private MyLocation mMyLocationQuery;
 
     private String LOCATION_COORDINATES = "37.8267,-122.4233";
 
@@ -165,6 +164,13 @@ public class MainActivity extends AppCompatActivity implements
                     MyLocation myLocation = myLocationAdapter.getItem(recyclerView.getChildAdapterPosition(child));
                     LOCATION_COORDINATES = myLocation.getLocationCoordinates();
 
+                    SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
+                    SharedPreferences.Editor prefEditor = preferencesLocation.edit();
+                    prefEditor.clear();
+                    prefEditor.putString("saved_location_coordinates", LOCATION_COORDINATES);
+                    prefEditor.putString("saved_location_name", myLocation.getLocationName());
+                    prefEditor.apply();
+
                     fetchDailyData();
                     fetchHourlyData();
                     fetchNowData();
@@ -202,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // Location viewModel stuff
         mMyLocationViewModel = ViewModelProviders.of(this).get(MyLocationViewModel.class);
-        //mMyLocationList = new ArrayList<>();
+        mMyLocationViewModel.getSpecificLocation().observe(this, location -> mMyLocationQuery = location);
         mMyLocationViewModel.getmAllLocations().observe(this, myLocationAdapter::setMyLocations);
     }
 
@@ -213,7 +219,23 @@ public class MainActivity extends AppCompatActivity implements
 
         if (haveLocationEnabled()) {
             // Get users location
-            findUserLocation();
+
+            // Simple location saved, change if have time
+            SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
+            String checkLocationCoordinates = preferencesLocation.getString("saved_location_coordinates", null);
+            String checkLocationName = preferencesLocation.getString("saved_location_name", null);
+
+            if(checkLocationName != null){
+                mMyLocationViewModel.queryForSpecifiedLocation(checkLocationName);
+            }
+
+            if(checkLocationCoordinates == null){
+                findUserLocation();
+            }else {
+                LOCATION_COORDINATES = checkLocationCoordinates;
+                mBinding.tvWeatherNowLocation.setText(checkLocationName);
+            }
+
 
         } else {
             mBinding.tvOffline.setVisibility(View.VISIBLE);
@@ -222,7 +244,6 @@ public class MainActivity extends AppCompatActivity implements
             // TODO: Add offline mode
             // TODO: Proper internet check
             // TODO: Swipe to change location
-            // TODO: Side menu with locations
             // TODO: Add backgroundImage (maybe from placePicker)
 
             // Such queries does not work

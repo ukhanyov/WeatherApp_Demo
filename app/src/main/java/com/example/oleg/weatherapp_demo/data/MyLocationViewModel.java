@@ -40,8 +40,11 @@ public class MyLocationViewModel extends AndroidViewModel {
         myLocationRepository.deleteSpecificMyLocation(name);
     }
 
-    public MutableLiveData<MyLocation> getSpecificLocation(String name) {
+    public void queryForSpecifiedLocation(String name){
         myLocationRepository.querySpecificMyLocation(name);
+    }
+
+    public MutableLiveData<MyLocation> getSpecificLocation() {
         return mSearchResult;
     }
 }
