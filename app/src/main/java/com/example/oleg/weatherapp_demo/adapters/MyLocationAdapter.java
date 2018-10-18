@@ -6,7 +6,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.oleg.weatherapp_demo.R;
@@ -18,20 +17,11 @@ public class MyLocationAdapter extends RecyclerView.Adapter<MyLocationAdapter.My
 
     private final LayoutInflater mInflater;
     private List<MyLocation> mMyLocations; // Cached copy of MyLocations
-    private Context mContext;
 
-    final private MyLocationAdapterOnClickHandler mClickHandler;
 
-    public MyLocationAdapter(Context context, MyLocationAdapterOnClickHandler clickHandler){
+    public MyLocationAdapter(Context context){
         mInflater = LayoutInflater.from(context);
-        mContext = context;
 
-        // Item click stuff
-        mClickHandler = clickHandler;
-    }
-
-    public interface MyLocationAdapterOnClickHandler{
-        void onClick(MyLocation id);
     }
 
     @NonNull
@@ -62,23 +52,19 @@ public class MyLocationAdapter extends RecyclerView.Adapter<MyLocationAdapter.My
         return 0;
     }
 
-    class MyLocationViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public MyLocation getItem(int position){
+        return mMyLocations.get(position);
+    }
+
+    class MyLocationViewHolder extends RecyclerView.ViewHolder {
 
         TextView locationName;
-        ImageButton deleteButton;
 
         MyLocationViewHolder(View view){
             super(view);
 
             locationName = view.findViewById(R.id.tv_location_item_name);
-            deleteButton = view.findViewById(R.id.ib_location_item_delete);
         }
 
-        @Override
-        public void onClick(View v) {
-            int adapterPosition = getAdapterPosition();
-            MyLocation myLocation = mMyLocations.get(adapterPosition);
-            mClickHandler.onClick(myLocation);
-        }
     }
 }

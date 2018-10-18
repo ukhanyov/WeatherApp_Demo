@@ -15,16 +15,21 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -62,10 +67,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+
 public class MainActivity extends AppCompatActivity implements
         // item click stuff
         WeatherAdapter.WeatherAdapterOnClickHandler,
-        WeatherHorizontalAdapter.WeatherHorizontalAdapterOnClickHandler, MyLocationAdapter.MyLocationAdapterOnClickHandler {
+        WeatherHorizontalAdapter.WeatherHorizontalAdapterOnClickHandler{
 
     //private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233?units=si&exclude=currently,minutely,hourly,flags";
     private ProgressBar progressBar;
@@ -81,6 +88,9 @@ public class MainActivity extends AppCompatActivity implements
 
     // Weather instance for weather now
     private Weather mWeatherNow;
+
+    // Nav drawer
+    DrawerLayout mDrawer;
 
     // MyLocation instance for location
     private MyLocation mMyLocation;
@@ -122,23 +132,53 @@ public class MainActivity extends AppCompatActivity implements
         mWeatherViewModel.getWeatherDailyByCoordinatesAndType().observe(this, adapter::setWeather);
         mWeatherViewModel.getWeatherHourlyByCoordinatesAndType().observe(this, horizontalAdapter::setWeather);
 
-        // Nav view stuff
-        DrawerLayout drawer = mBinding.navDrawer;
-
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this,
-                drawer,
-                null,
-                R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
         // Recycler view for nav drawer
-        final MyLocationAdapter myLocationAdapter = new MyLocationAdapter(this, this);
+        final MyLocationAdapter myLocationAdapter = new MyLocationAdapter(this);
         recyclerViewNavView.setAdapter(myLocationAdapter);
         recyclerViewNavView.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewNavView.setHasFixedSize(true);
+
+        // Nav view stuff
+        mDrawer = mBinding.navDrawer;
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this,
+                mDrawer,
+                null,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
+
+
+        final GestureDetector mGestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
+
+            @Override public boolean onSingleTapUp(MotionEvent e) {
+                return true;
+            }
+        });
+
+        recyclerViewNavView.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+
+                View child = recyclerView.findChildViewUnder(motionEvent.getX(),motionEvent.getY());
+
+                if(child!=null && mGestureDetector.onTouchEvent(motionEvent)){
+                    mDrawer.closeDrawers();
+
+                    MyLocation myLocation = myLocationAdapter.getItem(recyclerView.getChildAdapterPosition(child));
+
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+
+            }
+        });
+
+        toggle.syncState();
 
         // Location viewModel stuff
         mMyLocationViewModel = ViewModelProviders.of(this).get(MyLocationViewModel.class);
@@ -449,8 +489,8 @@ public class MainActivity extends AppCompatActivity implements
 
     public void currentWeatherClick(View view) {
 
-        if(mWeatherNow != null)
-        launchDetailsActivity(mWeatherNow);
+        if (mWeatherNow != null)
+            launchDetailsActivity(mWeatherNow);
 
     }
 
@@ -467,11 +507,6 @@ public class MainActivity extends AppCompatActivity implements
         };
         startDetailsActivity.putExtra(Intent.EXTRA_TEXT, data);
         startActivity(startDetailsActivity);
-    }
-
-    @Override
-    public void onClick(MyLocation id) {
-        Toast.makeText(this, "Location clicked: " + id.getLocationName(), Toast.LENGTH_SHORT).show();
     }
 
     // Get city name
