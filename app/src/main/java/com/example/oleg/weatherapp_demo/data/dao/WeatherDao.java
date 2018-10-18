@@ -24,8 +24,8 @@ public interface WeatherDao {
     @Query("DELETE FROM weather_table WHERE coordinates = :deleteString")
     void deleteWeatherByCoordinates(String deleteString);
 
-    @Query("DELETE FROM weather_table WHERE type_of_day = :deleteTypeString")
-    void deleteSpecificfWeatherByType(String deleteTypeString);
+    @Query("DELETE FROM weather_table WHERE type_of_day = :deleteTypeString AND coordinates = :deleteLocationString")
+    void deleteSpecificfWeatherByTypeAndLocation(String deleteTypeString, String deleteLocationString);
 
     @Query("SELECT * FROM weather_table ORDER BY date ASC")
     LiveData<List<Weather>> getAllWeather();

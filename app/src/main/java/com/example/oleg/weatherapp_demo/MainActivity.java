@@ -132,6 +132,13 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             mBinding.tvOffline.setVisibility(View.VISIBLE);
             mBinding.tvOffline.setText(R.string.offline_turn_on_location);
+
+            // TODO: Add offline mode
+            // TODO: Proper internet check
+
+            // Such queries does not work
+            //mWeatherViewModel.queryWeatherDailyByCoordinatesAndType(LOCATION_COORDINATES, Constants.DB_WEATHER_TYPE_DAILY);
+            //mWeatherViewModel.queryWeatherHourlyByCoordinatesAndType(LOCATION_COORDINATES, Constants.DB_WEATHER_TYPE_HOURLY);
         }
 
         if (haveNetworkConnection()) {
@@ -190,9 +197,7 @@ public class MainActivity extends AppCompatActivity implements
             data.put(Constants.QUERY_EXCLUDE, Constants.QUERY_EXCLUDE_ALL_BUT_DATE_ARRAY);
             Call<PJWeekly> parsedJSON = service.getAllWeather(Constants.ACCESS_KEY, LOCATION_COORDINATES, data);
 
-            // TODO : make proper deleteion query
-            mWeatherViewModel.deleteSpecificWeatherByType(Constants.DB_WEATHER_TYPE_DAILY);
-            //mWeatherViewModel.deleteWeatherByCoordinates(LOCATION_COORDINATES);
+            mWeatherViewModel.deleteSpecificWeatherByTypeAndCoordinates(Constants.DB_WEATHER_TYPE_DAILY, LOCATION_COORDINATES);
 
             parsedJSON.enqueue(new Callback<PJWeekly>() {
                 @Override
@@ -221,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements
                 @Override
                 public void onFailure(@NonNull Call<PJWeekly> call, @NonNull Throwable t) {
                     Log.d("Error: ", t.getMessage());
-                    Toast.makeText(MainActivity.this, "Oh no... Error fetching all data!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Oh no... Error fetching Daily data!", Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.INVISIBLE);
                 }
             });
@@ -238,9 +243,7 @@ public class MainActivity extends AppCompatActivity implements
             data.put(Constants.QUERY_EXCLUDE, Constants.QUERY_EXCLUDE_ALL_BUT_HOURLY_WEATHER);
             Call<PJHourly> parsedJSON = service.getHourlyWeather(Constants.ACCESS_KEY, LOCATION_COORDINATES, data);
 
-            // TODO : make proper deleteion query
-            mWeatherViewModel.deleteSpecificWeatherByType(Constants.DB_WEATHER_TYPE_HOURLY);
-            //mWeatherViewModel.deleteWeatherByCoordinates(LOCATION_COORDINATES);
+            mWeatherViewModel.deleteSpecificWeatherByTypeAndCoordinates(Constants.DB_WEATHER_TYPE_HOURLY, LOCATION_COORDINATES);
 
             parsedJSON.enqueue(new Callback<PJHourly>() {
                 @Override
@@ -313,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements
                 @Override
                 public void onFailure(@NonNull Call<PJCurrent> call, @NonNull Throwable t) {
                     Log.d("Error: ", t.getMessage());
-                    Toast.makeText(MainActivity.this, "Oh no... Error fetching today's data!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Oh no... Error fetching 'Now' data!", Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.INVISIBLE);
                 }
             });
@@ -418,6 +421,7 @@ public class MainActivity extends AppCompatActivity implements
 
     public void currentWeatherClick(View view) {
 
+        if(mWeatherNow != null)
         launchDetailsActivity(mWeatherNow);
 
     }

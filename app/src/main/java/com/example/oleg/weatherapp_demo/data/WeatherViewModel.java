@@ -14,7 +14,7 @@ import java.util.List;
 
 public class WeatherViewModel extends AndroidViewModel {
 
-    private WeatherDailyRepository mRepository;
+    private WeatherRepository mRepository;
     private LiveData<List<Weather>> mAllWeather;
     private LiveData<List<Weather>> mAllDailyWeather;
     private LiveData<List<Weather>> mAllHourlyWeather;
@@ -23,21 +23,13 @@ public class WeatherViewModel extends AndroidViewModel {
 
     public WeatherViewModel(@NonNull Application application) {
         super(application);
-        mRepository = new WeatherDailyRepository(application);
-        mAllWeather = mRepository.getAllWeather();
-        mAllDailyWeather = mRepository.getAllDailyWeather();
-        mAllHourlyWeather = mRepository.getAllHourlyWeather();
+        mRepository = new WeatherRepository(application);
+        //mAllWeather = mRepository.getAllWeather();
+        //mAllDailyWeather = mRepository.getAllDailyWeather();
+        //mAllHourlyWeather = mRepository.getAllHourlyWeather();
         mWeatherDailyCoordinatesAndType = mRepository.getSearchResultsDaily();
         mWeatherHourlyCoordinatesAndType = mRepository.getSearchResultsHourly();
     }
-
-    public LiveData<List<Weather>> getAllWeather() {
-        return mAllWeather;
-    }
-
-    public LiveData<List<Weather>> getAllDailyWeather() { return mAllDailyWeather; }
-
-    public LiveData<List<Weather>> getAllHourlyWeather() { return mAllHourlyWeather; }
 
     public void insert(Weather weather) {
         mRepository.insert(weather);
@@ -47,9 +39,7 @@ public class WeatherViewModel extends AndroidViewModel {
         mRepository.deleteAll();
     }
 
-    public void deleteWeatherByCoordinates(String deleteKey) {mRepository.deleteWeatherByCoordinates(deleteKey);}
-
-    public void deleteSpecificWeatherByType(String deleteKey) {mRepository.deleteSpecificWeatherByType(deleteKey);}
+    public void deleteSpecificWeatherByTypeAndCoordinates(String deleteKeyType, String deleteKeyCoordinates) {mRepository.deleteSpecificWeatherByTypeAndCoordinates(deleteKeyType, deleteKeyCoordinates);}
 
     public void queryWeatherDailyByCoordinatesAndType(String coordinates, String type){
         mRepository.queryDailyByCoordinatesAndType(coordinates, type);

@@ -1,11 +1,9 @@
 package com.example.oleg.weatherapp_demo.data;
 
 import android.app.Application;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
-import com.example.oleg.weatherapp_demo.Constants;
 import com.example.oleg.weatherapp_demo.data.dao.WeatherDao;
 import com.example.oleg.weatherapp_demo.data.entities.Weather;
 
@@ -13,21 +11,15 @@ import java.util.List;
 
 // Timeline 4
 
-public class WeatherDailyRepository implements AsyncResultWeatherDaily, AsyncResultWeatherHourly {
+public class WeatherRepository implements AsyncResultWeatherDaily, AsyncResultWeatherHourly {
 
     private WeatherDao mWeatherDao;
-    private LiveData<List<Weather>> mAllWeather;
-    private LiveData<List<Weather>> mAllDailyWeather;
-    private LiveData<List<Weather>> mAllHourlyWeather;
     private MutableLiveData<List<Weather>> searchResultsDaily = new MutableLiveData<>();
     private MutableLiveData<List<Weather>> searchResultsHourly = new MutableLiveData<>();
 
-    WeatherDailyRepository(Application application) {
+    WeatherRepository(Application application) {
         RoomDatabase db = RoomDatabase.getDatabase(application);
         mWeatherDao = db.weatherDao();
-        mAllWeather = mWeatherDao.getAllWeather();
-        mAllDailyWeather = mWeatherDao.getAllWeatherSpecifiedByDayType(Constants.DB_WEATHER_TYPE_DAILY);
-        mAllHourlyWeather = mWeatherDao.getAllWeatherSpecifiedByDayType(Constants.DB_WEATHER_TYPE_HOURLY);
     }
 
     @Override
@@ -38,18 +30,6 @@ public class WeatherDailyRepository implements AsyncResultWeatherDaily, AsyncRes
     @Override
     public void asyncFinishedHourly(List<Weather> result) {
         searchResultsHourly.setValue(result);
-    }
-
-    LiveData<List<Weather>> getAllWeather() {
-        return mAllWeather;
-    }
-
-    LiveData<List<Weather>> getAllHourlyWeather() {
-        return mAllHourlyWeather;
-    }
-
-    LiveData<List<Weather>> getAllDailyWeather() {
-        return mAllDailyWeather;
     }
 
     MutableLiveData<List<Weather>> getSearchResultsDaily() {
@@ -101,73 +81,26 @@ public class WeatherDailyRepository implements AsyncResultWeatherDaily, AsyncRes
         }
     }
 
-    void deleteWeatherByCoordinates(String deleteKey) {
-        new deleteWeatherByCoordinates(mWeatherDao).execute(deleteKey);
+    void deleteSpecificWeatherByTypeAndCoordinates(String deleteKeyType, String deleteKeyCoordinates){
+        new deleteSpecificWeatherByTypeAndCoordinatesAsyncTask(mWeatherDao).execute(deleteKeyType, deleteKeyCoordinates);
     }
 
-    private static class deleteWeatherByCoordinates extends AsyncTask<String, Void, Void> {
+    private static class deleteSpecificWeatherByTypeAndCoordinatesAsyncTask extends AsyncTask<String, Void, Void>{
 
         private WeatherDao mAsyncDao;
 
-        deleteWeatherByCoordinates(WeatherDao dao) {
+        deleteSpecificWeatherByTypeAndCoordinatesAsyncTask(WeatherDao dao){
             mAsyncDao = dao;
         }
 
         @Override
         protected Void doInBackground(String... strings) {
-            mAsyncDao.deleteWeatherByCoordinates(strings[0]);
-            return null;
-        }
-    }
-
-    void deleteSpecificWeatherByType(String deleteKey){
-        new deleteSpecificWeatherByType(mWeatherDao).execute(deleteKey);
-    }
-
-    private static class deleteSpecificWeatherByType extends AsyncTask<String, Void, Void>{
-
-        private WeatherDao mAsyncDao;
-
-        deleteSpecificWeatherByType(WeatherDao dao){
-            mAsyncDao = dao;
-        }
-
-        @Override
-        protected Void doInBackground(String... strings) {
-            mAsyncDao.deleteSpecificfWeatherByType(strings[0]);
+            mAsyncDao.deleteSpecificfWeatherByTypeAndLocation(strings[0], strings[1]);
             return null;
         }
     }
 
     // Query specific weather stuff
-
-//    void queryByName(String nameQueryKey) {
-//        queryByNameAsyncTask task = new queryByNameAsyncTask(mWeatherDao);
-//        task.delegate = this;
-//        task.execute(nameQueryKey);
-//
-//    }
-//
-//    private static class queryByNameAsyncTask extends AsyncTask<String, Void, List<Weather>> {
-//
-//        private WeatherDao mAsyncDao;
-//        private WeatherDailyRepository delegate = null;
-//
-//        queryByNameAsyncTask(WeatherDao dao) {
-//            mAsyncDao = dao;
-//        }
-//
-//        @Override
-//        protected List<Weather> doInBackground(String... strings) {
-//            return mAsyncDao.getSpecificWeatherEntry(strings[0]);
-//        }
-//
-//        @Override
-//        protected void onPostExecute(List<Weather> weathers) {
-//            delegate.asyncFinishedDaily(weathers);
-//        }
-//    }
-
     void queryDailyByCoordinatesAndType(String coordinates, String type) {
         getWeatherDailyByCoordinatesAndTypeAsyncTask task = new getWeatherDailyByCoordinatesAndTypeAsyncTask(mWeatherDao);
         task.delegate = this;
@@ -177,7 +110,7 @@ public class WeatherDailyRepository implements AsyncResultWeatherDaily, AsyncRes
     private static class getWeatherDailyByCoordinatesAndTypeAsyncTask extends AsyncTask<String, Void, List<Weather>>{
 
         private WeatherDao mAsyncDao;
-        private WeatherDailyRepository delegate = null;
+        private WeatherRepository delegate = null;
 
         getWeatherDailyByCoordinatesAndTypeAsyncTask(WeatherDao dao) { mAsyncDao = dao;}
 
@@ -201,7 +134,7 @@ public class WeatherDailyRepository implements AsyncResultWeatherDaily, AsyncRes
     private static class getWeatherHourlyByCoordinatesAndTypeAsyncTask extends AsyncTask<String, Void, List<Weather>>{
 
         private WeatherDao mAsyncDao;
-        private WeatherDailyRepository delegate = null;
+        private WeatherRepository delegate = null;
 
         getWeatherHourlyByCoordinatesAndTypeAsyncTask(WeatherDao dao) { mAsyncDao = dao;}
 
