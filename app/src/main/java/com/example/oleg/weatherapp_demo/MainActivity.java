@@ -28,6 +28,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.oleg.weatherapp_demo.adapters.MyLocationAdapter;
 import com.example.oleg.weatherapp_demo.adapters.WeatherAdapter;
 import com.example.oleg.weatherapp_demo.adapters.WeatherHorizontalAdapter;
 import com.example.oleg.weatherapp_demo.data.entities.MyLocation;
@@ -64,7 +65,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements
         // item click stuff
         WeatherAdapter.WeatherAdapterOnClickHandler,
-        WeatherHorizontalAdapter.WeatherHorizontalAdapterOnClickHandler {
+        WeatherHorizontalAdapter.WeatherHorizontalAdapterOnClickHandler, MyLocationAdapter.MyLocationAdapterOnClickHandler {
 
     //private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233?units=si&exclude=currently,minutely,hourly,flags";
     private ProgressBar progressBar;
@@ -98,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements
 
         RecyclerView recyclerViewVertical = mBinding.rvWeather;
         RecyclerView recyclerViewHorizontal = mBinding.rvWeatherHoryzontal;
+        RecyclerView recyclerViewNavView = mBinding.rvNavList;
         progressBar = mBinding.pbLoadingIndicator;
 
         // Second "this" is for item click
@@ -132,10 +134,16 @@ public class MainActivity extends AppCompatActivity implements
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        // Recycler view for nav drawer
+        final MyLocationAdapter myLocationAdapter = new MyLocationAdapter(this, this);
+        recyclerViewNavView.setAdapter(myLocationAdapter);
+        recyclerViewNavView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewNavView.setHasFixedSize(true);
+
         // Location viewModel stuff
         mMyLocationViewModel = ViewModelProviders.of(this).get(MyLocationViewModel.class);
-        mMyLocationList = new ArrayList<>();
-        mMyLocationViewModel.getmAllLocations().observe(this, mMyLocationList::addAll);
+        //mMyLocationList = new ArrayList<>();
+        mMyLocationViewModel.getmAllLocations().observe(this, myLocationAdapter::setMyLocations);
     }
 
     @Override
@@ -459,6 +467,11 @@ public class MainActivity extends AppCompatActivity implements
         };
         startDetailsActivity.putExtra(Intent.EXTRA_TEXT, data);
         startActivity(startDetailsActivity);
+    }
+
+    @Override
+    public void onClick(MyLocation id) {
+        Toast.makeText(this, "Location clicked: " + id.getLocationName(), Toast.LENGTH_SHORT).show();
     }
 
     // Get city name
