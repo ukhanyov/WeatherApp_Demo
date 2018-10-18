@@ -5,6 +5,9 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
+import com.example.oleg.weatherapp_demo.data.dao.MyLocationDao;
+import com.example.oleg.weatherapp_demo.data.entities.MyLocation;
+
 import java.util.List;
 
 public class MyLocationRepository implements AsyncResultMyLocation{

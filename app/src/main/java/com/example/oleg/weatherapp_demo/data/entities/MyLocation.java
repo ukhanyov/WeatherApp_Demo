@@ -1,4 +1,4 @@
-package com.example.oleg.weatherapp_demo.data;
+package com.example.oleg.weatherapp_demo.data.entities;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;

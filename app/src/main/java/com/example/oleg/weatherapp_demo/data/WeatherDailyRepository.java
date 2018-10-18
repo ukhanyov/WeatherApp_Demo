@@ -6,20 +6,23 @@ import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
 import com.example.oleg.weatherapp_demo.Constants;
+import com.example.oleg.weatherapp_demo.data.dao.WeatherDao;
+import com.example.oleg.weatherapp_demo.data.entities.Weather;
 
 import java.util.List;
 
 // Timeline 4
 
-public class WeatherRepository implements AsyncResultWeather {
+public class WeatherDailyRepository implements AsyncResultWeatherDaily, AsyncResultWeatherHourly {
 
     private WeatherDao mWeatherDao;
     private LiveData<List<Weather>> mAllWeather;
     private LiveData<List<Weather>> mAllDailyWeather;
     private LiveData<List<Weather>> mAllHourlyWeather;
-    private MutableLiveData<List<Weather>> searchResults = new MutableLiveData<>();
+    private MutableLiveData<List<Weather>> searchResultsDaily = new MutableLiveData<>();
+    private MutableLiveData<List<Weather>> searchResultsHourly = new MutableLiveData<>();
 
-    WeatherRepository(Application application) {
+    WeatherDailyRepository(Application application) {
         RoomDatabase db = RoomDatabase.getDatabase(application);
         mWeatherDao = db.weatherDao();
         mAllWeather = mWeatherDao.getAllWeather();
@@ -28,8 +31,13 @@ public class WeatherRepository implements AsyncResultWeather {
     }
 
     @Override
-    public void asyncFinished(List<Weather> result) {
-        searchResults.setValue(result);
+    public void asyncFinishedDaily(List<Weather> result) {
+        searchResultsDaily.setValue(result);
+    }
+
+    @Override
+    public void asyncFinishedHourly(List<Weather> result) {
+        searchResultsHourly.setValue(result);
     }
 
     LiveData<List<Weather>> getAllWeather() {
@@ -44,8 +52,12 @@ public class WeatherRepository implements AsyncResultWeather {
         return mAllDailyWeather;
     }
 
-    MutableLiveData<List<Weather>> getSearchResults() {
-        return searchResults;
+    MutableLiveData<List<Weather>> getSearchResultsDaily() {
+        return searchResultsDaily;
+    }
+
+    MutableLiveData<List<Weather>> getSearchResultsHourly(){
+        return searchResultsHourly;
     }
 
     // Insert stuff
@@ -128,45 +140,46 @@ public class WeatherRepository implements AsyncResultWeather {
     }
 
     // Query specific weather stuff
-    void queryByName(String nameQueryKey) {
-        queryByNameAsyncTask task = new queryByNameAsyncTask(mWeatherDao);
-        task.delegate = this;
-        task.execute(nameQueryKey);
 
-    }
+//    void queryByName(String nameQueryKey) {
+//        queryByNameAsyncTask task = new queryByNameAsyncTask(mWeatherDao);
+//        task.delegate = this;
+//        task.execute(nameQueryKey);
+//
+//    }
+//
+//    private static class queryByNameAsyncTask extends AsyncTask<String, Void, List<Weather>> {
+//
+//        private WeatherDao mAsyncDao;
+//        private WeatherDailyRepository delegate = null;
+//
+//        queryByNameAsyncTask(WeatherDao dao) {
+//            mAsyncDao = dao;
+//        }
+//
+//        @Override
+//        protected List<Weather> doInBackground(String... strings) {
+//            return mAsyncDao.getSpecificWeatherEntry(strings[0]);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(List<Weather> weathers) {
+//            delegate.asyncFinishedDaily(weathers);
+//        }
+//    }
 
-    private static class queryByNameAsyncTask extends AsyncTask<String, Void, List<Weather>> {
-
-        private WeatherDao mAsyncDao;
-        private WeatherRepository delegate = null;
-
-        queryByNameAsyncTask(WeatherDao dao) {
-            mAsyncDao = dao;
-        }
-
-        @Override
-        protected List<Weather> doInBackground(String... strings) {
-            return mAsyncDao.getSpecificWeatherEntry(strings[0]);
-        }
-
-        @Override
-        protected void onPostExecute(List<Weather> weathers) {
-            delegate.asyncFinished(weathers);
-        }
-    }
-
-    void queryByCoordinatesAndType(String coordinates, String type) {
-        getWeatherByCoordinatesAndTypeAsyncTask task = new getWeatherByCoordinatesAndTypeAsyncTask(mWeatherDao);
+    void queryDailyByCoordinatesAndType(String coordinates, String type) {
+        getWeatherDailyByCoordinatesAndTypeAsyncTask task = new getWeatherDailyByCoordinatesAndTypeAsyncTask(mWeatherDao);
         task.delegate = this;
         task.execute(coordinates, type);
     }
 
-    private static class getWeatherByCoordinatesAndTypeAsyncTask extends AsyncTask<String, Void, List<Weather>>{
+    private static class getWeatherDailyByCoordinatesAndTypeAsyncTask extends AsyncTask<String, Void, List<Weather>>{
 
         private WeatherDao mAsyncDao;
-        private WeatherRepository delegate = null;
+        private WeatherDailyRepository delegate = null;
 
-        getWeatherByCoordinatesAndTypeAsyncTask(WeatherDao dao) { mAsyncDao = dao;}
+        getWeatherDailyByCoordinatesAndTypeAsyncTask(WeatherDao dao) { mAsyncDao = dao;}
 
         @Override
         protected List<Weather> doInBackground(String... strings) {
@@ -175,7 +188,31 @@ public class WeatherRepository implements AsyncResultWeather {
 
         @Override
         protected void onPostExecute(List<Weather> weathers) {
-            delegate.asyncFinished(weathers);
+            delegate.asyncFinishedDaily(weathers);
+        }
+    }
+
+    void queryHourlyByCoordinatesAndType(String coordinates, String type) {
+        getWeatherHourlyByCoordinatesAndTypeAsyncTask task = new getWeatherHourlyByCoordinatesAndTypeAsyncTask(mWeatherDao);
+        task.delegate = this;
+        task.execute(coordinates, type);
+    }
+
+    private static class getWeatherHourlyByCoordinatesAndTypeAsyncTask extends AsyncTask<String, Void, List<Weather>>{
+
+        private WeatherDao mAsyncDao;
+        private WeatherDailyRepository delegate = null;
+
+        getWeatherHourlyByCoordinatesAndTypeAsyncTask(WeatherDao dao) { mAsyncDao = dao;}
+
+        @Override
+        protected List<Weather> doInBackground(String... strings) {
+            return mAsyncDao.getAllWeatherByCoordinatesAndType(strings[0], strings[1]);
+        }
+
+        @Override
+        protected void onPostExecute(List<Weather> weathers) {
+            delegate.asyncFinishedHourly(weathers);
         }
     }
 }

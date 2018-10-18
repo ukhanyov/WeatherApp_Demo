@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.oleg.weatherapp_demo.data.Weather;
+import com.example.oleg.weatherapp_demo.data.entities.Weather;
 import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 

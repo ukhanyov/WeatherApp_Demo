@@ -1,6 +1,6 @@
 package com.example.oleg.weatherapp_demo.data;
 
-import java.util.List;
+import com.example.oleg.weatherapp_demo.data.entities.MyLocation;
 
 public interface AsyncResultMyLocation {
     void asyncFinished(MyLocation result);

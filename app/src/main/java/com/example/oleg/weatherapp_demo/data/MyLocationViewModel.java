@@ -6,6 +6,8 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
+import com.example.oleg.weatherapp_demo.data.entities.MyLocation;
+
 import java.util.List;
 
 public class MyLocationViewModel extends AndroidViewModel {

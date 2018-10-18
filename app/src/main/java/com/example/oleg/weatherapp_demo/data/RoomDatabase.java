@@ -6,6 +6,11 @@ import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 
+import com.example.oleg.weatherapp_demo.data.dao.MyLocationDao;
+import com.example.oleg.weatherapp_demo.data.dao.WeatherDao;
+import com.example.oleg.weatherapp_demo.data.entities.MyLocation;
+import com.example.oleg.weatherapp_demo.data.entities.Weather;
+
 @Database(entities = {Weather.class, MyLocation.class}, version = 5)
 public abstract class RoomDatabase extends android.arch.persistence.room.RoomDatabase {
 

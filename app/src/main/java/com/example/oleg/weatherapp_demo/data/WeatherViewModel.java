@@ -6,25 +6,29 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
+import com.example.oleg.weatherapp_demo.data.entities.Weather;
+
 import java.util.List;
 
 // Timeline 5
 
 public class WeatherViewModel extends AndroidViewModel {
 
-    private WeatherRepository mRepository;
+    private WeatherDailyRepository mRepository;
     private LiveData<List<Weather>> mAllWeather;
     private LiveData<List<Weather>> mAllDailyWeather;
     private LiveData<List<Weather>> mAllHourlyWeather;
-    private MutableLiveData<List<Weather>> mWeatherCoordinatesAndType;
+    private MutableLiveData<List<Weather>> mWeatherDailyCoordinatesAndType;
+    private MutableLiveData<List<Weather>> mWeatherHourlyCoordinatesAndType;
 
     public WeatherViewModel(@NonNull Application application) {
         super(application);
-        mRepository = new WeatherRepository(application);
+        mRepository = new WeatherDailyRepository(application);
         mAllWeather = mRepository.getAllWeather();
         mAllDailyWeather = mRepository.getAllDailyWeather();
         mAllHourlyWeather = mRepository.getAllHourlyWeather();
-        mWeatherCoordinatesAndType = mRepository.getSearchResults();
+        mWeatherDailyCoordinatesAndType = mRepository.getSearchResultsDaily();
+        mWeatherHourlyCoordinatesAndType = mRepository.getSearchResultsHourly();
     }
 
     public LiveData<List<Weather>> getAllWeather() {
@@ -47,12 +51,20 @@ public class WeatherViewModel extends AndroidViewModel {
 
     public void deleteSpecificWeatherByType(String deleteKey) {mRepository.deleteSpecificWeatherByType(deleteKey);}
 
-    public void queryWeatherByCoordinatesAndType(String coordinates, String type){
-        mRepository.queryByCoordinatesAndType(coordinates, type);
+    public void queryWeatherDailyByCoordinatesAndType(String coordinates, String type){
+        mRepository.queryDailyByCoordinatesAndType(coordinates, type);
     }
 
-    public MutableLiveData<List<Weather>> getWeatherByCoordinatesAndType(){
-        return mWeatherCoordinatesAndType;
+    public MutableLiveData<List<Weather>> getWeatherDailyByCoordinatesAndType(){
+        return mWeatherDailyCoordinatesAndType;
+    }
+
+    public void queryWeatherHourlyByCoordinatesAndType(String coordinates, String type){
+        mRepository.queryHourlyByCoordinatesAndType(coordinates, type);
+    }
+
+    public MutableLiveData<List<Weather>> getWeatherHourlyByCoordinatesAndType(){
+        return mWeatherDailyCoordinatesAndType;
     }
 
 }
