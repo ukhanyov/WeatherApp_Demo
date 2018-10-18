@@ -15,18 +15,12 @@ import java.util.List;
 public class WeatherViewModel extends AndroidViewModel {
 
     private WeatherRepository mRepository;
-    private LiveData<List<Weather>> mAllWeather;
-    private LiveData<List<Weather>> mAllDailyWeather;
-    private LiveData<List<Weather>> mAllHourlyWeather;
     private MutableLiveData<List<Weather>> mWeatherDailyCoordinatesAndType;
     private MutableLiveData<List<Weather>> mWeatherHourlyCoordinatesAndType;
 
     public WeatherViewModel(@NonNull Application application) {
         super(application);
         mRepository = new WeatherRepository(application);
-        //mAllWeather = mRepository.getAllWeather();
-        //mAllDailyWeather = mRepository.getAllDailyWeather();
-        //mAllHourlyWeather = mRepository.getAllHourlyWeather();
         mWeatherDailyCoordinatesAndType = mRepository.getSearchResultsDaily();
         mWeatherHourlyCoordinatesAndType = mRepository.getSearchResultsHourly();
     }

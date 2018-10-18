@@ -1,4 +1,4 @@
-package com.example.oleg.weatherapp_demo;
+package com.example.oleg.weatherapp_demo.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.oleg.weatherapp_demo.R;
 import com.example.oleg.weatherapp_demo.data.entities.Weather;
 import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
@@ -24,7 +25,7 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
     // Item click stuff
     private final WeatherHorizontalAdapter.WeatherHorizontalAdapterOnClickHandler mClickHandler;
 
-    WeatherHorizontalAdapter(Context context, WeatherHorizontalAdapterOnClickHandler clickHandler) {
+    public WeatherHorizontalAdapter(Context context, WeatherHorizontalAdapterOnClickHandler clickHandler) {
         mInflater = LayoutInflater.from(context);
         mContext = context;
 
@@ -74,7 +75,7 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
         }
     }
 
-    void setWeather(List<Weather> weather){
+    public void setWeather(List<Weather> weather){
         mWeather = weather;
         notifyDataSetChanged();
     }

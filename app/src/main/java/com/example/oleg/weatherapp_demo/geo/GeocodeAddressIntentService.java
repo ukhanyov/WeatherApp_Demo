@@ -6,11 +6,10 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.ResultReceiver;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.example.oleg.weatherapp_demo.Constants;
+import com.example.oleg.weatherapp_demo.utils.Constants;
 
 import java.io.IOException;
 import java.util.ArrayList;

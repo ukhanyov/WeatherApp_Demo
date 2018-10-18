@@ -3,9 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <FrameLayout
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/nav_drawer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        tools:openDrawer="start">
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/cl_weather_now"
@@ -205,6 +208,13 @@
 
         </android.support.constraint.ConstraintLayout>
 
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_navList"
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="left|start"
+            android:background="#ffeeeeee" />
+
         <ProgressBar
             android:id="@+id/pb_loading_indicator"
             style="?android:attr/progressBarStyleLarge"
@@ -216,5 +226,6 @@
             android:indeterminateTint="#1a09d6"
             android:max="100" />
 
-    </FrameLayout>
+    </android.support.v4.widget.DrawerLayout>
+
 </layout>

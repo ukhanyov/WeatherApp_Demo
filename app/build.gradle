@@ -61,4 +61,9 @@ dependencies {
 
     // PlacePicker
     implementation 'com.google.android.gms:play-services-places:16.0.0'
+
+    //Side menu (navigation drawer)
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
+
 }

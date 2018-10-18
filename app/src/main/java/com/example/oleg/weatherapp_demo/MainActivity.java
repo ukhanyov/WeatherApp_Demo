@@ -16,6 +16,8 @@ import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +28,8 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.oleg.weatherapp_demo.adapters.WeatherAdapter;
+import com.example.oleg.weatherapp_demo.adapters.WeatherHorizontalAdapter;
 import com.example.oleg.weatherapp_demo.data.entities.MyLocation;
 import com.example.oleg.weatherapp_demo.data.MyLocationViewModel;
 import com.example.oleg.weatherapp_demo.data.entities.Weather;
@@ -39,6 +43,7 @@ import com.example.oleg.weatherapp_demo.network.pojo.PJHourlyInstance;
 import com.example.oleg.weatherapp_demo.network.pojo.PJWeekly;
 import com.example.oleg.weatherapp_demo.network.pojo.PJWeeklySpecificDay;
 import com.example.oleg.weatherapp_demo.network.retrofit.RetrofitWeatherInstance;
+import com.example.oleg.weatherapp_demo.utils.Constants;
 import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -65,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements
     private ProgressBar progressBar;
     private WeatherViewModel mWeatherViewModel;
     private MyLocationViewModel mMyLocationViewModel;
+    private DrawerLayout mDrawerLayout;
 
     // Fancy dataBinding
     ActivityMainBinding mBinding;
@@ -114,6 +120,18 @@ public class MainActivity extends AppCompatActivity implements
         mWeatherViewModel.getWeatherDailyByCoordinatesAndType().observe(this, adapter::setWeather);
         mWeatherViewModel.getWeatherHourlyByCoordinatesAndType().observe(this, horizontalAdapter::setWeather);
 
+        // Nav view stuff
+        DrawerLayout drawer = mBinding.navDrawer;
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this,
+                drawer,
+                null,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
         // Location viewModel stuff
         mMyLocationViewModel = ViewModelProviders.of(this).get(MyLocationViewModel.class);
         mMyLocationList = new ArrayList<>();
@@ -135,6 +153,8 @@ public class MainActivity extends AppCompatActivity implements
 
             // TODO: Add offline mode
             // TODO: Proper internet check
+            // TODO: Swipe to change location
+            // TODO: Side menu with locations
 
             // Such queries does not work
             //mWeatherViewModel.queryWeatherDailyByCoordinatesAndType(LOCATION_COORDINATES, Constants.DB_WEATHER_TYPE_DAILY);
