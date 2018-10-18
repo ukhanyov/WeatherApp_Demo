@@ -64,7 +64,7 @@ public class WeatherViewModel extends AndroidViewModel {
     }
 
     public MutableLiveData<List<Weather>> getWeatherHourlyByCoordinatesAndType(){
-        return mWeatherDailyCoordinatesAndType;
+        return mWeatherHourlyCoordinatesAndType;
     }
 
 }

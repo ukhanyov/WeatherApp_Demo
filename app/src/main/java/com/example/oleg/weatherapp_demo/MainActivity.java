@@ -57,8 +57,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements
-        // item click shit
-        WeatherAdapter.WeatherAdapterOnClickHandler, WeatherHorizontalAdapter.WeatherHorizontalAdapterOnClickHandler {
+        // item click stuff
+        WeatherAdapter.WeatherAdapterOnClickHandler,
+        WeatherHorizontalAdapter.WeatherHorizontalAdapterOnClickHandler {
 
     //private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233?units=si&exclude=currently,minutely,hourly,flags";
     private ProgressBar progressBar;
@@ -70,11 +71,6 @@ public class MainActivity extends AppCompatActivity implements
 
     // Get city name
     AddressResultReceiver mResultReceiver;
-
-    private List<Weather> mWeatherList;
-    private List<Weather> mHourlyWeatherList;
-    private List<Weather> mWeatherListSpecificDaily;
-    private List<Weather> mWeatherListSpecificHourly;
 
     // Weather instance for weather now
     private Weather mWeatherNow;
@@ -115,19 +111,8 @@ public class MainActivity extends AppCompatActivity implements
 
         // LiveData/viewModels
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
-        //mWeatherViewModel.getAllDailyWeather().observe(this, adapter::setWeather);
         mWeatherViewModel.getWeatherDailyByCoordinatesAndType().observe(this, adapter::setWeather);
-
-        mWeatherList = new ArrayList<>();
-        mWeatherViewModel.getAllDailyWeather().observe(this, mWeatherList::addAll);
-
-        //mWeatherViewModel.getAllHourlyWeather().observe(this, horizontalAdapter::setWeather);
         mWeatherViewModel.getWeatherHourlyByCoordinatesAndType().observe(this, horizontalAdapter::setWeather);
-
-        // TODO: Add another one mutable data for hourly fetches
-        // TODO: Replace assigments to adapter with specific data
-        //mWeatherListSpecificDaily = new ArrayList<>();
-        //mWeatherViewModel.getWeatherDailyByCoordinatesAndType().observe(this, mWeatherListSpecificDaily::addAll);
 
         // Location viewModel stuff
         mMyLocationViewModel = ViewModelProviders.of(this).get(MyLocationViewModel.class);
@@ -391,9 +376,7 @@ public class MainActivity extends AppCompatActivity implements
                 return true;
 
             case R.id.action_check:
-                List<Weather> custom = new ArrayList<>();
-                custom.addAll(mWeatherListSpecificDaily);
-                Toast.makeText(this, custom.get(0).getSummary(), Toast.LENGTH_SHORT).show();
+                Log.v(this.getClass().getSimpleName(), "Action check clicked");
                 return true;
 
             default:
@@ -434,19 +417,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void currentWeatherClick(View view) {
-        if (mWeatherList.isEmpty()) {
-            return;
-        }
 
-        for (Weather instance : mWeatherList) {
-            if (NormalizeDate.checkIfItIsToday(
-                    NormalizeDate.getHumanFriendlyDateFromDB(
-                            Long.parseLong(instance.getDate())
-                    ))) {
-                launchDetailsActivity(instance);
-                return;
-            }
-        }
+        launchDetailsActivity(mWeatherNow);
+
     }
 
     private void launchDetailsActivity(Weather weather) {
