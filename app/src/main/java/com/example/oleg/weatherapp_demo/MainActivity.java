@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
         toggle.syncState();
+
         recyclerViewNavView.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
@@ -162,6 +163,12 @@ public class MainActivity extends AppCompatActivity implements
                     mDrawer.closeDrawers();
 
                     MyLocation myLocation = myLocationAdapter.getItem(recyclerView.getChildAdapterPosition(child));
+                    LOCATION_COORDINATES = myLocation.getLocationCoordinates();
+
+                    fetchDailyData();
+                    fetchHourlyData();
+                    fetchNowData();
+                    mBinding.tvWeatherNowLocation.setText(myLocation.getLocationName());
 
                     return true;
                 }
@@ -174,6 +181,7 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
+        // Swipe to delete from locations list
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
 
@@ -184,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 //Remove swiped item from list and notify the RecyclerView
                 myLocationAdapter.notifyItemRemoved(viewHolder.getLayoutPosition());
-                // this is wanky, think arround later
+                // this is wanky, think around later
                 MyLocation myLocation = myLocationAdapter.getItem(viewHolder.getLayoutPosition());
                 mMyLocationViewModel.deleteSpecificLocation(myLocation.getLocationName());
             }
@@ -215,6 +223,7 @@ public class MainActivity extends AppCompatActivity implements
             // TODO: Proper internet check
             // TODO: Swipe to change location
             // TODO: Side menu with locations
+            // TODO: Add backgroundImage (maybe from placePicker)
 
             // Such queries does not work
             //mWeatherViewModel.queryWeatherDailyByCoordinatesAndType(LOCATION_COORDINATES, Constants.DB_WEATHER_TYPE_DAILY);
