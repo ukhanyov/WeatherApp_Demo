@@ -87,9 +87,13 @@ public class MainActivity extends AppCompatActivity implements
     DrawerLayout mDrawer;
 
     // MyLocation instance for location
-    private MyLocation mMyLocationQuery;
+    //private MyLocation mMyLocationQuery;
 
     private String LOCATION_COORDINATES = "37.8267,-122.4233";
+
+    // Swipe screen stuff
+    private float x1,x2;
+    static final int MIN_DISTANCE = 150;
 
 
     @Override
@@ -217,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // Location viewModel stuff
         mMyLocationViewModel = ViewModelProviders.of(this).get(MyLocationViewModel.class);
-        mMyLocationViewModel.getSpecificLocation().observe(this, location -> mMyLocationQuery = location);
+        //mMyLocationViewModel.getSpecificLocation().observe(this, location -> mMyLocationQuery = location);
         mMyLocationViewModel.getmAllLocations().observe(this, myLocationAdapter::setMyLocations);
     }
 
@@ -234,9 +238,9 @@ public class MainActivity extends AppCompatActivity implements
             String checkLocationCoordinates = preferencesLocation.getString("saved_location_coordinates", null);
             String checkLocationName = preferencesLocation.getString("saved_location_name", null);
 
-            if(checkLocationName != null){
-                mMyLocationViewModel.queryForSpecifiedLocation(checkLocationName);
-            }
+//            if(checkLocationName != null){
+//                mMyLocationViewModel.queryForSpecifiedLocation(checkLocationName);
+//            }
 
             if(checkLocationCoordinates == null){
                 findUserLocation();
@@ -274,6 +278,84 @@ public class MainActivity extends AppCompatActivity implements
             mBinding.tvOffline.setVisibility(View.VISIBLE);
             mBinding.tvOffline.setText(R.string.offline_turn_on_internet);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (item.getItemId()) {
+            case R.id.action_drop_table:
+                cleanViews();
+                return true;
+
+            case R.id.action_refresh_table:
+                cleanViews();
+                fetchNowData();
+                fetchDailyData();
+                fetchHourlyData();
+                return true;
+
+            case R.id.action_add_location:
+                // Start picking place on the map
+                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                try {
+                    startActivityForResult(builder.build(this), Constants.PLACE_PICKER_REQUEST_FOR_LOCATION);
+                } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+                    e.printStackTrace();
+                }
+                return true;
+
+            case R.id.action_check:
+                Log.v(this.getClass().getSimpleName(), "Action check clicked");
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.PLACE_PICKER_REQUEST_FOR_LOCATION) {
+            if (resultCode == RESULT_OK) {
+                cleanViews();
+                Place place = PlacePicker.getPlace(this, data);
+
+                LOCATION_COORDINATES = String.valueOf(place.getLatLng().latitude) + "," +
+                        String.valueOf(place.getLatLng().longitude);
+
+                mResultReceiver = new AddressResultReceiver(null);
+                Intent intent = new Intent(this, GeocodeAddressIntentService.class);
+                intent.putExtra(Constants.RECEIVER, mResultReceiver);
+                intent.putExtra(Constants.FETCH_TYPE_EXTRA, Constants.USE_ADDRESS_LOCATION);
+                intent.putExtra(Constants.LOCATION_LATITUDE_DATA_EXTRA, place.getLatLng().latitude);
+                intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, place.getLatLng().longitude);
+                startService(intent);
+
+                fetchNowData();
+                fetchHourlyData();
+                fetchDailyData();
+
+                SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
+                SharedPreferences.Editor prefEditor = preferencesLocation.edit();
+                prefEditor.clear();
+                prefEditor.putString("saved_location_coordinates", LOCATION_COORDINATES);
+                prefEditor.apply();
+            }
+        }
+    }
+
+    @Override
+    public void onClick(Weather weather) {
+        launchDetailsActivity(weather);
     }
 
     private void findUserLocation() {
@@ -463,85 +545,6 @@ public class MainActivity extends AppCompatActivity implements
             mBinding.tvWeatherNowHumidity.setText(getString(R.string.weather_now_humidity_level,
                     weather.getHumidity()));
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        switch (item.getItemId()) {
-            case R.id.action_drop_table:
-                cleanViews();
-                return true;
-
-            case R.id.action_refresh_table:
-                cleanViews();
-                fetchNowData();
-                fetchDailyData();
-                fetchHourlyData();
-                return true;
-
-            case R.id.action_add_location:
-                // Start picking place on the map
-                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                try {
-                    startActivityForResult(builder.build(this), Constants.PLACE_PICKER_REQUEST_FOR_LOCATION);
-                } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
-                    e.printStackTrace();
-                }
-                return true;
-
-            case R.id.action_check:
-                Log.v(this.getClass().getSimpleName(), "Action check clicked");
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.PLACE_PICKER_REQUEST_FOR_LOCATION) {
-            if (resultCode == RESULT_OK) {
-                cleanViews();
-                Place place = PlacePicker.getPlace(this, data);
-
-                LOCATION_COORDINATES = String.valueOf(place.getLatLng().latitude) + "," +
-                        String.valueOf(place.getLatLng().longitude);
-
-                mResultReceiver = new AddressResultReceiver(null);
-                Intent intent = new Intent(this, GeocodeAddressIntentService.class);
-                intent.putExtra(Constants.RECEIVER, mResultReceiver);
-                intent.putExtra(Constants.FETCH_TYPE_EXTRA, Constants.USE_ADDRESS_LOCATION);
-                intent.putExtra(Constants.LOCATION_LATITUDE_DATA_EXTRA, place.getLatLng().latitude);
-                intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, place.getLatLng().longitude);
-                startService(intent);
-
-                fetchNowData();
-                fetchHourlyData();
-                fetchDailyData();
-
-                SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
-                SharedPreferences.Editor prefEditor = preferencesLocation.edit();
-                prefEditor.clear();
-                prefEditor.putString("saved_location_coordinates", LOCATION_COORDINATES);
-                prefEditor.apply();
-            }
-        }
-    }
-
-    // Item click, obviously
-    @Override
-    public void onClick(Weather weather) {
-        launchDetailsActivity(weather);
     }
 
     public void currentWeatherClick(View view) {
