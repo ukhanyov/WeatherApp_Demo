@@ -51,7 +51,7 @@ import com.example.oleg.weatherapp_demo.network.retrofit.GetDataService;
 import com.example.oleg.weatherapp_demo.network.retrofit.RetrofitWeatherInstance;
 import com.example.oleg.weatherapp_demo.utils.Constants;
 import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
-import com.example.oleg.weatherapp_demo.utils.OnSwipeTouchListener;
+import com.example.oleg.weatherapp_demo.utils.CustomOnSwipeTouchListener;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -221,78 +221,63 @@ public class MainActivity extends AppCompatActivity implements
 
         // Location viewModel stuff
         mMyLocationViewModel = ViewModelProviders.of(this).get(MyLocationViewModel.class);
-        mMyLocationViewModel.getAllLocations().observe(this, myLocationAdapter::setMyLocations);
         mMyLocationsList = new ArrayList<>();
-        mMyLocationViewModel.getAllLocations().observe(this,mMyLocationsList::addAll);
+        mMyLocationViewModel.getAllLocations().observe(this, mMyLocationsList::addAll);
+        mMyLocationViewModel.getAllLocations().observe(this, myLocationAdapter::setMyLocations);
 
 
         // Swipes on screen
-        mBinding.clWeatherNow.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
+        mBinding.clWeatherNow.setOnTouchListener(new CustomOnSwipeTouchListener(MainActivity.this) {
             public void onSwipeRight() {
 
-                int position = 0;
-                boolean assigned = false;
-
                 for(MyLocation location : mMyLocationsList){
+
                     if(Objects.equals(location.getLocationCoordinates(), LOCATION_COORDINATES)){
-                        position = mMyLocationsList.indexOf(location);
-                        assigned = true;
+                        int position = mMyLocationsList.indexOf(location);
+                        if(position < mMyLocationsList.size() - 1){
+
+                            LOCATION_COORDINATES = mMyLocationsList.get(position + 1).getLocationCoordinates();
+                            mBinding.tvWeatherNowLocation.setText(mMyLocationsList.get(position + 1).getLocationName());
+
+                            fetchNowData();
+                            fetchHourlyData();
+                            fetchDailyData();
+
+                            SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
+                            SharedPreferences.Editor prefEditor = preferencesLocation.edit();
+                            prefEditor.clear();
+                            prefEditor.putString("saved_location_coordinates", LOCATION_COORDINATES);
+                            prefEditor.putString("saved_location_name", mMyLocationsList.get(position + 1).getLocationName());
+                            prefEditor.apply();
+
+                        }
                     }
-                }
-
-                if(assigned && position < mMyLocationsList.size() - 1){
-
-                    progressBar.setVisibility(View.VISIBLE);
-
-                    LOCATION_COORDINATES = mMyLocationsList.get(position + 1).getLocationCoordinates();
-
-                    mBinding.tvWeatherNowLocation.setText(mMyLocationsList.get(position + 1).getLocationName());
-
-                    fetchNowData();
-                    fetchHourlyData();
-                    fetchDailyData();
-
-                    SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
-                    SharedPreferences.Editor prefEditor = preferencesLocation.edit();
-                    prefEditor.clear();
-                    prefEditor.putString("saved_location_coordinates", LOCATION_COORDINATES);
-                    prefEditor.putString("saved_location_name", mMyLocationsList.get(position + 1).getLocationName());
-                    prefEditor.apply();
-
-                    progressBar.setVisibility(View.INVISIBLE);
                 }
             }
             public void onSwipeLeft() {
-                int position = 0;
-                boolean assigned = false;
 
                 for(MyLocation location : mMyLocationsList){
+
                     if(Objects.equals(location.getLocationCoordinates(), LOCATION_COORDINATES)){
-                        position = mMyLocationsList.indexOf(location);
-                        assigned = true;
+                        int position = mMyLocationsList.indexOf(location);
+                        if(position >= 0){
+
+                            LOCATION_COORDINATES = mMyLocationsList.get(position - 1).getLocationCoordinates();
+                            mBinding.tvWeatherNowLocation.setText(mMyLocationsList.get(position - 1).getLocationName());
+
+                            fetchNowData();
+                            fetchHourlyData();
+                            fetchDailyData();
+
+                            SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
+                            SharedPreferences.Editor prefEditor = preferencesLocation.edit();
+                            prefEditor.clear();
+                            prefEditor.putString("saved_location_coordinates", LOCATION_COORDINATES);
+                            prefEditor.putString("saved_location_name", mMyLocationsList.get(position - 1).getLocationName());
+                            prefEditor.apply();
+
+                        }
                     }
-                }
-
-                if(assigned && position != 0){
-
-                    progressBar.setVisibility(View.VISIBLE);
-
-                    LOCATION_COORDINATES = mMyLocationsList.get(position - 1).getLocationCoordinates();
-
-                    mBinding.tvWeatherNowLocation.setText(mMyLocationsList.get(position - 1).getLocationName());
-
-                    fetchNowData();
-                    fetchHourlyData();
-                    fetchDailyData();
-
-                    SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
-                    SharedPreferences.Editor prefEditor = preferencesLocation.edit();
-                    prefEditor.clear();
-                    prefEditor.putString("saved_location_coordinates", LOCATION_COORDINATES);
-                    prefEditor.putString("saved_location_name", mMyLocationsList.get(position + 1).getLocationName());
-                    prefEditor.apply();
-
-                    progressBar.setVisibility(View.INVISIBLE);
                 }
             }
             public void onSimpleClick(){
@@ -670,8 +655,10 @@ public class MainActivity extends AppCompatActivity implements
                 final Address address = resultData.getParcelable(Constants.RESULT_ADDRESS);
                 runOnUiThread(() -> {
                     assert address != null;
+
                     mBinding.tvWeatherNowLocation.setText(address.getLocality());
-                    saveCurrentLocation();
+
+                    saveCurrentLocation(address.getLocality());
 
 
                     SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
@@ -686,13 +673,13 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void saveCurrentLocation() {
+    private void saveCurrentLocation(String locationName) {
         if (LOCATION_COORDINATES.length() > 0) {
 
             String[] coordinates = LOCATION_COORDINATES.split(",");
 
             mMyLocationViewModel.insert(new MyLocation(
-                    mBinding.tvWeatherNowLocation.getText().toString(),
+                    locationName,
                     LOCATION_COORDINATES,
                     Double.valueOf(coordinates[0]),
                     Double.valueOf(coordinates[1])
@@ -730,6 +717,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void cleanViews() {
         mWeatherViewModel.deleteAll();
+        mMyLocationViewModel.deleteAll();
         mBinding.ivWeatherNow.setImageResource(R.drawable.ic_weather_default);
 
         mBinding.tvWeatherNowDate.setText(null);
