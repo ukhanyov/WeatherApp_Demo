@@ -29,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -50,6 +51,7 @@ import com.example.oleg.weatherapp_demo.network.retrofit.GetDataService;
 import com.example.oleg.weatherapp_demo.network.retrofit.RetrofitWeatherInstance;
 import com.example.oleg.weatherapp_demo.utils.Constants;
 import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
+import com.example.oleg.weatherapp_demo.utils.OnSwipeTouchListener;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -92,8 +94,8 @@ public class MainActivity extends AppCompatActivity implements
     private String LOCATION_COORDINATES = "37.8267,-122.4233";
 
     // Swipe screen stuff
-    private float x1,x2;
-    static final int MIN_DISTANCE = 150;
+//    private float x1,x2;
+//    static final int MIN_DISTANCE = 150;
 
 
     @Override
@@ -223,6 +225,21 @@ public class MainActivity extends AppCompatActivity implements
         mMyLocationViewModel = ViewModelProviders.of(this).get(MyLocationViewModel.class);
         //mMyLocationViewModel.getSpecificLocation().observe(this, location -> mMyLocationQuery = location);
         mMyLocationViewModel.getmAllLocations().observe(this, myLocationAdapter::setMyLocations);
+
+
+        // Swipes on screen
+        mBinding.clWeatherNow.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
+            public void onSwipeRight() {
+                Toast.makeText(MainActivity.this, "right", Toast.LENGTH_SHORT).show();
+            }
+            public void onSwipeLeft() {
+                Toast.makeText(MainActivity.this, "left", Toast.LENGTH_SHORT).show();
+            }
+            public void onSimpleClick(){
+                if(mWeatherNow != null) launchDetailsActivity(mWeatherNow);
+            }
+
+        });
     }
 
     @Override
@@ -356,6 +373,29 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onClick(Weather weather) {
         launchDetailsActivity(weather);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        View v = getCurrentFocus();
+
+            View w = getCurrentFocus();
+            int scrcoords[] = new int[2];
+            Objects.requireNonNull(w).getLocationOnScreen(scrcoords);
+            float x = event.getRawX() + w.getLeft() - scrcoords[0];
+            float y = event.getRawY() + w.getTop() - scrcoords[1];
+            if (event.getAction() == MotionEvent.ACTION_UP
+                    && (x < w.getLeft() ||
+                    x >= w.getRight() ||
+                    y < w.getTop() ||
+                    y > w.getBottom())) {
+
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                Objects.requireNonNull(imm).hideSoftInputFromWindow(Objects.requireNonNull(getWindow().getCurrentFocus())
+                        .getWindowToken(), 0);
+            }
+
+        return super.dispatchTouchEvent(event);
     }
 
     private void findUserLocation() {
