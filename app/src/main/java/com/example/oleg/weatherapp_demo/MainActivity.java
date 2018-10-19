@@ -227,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // Swipes on screen
         mBinding.clWeatherNow.setOnTouchListener(new CustomOnSwipeTouchListener(MainActivity.this) {
+
             public void onSwipeRight() {
 
                 mMyLocationsList = new ArrayList<>();
@@ -235,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements
                 for(MyLocation location : mMyLocationsList){
 
                     if(Objects.equals(location.getLocationCoordinates(), LOCATION_COORDINATES)){
+
                         int position = mMyLocationsList.indexOf(location);
                         if(position < mMyLocationsList.size() - 1){
 
@@ -253,15 +255,18 @@ public class MainActivity extends AppCompatActivity implements
                             prefEditor.apply();
 
                         }
+
+                        return;
                     }
                 }
             }
+
             public void onSwipeLeft() {
 
-                for(MyLocation location : mMyLocationsList){
+                mMyLocationsList = new ArrayList<>();
+                mMyLocationsList = myLocationAdapter.getAll();
 
-                    mMyLocationsList = new ArrayList<>();
-                    mMyLocationsList = myLocationAdapter.getAll();
+                for(MyLocation location : mMyLocationsList){
 
                     if(Objects.equals(location.getLocationCoordinates(), LOCATION_COORDINATES)){
                         int position = mMyLocationsList.indexOf(location);
@@ -282,6 +287,8 @@ public class MainActivity extends AppCompatActivity implements
                             prefEditor.apply();
 
                         }
+
+                        return;
                     }
                 }
             }
