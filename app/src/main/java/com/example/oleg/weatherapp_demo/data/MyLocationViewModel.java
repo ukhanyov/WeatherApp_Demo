@@ -24,7 +24,7 @@ public class MyLocationViewModel extends AndroidViewModel {
         mSearchResult = myLocationRepository.getSearchResults();
     }
 
-    public LiveData<List<MyLocation>> getmAllLocations() {
+    public LiveData<List<MyLocation>> getAllLocations() {
         return mAllLocations;
     }
 

@@ -58,7 +58,9 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -89,13 +91,9 @@ public class MainActivity extends AppCompatActivity implements
     DrawerLayout mDrawer;
 
     // MyLocation instance for location
-    //private MyLocation mMyLocationQuery;
+    private List<MyLocation> mMyLocationsList;
 
     private String LOCATION_COORDINATES = "37.8267,-122.4233";
-
-    // Swipe screen stuff
-//    private float x1,x2;
-//    static final int MIN_DISTANCE = 150;
 
 
     @Override
@@ -223,17 +221,79 @@ public class MainActivity extends AppCompatActivity implements
 
         // Location viewModel stuff
         mMyLocationViewModel = ViewModelProviders.of(this).get(MyLocationViewModel.class);
-        //mMyLocationViewModel.getSpecificLocation().observe(this, location -> mMyLocationQuery = location);
-        mMyLocationViewModel.getmAllLocations().observe(this, myLocationAdapter::setMyLocations);
+        mMyLocationViewModel.getAllLocations().observe(this, myLocationAdapter::setMyLocations);
+        mMyLocationsList = new ArrayList<>();
+        mMyLocationViewModel.getAllLocations().observe(this,mMyLocationsList::addAll);
 
 
         // Swipes on screen
         mBinding.clWeatherNow.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
             public void onSwipeRight() {
-                Toast.makeText(MainActivity.this, "right", Toast.LENGTH_SHORT).show();
+
+                int position = 0;
+                boolean assigned = false;
+
+                for(MyLocation location : mMyLocationsList){
+                    if(Objects.equals(location.getLocationCoordinates(), LOCATION_COORDINATES)){
+                        position = mMyLocationsList.indexOf(location);
+                        assigned = true;
+                    }
+                }
+
+                if(assigned && position < mMyLocationsList.size() - 1){
+
+                    progressBar.setVisibility(View.VISIBLE);
+
+                    LOCATION_COORDINATES = mMyLocationsList.get(position + 1).getLocationCoordinates();
+
+                    mBinding.tvWeatherNowLocation.setText(mMyLocationsList.get(position + 1).getLocationName());
+
+                    fetchNowData();
+                    fetchHourlyData();
+                    fetchDailyData();
+
+                    SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
+                    SharedPreferences.Editor prefEditor = preferencesLocation.edit();
+                    prefEditor.clear();
+                    prefEditor.putString("saved_location_coordinates", LOCATION_COORDINATES);
+                    prefEditor.putString("saved_location_name", mMyLocationsList.get(position + 1).getLocationName());
+                    prefEditor.apply();
+
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
             }
             public void onSwipeLeft() {
-                Toast.makeText(MainActivity.this, "left", Toast.LENGTH_SHORT).show();
+                int position = 0;
+                boolean assigned = false;
+
+                for(MyLocation location : mMyLocationsList){
+                    if(Objects.equals(location.getLocationCoordinates(), LOCATION_COORDINATES)){
+                        position = mMyLocationsList.indexOf(location);
+                        assigned = true;
+                    }
+                }
+
+                if(assigned && position != 0){
+
+                    progressBar.setVisibility(View.VISIBLE);
+
+                    LOCATION_COORDINATES = mMyLocationsList.get(position - 1).getLocationCoordinates();
+
+                    mBinding.tvWeatherNowLocation.setText(mMyLocationsList.get(position - 1).getLocationName());
+
+                    fetchNowData();
+                    fetchHourlyData();
+                    fetchDailyData();
+
+                    SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
+                    SharedPreferences.Editor prefEditor = preferencesLocation.edit();
+                    prefEditor.clear();
+                    prefEditor.putString("saved_location_coordinates", LOCATION_COORDINATES);
+                    prefEditor.putString("saved_location_name", mMyLocationsList.get(position + 1).getLocationName());
+                    prefEditor.apply();
+
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
             }
             public void onSimpleClick(){
                 if(mWeatherNow != null) launchDetailsActivity(mWeatherNow);
@@ -255,10 +315,6 @@ public class MainActivity extends AppCompatActivity implements
             String checkLocationCoordinates = preferencesLocation.getString("saved_location_coordinates", null);
             String checkLocationName = preferencesLocation.getString("saved_location_name", null);
 
-//            if(checkLocationName != null){
-//                mMyLocationViewModel.queryForSpecifiedLocation(checkLocationName);
-//            }
-
             if(checkLocationCoordinates == null){
                 findUserLocation();
             }else {
@@ -276,9 +332,6 @@ public class MainActivity extends AppCompatActivity implements
             // TODO: Swipe to change location
             // TODO: Add backgroundImage (maybe from placePicker)
 
-            // Such queries does not work
-            //mWeatherViewModel.queryWeatherDailyByCoordinatesAndType(LOCATION_COORDINATES, Constants.DB_WEATHER_TYPE_DAILY);
-            //mWeatherViewModel.queryWeatherHourlyByCoordinatesAndType(LOCATION_COORDINATES, Constants.DB_WEATHER_TYPE_HOURLY);
         }
 
         if (haveNetworkConnection()) {
@@ -327,10 +380,6 @@ public class MainActivity extends AppCompatActivity implements
                 } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                     e.printStackTrace();
                 }
-                return true;
-
-            case R.id.action_check:
-                Log.v(this.getClass().getSimpleName(), "Action check clicked");
                 return true;
 
             default:
