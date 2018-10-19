@@ -57,6 +57,7 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -220,10 +221,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // Location viewModel stuff
         mMyLocationViewModel = ViewModelProviders.of(this).get(MyLocationViewModel.class);
-        //mMyLocationViewModel.getSpecificLocation().observe(this, location -> mMyLocationQuery = location);
         mMyLocationViewModel.getAllLocations().observe(this, myLocationAdapter::setMyLocations);
-        //mMyLocationsList = new ArrayList<>();
-        //mMyLocationViewModel.getAllLocations().observe(this, mMyLocationsList::addAll);
 
         // Swipes on screen
         mBinding.clWeatherNow.setOnTouchListener(new CustomOnSwipeTouchListener(MainActivity.this) {
@@ -330,27 +328,27 @@ public class MainActivity extends AppCompatActivity implements
 
             // TODO: Add offline mode
             // TODO: Proper internet check
-            // TODO: Swipe to change location
             // TODO: Add backgroundImage (maybe from placePicker)
 
-            // Such queries does not work
-            //mWeatherViewModel.queryWeatherDailyByCoordinatesAndType(LOCATION_COORDINATES, Constants.DB_WEATHER_TYPE_DAILY);
-            //mWeatherViewModel.queryWeatherHourlyByCoordinatesAndType(LOCATION_COORDINATES, Constants.DB_WEATHER_TYPE_HOURLY);
         }
 
-        if (haveNetworkConnection()) {
-            // Daily data
-            fetchDailyData();
+        try {
+            if (haveNetworkConnection() && isConnected()) {
+                // Daily data
+                fetchDailyData();
 
-            // Hourly data
-            fetchHourlyData();
+                // Hourly data
+                fetchHourlyData();
 
-            // Now data
-            fetchNowData();
+                // Now data
+                fetchNowData();
 
-        } else {
-            mBinding.tvOffline.setVisibility(View.VISIBLE);
-            mBinding.tvOffline.setText(R.string.offline_turn_on_internet);
+            } else {
+                mBinding.tvOffline.setVisibility(View.VISIBLE);
+                mBinding.tvOffline.setText(R.string.offline_turn_on_internet);
+            }
+        } catch (InterruptedException | IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -720,5 +718,10 @@ public class MainActivity extends AppCompatActivity implements
         mBinding.tvWeatherNowTmpApparent.setText(null);
         mBinding.tvWeatherNowHumidity.setText(null);
         mBinding.tvWeatherNowLocation.setText(null);
+    }
+
+    public boolean isConnected() throws InterruptedException, IOException {
+        final String command = "ping -c 1 google.com";
+        return Runtime.getRuntime().exec(command).waitFor() == 0;
     }
 }
