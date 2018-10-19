@@ -57,7 +57,6 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -201,6 +200,16 @@ public class MainActivity extends AppCompatActivity implements
                 // this is wanky, think around later
                 MyLocation myLocation = myLocationAdapter.getItem(viewHolder.getLayoutPosition());
                 mMyLocationViewModel.deleteSpecificLocation(myLocation.getLocationName());
+
+                // Check if location is in preferences
+                SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
+                if(myLocation.getLocationName().equals(preferencesLocation.getString("saved_location_name", null)) ||
+                        myLocation.getLocationCoordinates().equals(preferencesLocation.getString("saved_location_coordinates", null))){
+                    SharedPreferences.Editor prefEditor = preferencesLocation.edit();
+                    prefEditor.clear();
+                    prefEditor.apply();
+                }
+
             }
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
@@ -482,7 +491,7 @@ public class MainActivity extends AppCompatActivity implements
                 // Start picking place on the map
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                 try {
-                    startActivityForResult(builder.build(this), Constants.PLACE_PICKER_REQUEST);
+                    startActivityForResult(builder.build(this), Constants.PLACE_PICKER_REQUEST_FOR_LOCATION);
                 } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                     e.printStackTrace();
                 }
@@ -500,7 +509,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.PLACE_PICKER_REQUEST) {
+        if (requestCode == Constants.PLACE_PICKER_REQUEST_FOR_LOCATION) {
             if (resultCode == RESULT_OK) {
                 cleanViews();
                 Place place = PlacePicker.getPlace(this, data);
@@ -519,6 +528,12 @@ public class MainActivity extends AppCompatActivity implements
                 fetchNowData();
                 fetchHourlyData();
                 fetchDailyData();
+
+                SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
+                SharedPreferences.Editor prefEditor = preferencesLocation.edit();
+                prefEditor.clear();
+                prefEditor.putString("saved_location_coordinates", LOCATION_COORDINATES);
+                prefEditor.apply();
             }
         }
     }
@@ -565,6 +580,13 @@ public class MainActivity extends AppCompatActivity implements
                     assert address != null;
                     mBinding.tvWeatherNowLocation.setText(address.getLocality());
                     saveCurrentLocation();
+
+
+                    SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
+                    SharedPreferences.Editor prefEditor = preferencesLocation.edit();
+                    prefEditor.putString("saved_location_name", address.getLocality());
+                    prefEditor.apply();
+
                 });
             } else {
                 Toast.makeText(MainActivity.this, "Error parsing location", Toast.LENGTH_SHORT).show();

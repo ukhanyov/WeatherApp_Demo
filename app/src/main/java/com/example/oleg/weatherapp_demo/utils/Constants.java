@@ -32,6 +32,6 @@ public class Constants {
     public static final int REQUEST_LOCATION = 1;
 
     // Requests
-    public static final int PLACE_PICKER_REQUEST = 101;
+    public static final int PLACE_PICKER_REQUEST_FOR_LOCATION = 101;
 
 }
