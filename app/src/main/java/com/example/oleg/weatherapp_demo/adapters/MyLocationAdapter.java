@@ -46,6 +46,11 @@ public class MyLocationAdapter extends RecyclerView.Adapter<MyLocationAdapter.My
         notifyDataSetChanged();
     }
 
+    public List<MyLocation> getAll(){
+        if(mMyLocations != null) return mMyLocations;
+        else return null;
+    }
+
     @Override
     public int getItemCount() {
         if(mMyLocations != null) return mMyLocations.size();
