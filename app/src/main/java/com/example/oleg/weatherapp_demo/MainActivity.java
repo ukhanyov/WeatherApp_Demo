@@ -96,6 +96,9 @@ public class MainActivity extends AppCompatActivity implements
     private String LOCATION_COORDINATES = "37.8267,-122.4233";
 
 
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,8 +113,8 @@ public class MainActivity extends AppCompatActivity implements
         progressBar = mBinding.pbLoadingIndicator;
 
         // Second "this" is for item click
-        final WeatherAdapter adapter = new WeatherAdapter(this, this);
-        recyclerViewVertical.setAdapter(adapter);
+        final WeatherAdapter adapterVertical = new WeatherAdapter(this, this);
+        recyclerViewVertical.setAdapter(adapterVertical);
         recyclerViewVertical.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewVertical.setHasFixedSize(true);
 
@@ -126,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // LiveData/viewModels
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
-        mWeatherViewModel.getWeatherDailyByCoordinatesAndType().observe(this, adapter::setWeather);
+        mWeatherViewModel.getWeatherDailyByCoordinatesAndType().observe(this, adapterVertical::setWeather);
         mWeatherViewModel.getWeatherHourlyByCoordinatesAndType().observe(this, horizontalAdapter::setWeather);
 
         // Recycler view for nav drawer
@@ -155,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements
         });
         toggle.syncState();
 
+        // Item picker for side menu
         recyclerViewNavView.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
@@ -174,10 +178,9 @@ public class MainActivity extends AppCompatActivity implements
                     prefEditor.putString("saved_location_name", myLocation.getLocationName());
                     prefEditor.apply();
 
-                    fetchDailyData();
-                    fetchHourlyData();
-                    fetchNowData();
                     mBinding.tvWeatherNowLocation.setText(myLocation.getLocationName());
+
+                    fetchAllTheData(LOCATION_COORDINATES);
 
                     return true;
                 }
@@ -241,9 +244,7 @@ public class MainActivity extends AppCompatActivity implements
                             LOCATION_COORDINATES = mMyLocationsList.get(position + 1).getLocationCoordinates();
                             mBinding.tvWeatherNowLocation.setText(mMyLocationsList.get(position + 1).getLocationName());
 
-                            fetchNowData();
-                            fetchHourlyData();
-                            fetchDailyData();
+                            fetchAllTheData(LOCATION_COORDINATES);
 
                             SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
                             SharedPreferences.Editor prefEditor = preferencesLocation.edit();
@@ -273,9 +274,7 @@ public class MainActivity extends AppCompatActivity implements
                             LOCATION_COORDINATES = mMyLocationsList.get(position - 1).getLocationCoordinates();
                             mBinding.tvWeatherNowLocation.setText(mMyLocationsList.get(position - 1).getLocationName());
 
-                            fetchNowData();
-                            fetchHourlyData();
-                            fetchDailyData();
+                            fetchAllTheData(LOCATION_COORDINATES);
 
                             SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
                             SharedPreferences.Editor prefEditor = preferencesLocation.edit();
@@ -327,10 +326,14 @@ public class MainActivity extends AppCompatActivity implements
             mBinding.tvOffline.setText(R.string.offline_turn_on_location);
 
             // TODO: Add offline mode
-            // TODO: Proper internet check
             // TODO: Add backgroundImage (maybe from placePicker)
-
         }
+
+        fetchAllTheData(LOCATION_COORDINATES);
+    }
+
+    private void fetchAllTheData(String coordinates){
+
 
         try {
             if (haveNetworkConnection() && isConnected()) {
@@ -343,7 +346,16 @@ public class MainActivity extends AppCompatActivity implements
                 // Now data
                 fetchNowData();
 
+                progressBar.setVisibility(View.GONE);
+
             } else {
+
+                // Query for data (offline)
+
+                mWeatherViewModel.queryWeatherHourlyByCoordinatesAndType(coordinates, Constants.DB_WEATHER_TYPE_HOURLY);
+                mWeatherViewModel.queryWeatherDailyByCoordinatesAndType(coordinates, Constants.DB_WEATHER_TYPE_DAILY);
+
+
                 mBinding.tvOffline.setVisibility(View.VISIBLE);
                 mBinding.tvOffline.setText(R.string.offline_turn_on_internet);
             }
@@ -558,9 +570,9 @@ public class MainActivity extends AppCompatActivity implements
 
             case R.id.action_refresh_table:
                 cleanViews();
-                fetchNowData();
-                fetchDailyData();
-                fetchHourlyData();
+
+                fetchAllTheData(LOCATION_COORDINATES);
+
                 return true;
 
             case R.id.action_add_location:
@@ -597,9 +609,7 @@ public class MainActivity extends AppCompatActivity implements
                 intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, place.getLatLng().longitude);
                 startService(intent);
 
-                fetchNowData();
-                fetchHourlyData();
-                fetchDailyData();
+                fetchAllTheData(LOCATION_COORDINATES);
 
                 SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
                 SharedPreferences.Editor prefEditor = preferencesLocation.edit();
@@ -721,7 +731,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public boolean isConnected() throws InterruptedException, IOException {
-        final String command = "ping -c 1 google.com";
+
+        // The -i 5 is a timeout option
+
+        final String command = "ping -i 5 -c 1 google.com";
         return Runtime.getRuntime().exec(command).waitFor() == 0;
     }
 }
