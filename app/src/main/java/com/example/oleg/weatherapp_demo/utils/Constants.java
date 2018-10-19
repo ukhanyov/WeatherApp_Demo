@@ -16,7 +16,7 @@ public class Constants {
     public static final String LOCATION_NAME_DATA_EXTRA = PACKAGE_NAME + ".LOCATION_NAME_DATA_EXTRA";
     public static final String FETCH_TYPE_EXTRA = PACKAGE_NAME + ".FETCH_TYPE_EXTRA";
 
-    public static final String ACCESS_KEY = "f112fd7d65ad86569575ed2829356de1";
+    public static final String ACCESS_KEY = "735a826704c4ad82ea2b4ab0fc4b8562";
     public static final String QUERY_UTILS = "units";
     public static final String QUERY_UTILS_FORMAT = "si";
     public static final String QUERY_EXCLUDE = "exclude";
@@ -33,5 +33,6 @@ public class Constants {
 
     // Requests
     public static final int PLACE_PICKER_REQUEST_FOR_LOCATION = 101;
+    public static final int PLACE_PICKER_REQUEST_FOR_PICTURE = 102;
 
 }

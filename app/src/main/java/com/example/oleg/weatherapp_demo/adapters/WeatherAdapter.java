@@ -87,6 +87,11 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         else return 0;
     }
 
+    public List<Weather> getAllWeather(){
+        if(mWeather != null) return mWeather;
+        else return null;
+    }
+
     class WeatherViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         ImageView weatherIcon;

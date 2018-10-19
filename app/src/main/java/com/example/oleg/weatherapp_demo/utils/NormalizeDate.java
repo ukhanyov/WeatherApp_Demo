@@ -77,8 +77,9 @@ public class NormalizeDate {
         Calendar currentTime = Calendar.getInstance();
 
         //Divide by 1000 because DarkWeather time is in seconds, not milliseconds
-        String compareDate = getHumanFriendlyDateFromDB(currentTime.getTimeInMillis()  / 1000L  );
-        return inputDate.equals(compareDate);
+        long date = currentTime.getTimeInMillis()  / 1000L;
+
+        return getHumanFriendlyTimeFromDB(date).equals(getHumanFriendlyTimeFromDB(Long.valueOf(inputDate)));
     }
 
     public static boolean checkIfTimeIsNow(long dbDate){

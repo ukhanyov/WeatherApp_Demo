@@ -11,7 +11,9 @@ import java.util.List;
 
 // Timeline 4
 
-public class WeatherRepository implements AsyncResultWeatherDaily, AsyncResultWeatherHourly {
+public class WeatherRepository implements
+        AsyncResultWeatherDaily,
+        AsyncResultWeatherHourly{
 
     private WeatherDao mWeatherDao;
     private MutableLiveData<List<Weather>> searchResultsDaily = new MutableLiveData<>();
@@ -59,7 +61,6 @@ public class WeatherRepository implements AsyncResultWeatherDaily, AsyncResultWe
             return null;
         }
     }
-
 
     // Delete stuff
     void deleteAll() {
@@ -148,4 +149,5 @@ public class WeatherRepository implements AsyncResultWeatherDaily, AsyncResultWe
             delegate.asyncFinishedHourly(weathers);
         }
     }
+
 }

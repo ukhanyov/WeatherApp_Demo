@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Location;
 import android.location.LocationManager;
@@ -29,6 +31,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -54,10 +57,16 @@ import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlacePhotoMetadataResponse;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -95,8 +104,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private String LOCATION_COORDINATES = "37.8267,-122.4233";
 
-
-
+    // For picture
+    GeoDataClient mGeoDataClient;
 
 
     @Override
@@ -131,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
         mWeatherViewModel.getWeatherDailyByCoordinatesAndType().observe(this, adapterVertical::setWeather);
         mWeatherViewModel.getWeatherHourlyByCoordinatesAndType().observe(this, horizontalAdapter::setWeather);
+
 
         // Recycler view for nav drawer
         final MyLocationAdapter myLocationAdapter = new MyLocationAdapter(this);
@@ -349,17 +359,17 @@ public class MainActivity extends AppCompatActivity implements
                 progressBar.setVisibility(View.GONE);
 
             } else {
-
                 // Query for data (offline)
-
                 mWeatherViewModel.queryWeatherHourlyByCoordinatesAndType(coordinates, Constants.DB_WEATHER_TYPE_HOURLY);
                 mWeatherViewModel.queryWeatherDailyByCoordinatesAndType(coordinates, Constants.DB_WEATHER_TYPE_DAILY);
+
 
 
                 mBinding.tvOffline.setVisibility(View.VISIBLE);
                 mBinding.tvOffline.setText(R.string.offline_turn_on_internet);
             }
-        } catch (InterruptedException | IOException e) {
+        } catch (InterruptedException |
+                IOException e) {
             e.printStackTrace();
         }
     }
@@ -381,6 +391,11 @@ public class MainActivity extends AppCompatActivity implements
 
             Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
             LOCATION_COORDINATES = String.valueOf(location.getLatitude()) + "," + String.valueOf(location.getLongitude());
+
+            SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
+            SharedPreferences.Editor prefEditor = preferencesLocation.edit();
+            prefEditor.putString("saved_location_coordinates", LOCATION_COORDINATES);
+            prefEditor.apply();
 
             // Get city name
             mResultReceiver = new AddressResultReceiver(null);
@@ -616,6 +631,7 @@ public class MainActivity extends AppCompatActivity implements
                 prefEditor.clear();
                 prefEditor.putString("saved_location_coordinates", LOCATION_COORDINATES);
                 prefEditor.apply();
+
             }
         }
     }
@@ -733,7 +749,6 @@ public class MainActivity extends AppCompatActivity implements
     public boolean isConnected() throws InterruptedException, IOException {
 
         // The -i 5 is a timeout option
-
         final String command = "ping -i 5 -c 1 google.com";
         return Runtime.getRuntime().exec(command).waitFor() == 0;
     }
