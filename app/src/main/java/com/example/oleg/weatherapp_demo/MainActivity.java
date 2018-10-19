@@ -19,7 +19,9 @@ import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,10 +29,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -112,9 +116,27 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         // Fancy dataBinding
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
+        // Toolbar
+        ActionBar mActionBar = getSupportActionBar();
+        LayoutInflater li = LayoutInflater.from(this);
+        mActionBar.setDisplayShowHomeEnabled(false);
+        mActionBar.setDisplayShowTitleEnabled(false);
+        View customView = li.inflate(R.layout.action_bar_layout, null);
+        mActionBar.setCustomView(customView);
+        mActionBar.setDisplayShowCustomEnabled(true);
+        ImageButton imageButton = findViewById(R.id.ib_nav_open);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBinding.navDrawer.openDrawer(GravityCompat.START);
+            }
+        });
+
+
+
 
         RecyclerView recyclerViewVertical = mBinding.rvWeather;
         RecyclerView recyclerViewHorizontal = mBinding.rvWeatherHoryzontal;
@@ -336,6 +358,7 @@ public class MainActivity extends AppCompatActivity implements
             mBinding.tvOffline.setText(R.string.offline_turn_on_location);
 
             // TODO: Add offline mode
+            // TODO: Add callback when internet is enabled
             // TODO: Add backgroundImage (maybe from placePicker)
         }
 
@@ -356,7 +379,7 @@ public class MainActivity extends AppCompatActivity implements
                 // Now data
                 fetchNowData();
 
-                progressBar.setVisibility(View.GONE);
+                mBinding.tvOffline.setVisibility(View.GONE);
 
             } else {
                 // Query for data (offline)
@@ -579,9 +602,6 @@ public class MainActivity extends AppCompatActivity implements
         int id = item.getItemId();
 
         switch (item.getItemId()) {
-            case R.id.action_drop_table:
-                cleanViews();
-                return true;
 
             case R.id.action_refresh_table:
                 cleanViews();
@@ -592,10 +612,16 @@ public class MainActivity extends AppCompatActivity implements
 
             case R.id.action_add_location:
                 // Start picking place on the map
-                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                 try {
-                    startActivityForResult(builder.build(this), Constants.PLACE_PICKER_REQUEST_FOR_LOCATION);
-                } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+                    if(haveNetworkConnection() && isConnected()){
+                        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                        startActivityForResult(builder.build(this), Constants.PLACE_PICKER_REQUEST_FOR_LOCATION);
+                    }
+
+                } catch (InterruptedException |
+                        IOException |
+                        GooglePlayServicesNotAvailableException |
+                        GooglePlayServicesRepairableException e) {
                     e.printStackTrace();
                 }
                 return true;
