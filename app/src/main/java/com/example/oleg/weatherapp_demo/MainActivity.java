@@ -8,6 +8,10 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
@@ -31,9 +35,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -289,6 +295,7 @@ public class MainActivity extends AppCompatActivity implements
             // TODO: Add callback when internet is enabled
             // TODO: Add backgroundImage (maybe from placePicker)
             // TODO: Implement sunrises and sundowns
+            // TODO: save images to the MyLocation table
         }
 
         fetchAllTheData(LOCATION_COORDINATES);
@@ -328,12 +335,12 @@ public class MainActivity extends AppCompatActivity implements
 
         switch (item.getItemId()) {
 
-            case R.id.action_refresh_table:
-                cleanViews();
-
-                fetchAllTheData(LOCATION_COORDINATES);
-
-                return true;
+//            case R.id.action_refresh_table:
+//                cleanViews();
+//
+//                fetchAllTheData(LOCATION_COORDINATES);
+//
+//                return true;
 
             case R.id.action_add_location:
                 // Start picking place on the map
@@ -663,7 +670,7 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    public void buttonOnLocationNavigationDrawerClicked(View view){
+    public void buttonOnLocationNavigationDrawerClicked(View view) {
 
         AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -797,20 +804,51 @@ public class MainActivity extends AppCompatActivity implements
             // Get the first photo in the list.
             PlacePhotoMetadata photoMetadata = photoMetadataBuffer.get(0);
             // Get the attribution text.
-            CharSequence attribution = photoMetadata.getAttributions();
+            //CharSequence attribution = photoMetadata.getAttributions();
             // Get a full-size bitmap for the photo.
             Task<PlacePhotoResponse> photoResponse = mGeoDataClient.getPhoto(photoMetadata);
-            photoResponse.addOnCompleteListener(new OnCompleteListener<PlacePhotoResponse>() {
-                @Override
-                public void onComplete(@NonNull Task<PlacePhotoResponse> task) {
-                    PlacePhotoResponse photo = task.getResult();
-                    Bitmap bitmap = Objects.requireNonNull(photo).getBitmap();
-                    Drawable drawable = new BitmapDrawable(getResources(), bitmap);
+            photoResponse.addOnCompleteListener(task1 -> {
+                PlacePhotoResponse photo = task1.getResult();
+                Bitmap originalImage = Objects.requireNonNull(photo).getBitmap();
 
-                    mBinding.clActivityMain.setBackground(drawable);
-                    // Setting opacity (scale is 0 - 255)
-                    mBinding.clActivityMain.getBackground().setAlpha(51);
-                }
+                // Resize bitmap
+                int width = mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow.getWidth();
+                int height = mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow.getHeight();
+                Bitmap background = Bitmap.createBitmap((int)width, (int)height, Bitmap.Config.ARGB_8888);
+
+                float originalWidth = originalImage.getWidth();
+                float originalHeight = originalImage.getHeight();
+
+                Canvas canvas = new Canvas(background);
+
+                float scale = height / originalHeight;
+
+                // TODO: Add if to differentiate
+
+                // port
+                float xTranslation = (width - originalWidth * scale) / 2.0f;
+                float yTranslation = 0.0f;
+
+                // land
+//                float xTranslation = 0.0f;
+//                float yTranslation = (height - originalHeight * scale) / 2.0f;
+
+                Matrix transformation = new Matrix();
+                transformation.postTranslate(xTranslation, yTranslation);
+                transformation.preScale(scale, scale);
+
+                Paint paint = new Paint();
+                paint.setFilterBitmap(true);
+
+                canvas.drawBitmap(originalImage, transformation, paint);
+
+                Drawable drawable = new BitmapDrawable(getResources(), background);
+
+                //((BitmapDrawable) drawable).setGravity(Gravity.CENTER);
+                mBinding.clActivityMain.setBackground(drawable);
+                // Setting opacity (scale is 0 - 255)
+                mBinding.clActivityMain.getBackground().setAlpha(51);
+
             });
         });
     }

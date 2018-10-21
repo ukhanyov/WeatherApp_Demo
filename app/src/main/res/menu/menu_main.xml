@@ -10,17 +10,17 @@
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_add_location_white_24dp"/>
 
-    <item
-        android:id="@+id/action_drop_table"
-        android:orderInCategory="100"
-        android:title="@string/action_drop_table"
-        app:showAsAction="never" />
+    <!--<item-->
+        <!--android:id="@+id/action_drop_table"-->
+        <!--android:orderInCategory="100"-->
+        <!--android:title="@string/action_drop_table"-->
+        <!--app:showAsAction="never" />-->
 
-    <item
-        android:id="@+id/action_refresh_table"
-        android:orderInCategory="101"
-        android:title="@string/action_refresh_table"
-        app:showAsAction="never" />
+    <!--<item-->
+        <!--android:id="@+id/action_refresh_table"-->
+        <!--android:orderInCategory="101"-->
+        <!--android:title="@string/action_refresh_table"-->
+        <!--app:showAsAction="never" />-->
 
 
 </menu>
