@@ -127,8 +127,8 @@ public class MainActivity extends AppCompatActivity implements
         NavigationView navigationView = mBinding.navView;
         navigationView.setNavigationItemSelectedListener(this);
 
-        RecyclerView recyclerViewVertical = mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.rvWeather;
-        RecyclerView recyclerViewHorizontal = mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.rvWeatherHorizontal;
+        RecyclerView recyclerViewVertical = mBinding.layoutContentMain.layoutContentAppBar.rvWeather;
+        RecyclerView recyclerViewHorizontal = mBinding.layoutContentMain.layoutContentAppBar.rvWeatherHorizontal;
         RecyclerView recyclerViewNavView = mBinding.rvNavList;
         progressBar = mBinding.pbLoadingIndicator;
 
@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void swipesOnScreen(MyLocationAdapter myLocationAdapter) {
 
-        mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.clWeatherNow.setOnTouchListener(new CustomOnSwipeTouchListener(MainActivity.this) {
+        mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow.setOnTouchListener(new CustomOnSwipeTouchListener(MainActivity.this) {
 
             public void onSwipeRight() {
 
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements
                         if (position < mMyLocationsList.size() - 1) {
 
                             LOCATION_COORDINATES = mMyLocationsList.get(position + 1).getLocationCoordinates();
-                            mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvWeatherNowLocation.setText(mMyLocationsList.get(position + 1).getLocationName());
+                            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(mMyLocationsList.get(position + 1).getLocationName());
 
                             fetchAllTheData(LOCATION_COORDINATES);
 
@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements
                         if (position >= 0) {
 
                             LOCATION_COORDINATES = mMyLocationsList.get(position - 1).getLocationCoordinates();
-                            mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvWeatherNowLocation.setText(mMyLocationsList.get(position - 1).getLocationName());
+                            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(mMyLocationsList.get(position - 1).getLocationName());
 
                             fetchAllTheData(LOCATION_COORDINATES);
 
@@ -242,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvOffline.setVisibility(View.GONE);
+        mBinding.layoutContentMain.layoutContentAppBar.tvOffline.setVisibility(View.GONE);
 
         if (haveLocationEnabled()) {
             // Get users location
@@ -263,13 +263,13 @@ public class MainActivity extends AppCompatActivity implements
                 findUserLocation();
             } else {
                 LOCATION_COORDINATES = checkLocationCoordinates;
-                mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvWeatherNowLocation.setText(checkLocationName);
+                mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(checkLocationName);
             }
 
 
         } else {
-            mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvOffline.setVisibility(View.VISIBLE);
-            mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvOffline.setText(R.string.offline_turn_on_location);
+            mBinding.layoutContentMain.layoutContentAppBar.tvOffline.setVisibility(View.VISIBLE);
+            mBinding.layoutContentMain.layoutContentAppBar.tvOffline.setText(R.string.offline_turn_on_location);
 
             // TODO: Add offline mode
             // TODO: Add callback when internet is enabled
@@ -317,7 +317,7 @@ public class MainActivity extends AppCompatActivity implements
                 // Now data
                 fetchNowData();
 
-                mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvOffline.setVisibility(View.GONE);
+                mBinding.layoutContentMain.layoutContentAppBar.tvOffline.setVisibility(View.GONE);
 
             } else {
                 // Query for data (offline)
@@ -325,8 +325,8 @@ public class MainActivity extends AppCompatActivity implements
                 mWeatherViewModel.queryWeatherDailyByCoordinatesAndType(coordinates, Constants.DB_WEATHER_TYPE_DAILY);
 
 
-                mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvOffline.setVisibility(View.VISIBLE);
-                mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvOffline.setText(R.string.offline_turn_on_internet);
+                mBinding.layoutContentMain.layoutContentAppBar.tvOffline.setVisibility(View.VISIBLE);
+                mBinding.layoutContentMain.layoutContentAppBar.tvOffline.setText(R.string.offline_turn_on_internet);
             }
         } catch (InterruptedException |
                 IOException e) {
@@ -508,22 +508,22 @@ public class MainActivity extends AppCompatActivity implements
     private void setWeatherNowViews(Weather weather) {
 
         if (weather != null) {
-            mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.ivWeatherNow.setImageResource(
+            mBinding.layoutContentMain.layoutContentAppBar.ivWeatherNow.setImageResource(
                     WeatherIconInterpreter.interpretIcon(weather.getSummary()));
 
-            mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvWeatherNowDate.setText(
+            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowDate.setText(
                     NormalizeDate.getHumanFriendlyDateFromDB(Long.valueOf(weather.getDate())));
 
-            mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvWeatherNowDescription.setText(
+            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowDescription.setText(
                     WeatherIconInterpreter.interpretDescription(weather.getSummary()));
 
-            mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvWeatherNowTemp.setText(getString(R.string.weather_now_current_temp,
+            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowTemp.setText(getString(R.string.weather_now_current_temp,
                     weather.getTemperatureMax(), getString(R.string.degrees_celsius)));
 
-            mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvWeatherNowTmpApparent.setText(getString(R.string.how_it_feels,
+            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowTmpApparent.setText(getString(R.string.how_it_feels,
                     weather.getTemperatureMin(), getString(R.string.degrees_celsius)));
 
-            mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvWeatherNowHumidity.setText(getString(R.string.weather_now_humidity_level,
+            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowHumidity.setText(getString(R.string.weather_now_humidity_level,
                     weather.getHumidity()));
         }
     }
@@ -644,7 +644,7 @@ public class MainActivity extends AppCompatActivity implements
             prefEditor.putString("saved_location_name", location.getLocationName());
             prefEditor.apply();
 
-            mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvWeatherNowLocation.setText(location.getLocationName());
+            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(location.getLocationName());
 
             fetchAllTheData(LOCATION_COORDINATES);
         }
@@ -697,7 +697,7 @@ public class MainActivity extends AppCompatActivity implements
                 final Address address = resultData.getParcelable(Constants.RESULT_ADDRESS);
                 runOnUiThread(() -> {
                     assert address != null;
-                    mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvWeatherNowLocation.setText(address.getLocality());
+                    mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(address.getLocality());
                     saveCurrentLocation(address.getLocality());
 
 
@@ -757,14 +757,14 @@ public class MainActivity extends AppCompatActivity implements
 
     private void cleanViews() {
         mWeatherViewModel.deleteAll();
-        mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.ivWeatherNow.setImageResource(R.drawable.ic_weather_default);
+        mBinding.layoutContentMain.layoutContentAppBar.ivWeatherNow.setImageResource(R.drawable.ic_weather_default);
 
-        mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvWeatherNowDate.setText(null);
-        mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvWeatherNowDescription.setText(null);
-        mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvWeatherNowTemp.setText(null);
-        mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvWeatherNowTmpApparent.setText(null);
-        mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvWeatherNowHumidity.setText(null);
-        mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvWeatherNowLocation.setText(null);
+        mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowDate.setText(null);
+        mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowDescription.setText(null);
+        mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowTemp.setText(null);
+        mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowTmpApparent.setText(null);
+        mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowHumidity.setText(null);
+        mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(null);
     }
 
     public boolean isConnected() throws InterruptedException, IOException {
