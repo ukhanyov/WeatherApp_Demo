@@ -25,6 +25,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +33,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.oleg.weatherapp_demo.adapters.MyLocationAdapter;
 import com.example.oleg.weatherapp_demo.adapters.WeatherAdapter;
 import com.example.oleg.weatherapp_demo.adapters.WeatherHorizontalAdapter;
 import com.example.oleg.weatherapp_demo.data.MyLocationViewModel;
@@ -48,6 +50,7 @@ import com.example.oleg.weatherapp_demo.network.pojo.PJWeeklySpecificDay;
 import com.example.oleg.weatherapp_demo.network.retrofit.GetDataService;
 import com.example.oleg.weatherapp_demo.network.retrofit.RetrofitWeatherInstance;
 import com.example.oleg.weatherapp_demo.utils.Constants;
+import com.example.oleg.weatherapp_demo.utils.CustomOnSwipeTouchListener;
 import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -57,6 +60,7 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,14 +106,17 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // Fancy dataBinding
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         Toolbar toolbar = mBinding.layoutContentMainPortrait.toolbar;
         setSupportActionBar(toolbar);
         DrawerLayout drawer = mBinding.drawerLayout;
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this,
+                drawer,
+                toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -133,17 +140,9 @@ public class MainActivity extends AppCompatActivity implements
 //            }
 //        });
 
-
-
-
-//        RecyclerView recyclerViewVertical = mBinding.rvWeather;
-//        RecyclerView recyclerViewHorizontal = mBinding.rvWeatherHoryzontal;
-//        RecyclerView recyclerViewNavView = mBinding.rvNavList;
-//        progressBar = mBinding.pbLoadingIndicator;
-
         RecyclerView recyclerViewVertical = mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.rvWeather;
         RecyclerView recyclerViewHorizontal = mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.rvWeatherHorizontal;
-        //RecyclerView recyclerViewNavView = findViewById(R.id.rv_navList);
+        RecyclerView recyclerViewNavView = mBinding.rvNavList;
         progressBar = mBinding.pbLoadingIndicator;
 
         // Second "this" is for item click
@@ -168,10 +167,10 @@ public class MainActivity extends AppCompatActivity implements
 
 
         // Recycler view for nav drawer
-//        final MyLocationAdapter myLocationAdapter = new MyLocationAdapter(this);
-//        recyclerViewNavView.setAdapter(myLocationAdapter);
-//        recyclerViewNavView.setLayoutManager(new LinearLayoutManager(this));
-//        recyclerViewNavView.setHasFixedSize(true);
+        final MyLocationAdapter myLocationAdapter = new MyLocationAdapter(this);
+        recyclerViewNavView.setAdapter(myLocationAdapter);
+        recyclerViewNavView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewNavView.setHasFixedSize(true);
 
         // Nav view stuff
 //        mDrawer = mBinding.navDrawer;
@@ -229,107 +228,107 @@ public class MainActivity extends AppCompatActivity implements
 //        });
 
         // Swipe to delete from locations list
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
 
-//        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-//            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-//
-//                return true;// true if moved, false otherwise
-//            }
-//
-//            @Override
-//            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-//                //Remove swiped item from list and notify the RecyclerView
-//                myLocationAdapter.notifyItemRemoved(viewHolder.getLayoutPosition());
-//                // this is wanky, think around later
-//                MyLocation myLocation = myLocationAdapter.getItem(viewHolder.getLayoutPosition());
-//                mMyLocationViewModel.deleteSpecificLocation(myLocation.getLocationName());
-//
-//                // Check if location is in preferences
-//                SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
-//                if(myLocation.getLocationName().equals(preferencesLocation.getString("saved_location_name", null)) ||
-//                        myLocation.getLocationCoordinates().equals(preferencesLocation.getString("saved_location_coordinates", null))){
-//                    SharedPreferences.Editor prefEditor = preferencesLocation.edit();
-//                    prefEditor.clear();
-//                    prefEditor.apply();
-//                }
-//
-//            }
-//        };
-//        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-//        itemTouchHelper.attachToRecyclerView(recyclerViewNavView);
+                return true;// true if moved, false otherwise
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                //Remove swiped item from list and notify the RecyclerView
+                myLocationAdapter.notifyItemRemoved(viewHolder.getLayoutPosition());
+                // this is wanky, think around later
+                MyLocation myLocation = myLocationAdapter.getItem(viewHolder.getLayoutPosition());
+                mMyLocationViewModel.deleteSpecificLocation(myLocation.getLocationName());
+
+                // Check if location is in preferences
+                SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
+                if(myLocation.getLocationName().equals(preferencesLocation.getString("saved_location_name", null)) ||
+                        myLocation.getLocationCoordinates().equals(preferencesLocation.getString("saved_location_coordinates", null))){
+                    SharedPreferences.Editor prefEditor = preferencesLocation.edit();
+                    prefEditor.clear();
+                    prefEditor.apply();
+                }
+
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerViewNavView);
 
         // Location viewModel stuff
         mMyLocationViewModel = ViewModelProviders.of(this).get(MyLocationViewModel.class);
-//        mMyLocationViewModel.getAllLocations().observe(this, myLocationAdapter::setMyLocations);
-//
-//        // Swipes on screen
-//        mBinding.clWeatherNow.setOnTouchListener(new CustomOnSwipeTouchListener(MainActivity.this) {
-//
-//            public void onSwipeRight() {
-//
-//                mMyLocationsList = new ArrayList<>();
-//                mMyLocationsList = myLocationAdapter.getAll();
-//
-//                for(MyLocation location : mMyLocationsList){
-//
-//                    if(Objects.equals(location.getLocationCoordinates(), LOCATION_COORDINATES)){
-//
-//                        int position = mMyLocationsList.indexOf(location);
-//                        if(position < mMyLocationsList.size() - 1){
-//
-//                            LOCATION_COORDINATES = mMyLocationsList.get(position + 1).getLocationCoordinates();
-//                            mBinding.tvWeatherNowLocation.setText(mMyLocationsList.get(position + 1).getLocationName());
-//
-//                            fetchAllTheData(LOCATION_COORDINATES);
-//
-//                            SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
-//                            SharedPreferences.Editor prefEditor = preferencesLocation.edit();
-//                            prefEditor.clear();
-//                            prefEditor.putString("saved_location_coordinates", LOCATION_COORDINATES);
-//                            prefEditor.putString("saved_location_name", mMyLocationsList.get(position + 1).getLocationName());
-//                            prefEditor.apply();
-//
-//                        }
-//
-//                        return;
-//                    }
-//                }
-//            }
-//
-//            public void onSwipeLeft() {
-//
-//                mMyLocationsList = new ArrayList<>();
-//                mMyLocationsList = myLocationAdapter.getAll();
-//
-//                for(MyLocation location : mMyLocationsList){
-//
-//                    if(Objects.equals(location.getLocationCoordinates(), LOCATION_COORDINATES)){
-//                        int position = mMyLocationsList.indexOf(location);
-//                        if(position >= 0){
-//
-//                            LOCATION_COORDINATES = mMyLocationsList.get(position - 1).getLocationCoordinates();
-//                            mBinding.tvWeatherNowLocation.setText(mMyLocationsList.get(position - 1).getLocationName());
-//
-//                            fetchAllTheData(LOCATION_COORDINATES);
-//
-//                            SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
-//                            SharedPreferences.Editor prefEditor = preferencesLocation.edit();
-//                            prefEditor.clear();
-//                            prefEditor.putString("saved_location_coordinates", LOCATION_COORDINATES);
-//                            prefEditor.putString("saved_location_name", mMyLocationsList.get(position - 1).getLocationName());
-//                            prefEditor.apply();
-//
-//                        }
-//
-//                        return;
-//                    }
-//                }
-//            }
-//            public void onSimpleClick(){
-//                if(mWeatherNow != null) launchDetailsActivity(mWeatherNow);
-//            }
-//
-//        });
+        mMyLocationViewModel.getAllLocations().observe(this, myLocationAdapter::setMyLocations);
+
+        // Swipes on screen
+        mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.clWeatherNow.setOnTouchListener(new CustomOnSwipeTouchListener(MainActivity.this) {
+
+            public void onSwipeRight() {
+
+                mMyLocationsList = new ArrayList<>();
+                mMyLocationsList = myLocationAdapter.getAll();
+
+                for(MyLocation location : mMyLocationsList){
+
+                    if(Objects.equals(location.getLocationCoordinates(), LOCATION_COORDINATES)){
+
+                        int position = mMyLocationsList.indexOf(location);
+                        if(position < mMyLocationsList.size() - 1){
+
+                            LOCATION_COORDINATES = mMyLocationsList.get(position + 1).getLocationCoordinates();
+                            mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvWeatherNowLocation.setText(mMyLocationsList.get(position + 1).getLocationName());
+
+                            fetchAllTheData(LOCATION_COORDINATES);
+
+                            SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
+                            SharedPreferences.Editor prefEditor = preferencesLocation.edit();
+                            prefEditor.clear();
+                            prefEditor.putString("saved_location_coordinates", LOCATION_COORDINATES);
+                            prefEditor.putString("saved_location_name", mMyLocationsList.get(position + 1).getLocationName());
+                            prefEditor.apply();
+
+                        }
+
+                        return;
+                    }
+                }
+            }
+
+            public void onSwipeLeft() {
+
+                mMyLocationsList = new ArrayList<>();
+                mMyLocationsList = myLocationAdapter.getAll();
+
+                for(MyLocation location : mMyLocationsList){
+
+                    if(Objects.equals(location.getLocationCoordinates(), LOCATION_COORDINATES)){
+                        int position = mMyLocationsList.indexOf(location);
+                        if(position >= 0){
+
+                            LOCATION_COORDINATES = mMyLocationsList.get(position - 1).getLocationCoordinates();
+                            mBinding.layoutContentMainPortrait.layoutContentAppBarPortrait.tvWeatherNowLocation.setText(mMyLocationsList.get(position - 1).getLocationName());
+
+                            fetchAllTheData(LOCATION_COORDINATES);
+
+                            SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
+                            SharedPreferences.Editor prefEditor = preferencesLocation.edit();
+                            prefEditor.clear();
+                            prefEditor.putString("saved_location_coordinates", LOCATION_COORDINATES);
+                            prefEditor.putString("saved_location_name", mMyLocationsList.get(position - 1).getLocationName());
+                            prefEditor.apply();
+
+                        }
+
+                        return;
+                    }
+                }
+            }
+            public void onSimpleClick(){
+                if(mWeatherNow != null) launchDetailsActivity(mWeatherNow);
+            }
+
+        });
+
     }
 
     @Override

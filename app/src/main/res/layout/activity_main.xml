@@ -22,16 +22,24 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:fitsSystemWindows="true"
-            app:headerLayout="@layout/nav_header_main"
-            app:menu="@menu/activity_main_drawer" />
+            android:fitsSystemWindows="true">
 
-        <!--<android.support.v7.widget.RecyclerView-->
-        <!--android:id="@+id/rv_navList"-->
-        <!--android:layout_width="200dp"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_gravity="left|start"-->
-        <!--android:background="#ffeeeeee" />-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <include
+                android:id="@+id/navigation_drawer_header_include"
+                layout="@layout/nav_header_main" />
+
+            <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_navList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        </RelativeLayout>
+    </android.support.design.widget.NavigationView>
+
 
         <ProgressBar
             android:id="@+id/pb_loading_indicator"
