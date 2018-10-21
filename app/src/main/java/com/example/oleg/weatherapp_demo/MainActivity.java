@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        Toolbar toolbar = mBinding.layoutContentMainPortrait.toolbar;
+        Toolbar toolbar = mBinding.toolbarLayout.toolbar;
         setSupportActionBar(toolbar);
         DrawerLayout drawer = mBinding.drawerLayout;
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
