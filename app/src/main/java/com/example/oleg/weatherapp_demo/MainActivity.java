@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Location;
 import android.location.LocationManager;
@@ -803,6 +805,11 @@ public class MainActivity extends AppCompatActivity implements
                 public void onComplete(@NonNull Task<PlacePhotoResponse> task) {
                     PlacePhotoResponse photo = task.getResult();
                     Bitmap bitmap = Objects.requireNonNull(photo).getBitmap();
+                    Drawable drawable = new BitmapDrawable(getResources(), bitmap);
+
+                    mBinding.clActivityMain.setBackground(drawable);
+                    // Setting opacity (scale is 0 - 255)
+                    mBinding.clActivityMain.getBackground().setAlpha(51);
                 }
             });
         });
