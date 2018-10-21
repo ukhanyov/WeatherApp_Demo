@@ -233,6 +233,7 @@ public class MainActivity extends AppCompatActivity implements
             }
 
             public void onSimpleClick() {
+
                 if (mWeatherNow != null) launchDetailsActivity(mWeatherNow);
             }
 
@@ -276,6 +277,7 @@ public class MainActivity extends AppCompatActivity implements
             // TODO: Add backgroundImage (maybe from placePicker)
             // TODO: Change design
             // TODO: Implement sunrises and sundowns
+            // TODO: tap sound
         }
 
         fetchAllTheData(LOCATION_COORDINATES);
