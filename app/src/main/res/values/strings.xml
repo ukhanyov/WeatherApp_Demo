@@ -56,4 +56,5 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="open_navigation_drawer">Open navigation drawer</string>
+    <string name="delete_selected_location">Delete selected location</string>
 </resources>

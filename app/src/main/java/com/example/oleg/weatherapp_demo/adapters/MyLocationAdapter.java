@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.oleg.weatherapp_demo.R;
@@ -18,10 +19,18 @@ public class MyLocationAdapter extends RecyclerView.Adapter<MyLocationAdapter.My
     private final LayoutInflater mInflater;
     private List<MyLocation> mMyLocations; // Cached copy of MyLocations
 
+    // Item click stuff
+    final private MyLocationAdapterOnClickHandler mClickHandler;
 
-    public MyLocationAdapter(Context context){
+    public MyLocationAdapter(Context context, MyLocationAdapterOnClickHandler  clickHandler){
         mInflater = LayoutInflater.from(context);
 
+        mClickHandler = clickHandler;
+
+    }
+
+    public interface MyLocationAdapterOnClickHandler{
+        void onClick();
     }
 
     @NonNull
@@ -51,6 +60,10 @@ public class MyLocationAdapter extends RecyclerView.Adapter<MyLocationAdapter.My
         else return null;
     }
 
+    public MyLocation deleteLocation(int position){
+        return mMyLocations.get(position);
+    }
+
     @Override
     public int getItemCount() {
         if(mMyLocations != null) return mMyLocations.size();
@@ -61,15 +74,23 @@ public class MyLocationAdapter extends RecyclerView.Adapter<MyLocationAdapter.My
         return mMyLocations.get(position);
     }
 
-    class MyLocationViewHolder extends RecyclerView.ViewHolder {
+    class MyLocationViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView locationName;
+        ImageButton imageButton;
 
         MyLocationViewHolder(View view){
             super(view);
 
             locationName = view.findViewById(R.id.tv_location_item_name);
+            imageButton = view.findViewById(R.id.ib_delete_location);
         }
 
+        @Override
+        public void onClick(View view) {
+            int adapterPosition = getAdapterPosition();
+            MyLocation myLocation = mMyLocations.get(adapterPosition);
+            mClickHandler.onClick();
+        }
     }
 }
