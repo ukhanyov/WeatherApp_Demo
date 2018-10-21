@@ -75,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements
         // item click stuff
         WeatherAdapter.WeatherAdapterOnClickHandler,
         WeatherHorizontalAdapter.WeatherHorizontalAdapterOnClickHandler,
-        MyLocationAdapter.MyLocationAdapterOnClickHandler,
         NavigationView.OnNavigationItemSelectedListener {
 
     //private static String url = "https://api.darksky.net/forecast/31b4710c5ae2b750bb6227c0517f84de/37.8267,-122.4233?units=si&exclude=currently,minutely,hourly,flags";
@@ -154,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements
         mWeatherViewModel.getWeatherHourlyByCoordinatesAndType().observe(this, horizontalAdapter::setWeather);
 
         // Recycler view for nav drawer
-        final MyLocationAdapter myLocationAdapter = new MyLocationAdapter(this, this);
+        final MyLocationAdapter myLocationAdapter = new MyLocationAdapter(this);
         recyclerViewNavView.setAdapter(myLocationAdapter);
         recyclerViewNavView.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewNavView.setHasFixedSize(true);
@@ -626,11 +625,6 @@ public class MainActivity extends AppCompatActivity implements
         };
         startDetailsActivity.putExtra(Intent.EXTRA_TEXT, data);
         startActivity(startDetailsActivity);
-    }
-
-    @Override
-    public void onClick() {
-        Toast.makeText(this, "dsfsdfsdf", Toast.LENGTH_SHORT).show();
     }
 
     public void textOnLocationNavigationDrawerClicked(View view) {

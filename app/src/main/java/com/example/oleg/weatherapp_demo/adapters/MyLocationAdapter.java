@@ -19,18 +19,8 @@ public class MyLocationAdapter extends RecyclerView.Adapter<MyLocationAdapter.My
     private final LayoutInflater mInflater;
     private List<MyLocation> mMyLocations; // Cached copy of MyLocations
 
-    // Item click stuff
-    final private MyLocationAdapterOnClickHandler mClickHandler;
-
-    public MyLocationAdapter(Context context, MyLocationAdapterOnClickHandler  clickHandler){
+    public MyLocationAdapter(Context context){
         mInflater = LayoutInflater.from(context);
-
-        mClickHandler = clickHandler;
-
-    }
-
-    public interface MyLocationAdapterOnClickHandler{
-        void onClick();
     }
 
     @NonNull
@@ -60,10 +50,6 @@ public class MyLocationAdapter extends RecyclerView.Adapter<MyLocationAdapter.My
         else return null;
     }
 
-    public MyLocation deleteLocation(int position){
-        return mMyLocations.get(position);
-    }
-
     @Override
     public int getItemCount() {
         if(mMyLocations != null) return mMyLocations.size();
@@ -74,7 +60,7 @@ public class MyLocationAdapter extends RecyclerView.Adapter<MyLocationAdapter.My
         return mMyLocations.get(position);
     }
 
-    class MyLocationViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class MyLocationViewHolder extends RecyclerView.ViewHolder{
 
         TextView locationName;
         ImageButton imageButton;
@@ -84,13 +70,6 @@ public class MyLocationAdapter extends RecyclerView.Adapter<MyLocationAdapter.My
 
             locationName = view.findViewById(R.id.tv_location_item_name);
             imageButton = view.findViewById(R.id.ib_delete_location);
-        }
-
-        @Override
-        public void onClick(View view) {
-            int adapterPosition = getAdapterPosition();
-            MyLocation myLocation = mMyLocations.get(adapterPosition);
-            mClickHandler.onClick();
         }
     }
 }
