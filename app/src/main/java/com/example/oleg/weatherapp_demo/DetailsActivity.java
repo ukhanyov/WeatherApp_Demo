@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 
 import com.example.oleg.weatherapp_demo.databinding.ActivityDetailsBinding;
 import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
+
+import java.util.Objects;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -32,8 +35,22 @@ public class DetailsActivity extends AppCompatActivity {
         // Fancy dataBinding
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_details);
 
+        // Toolbar
+        Toolbar toolbar = mBinding.toolbarLayoutDetails.toolbar;
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
+
         mWeatherData = getIntent().getStringArrayExtra(Intent.EXTRA_TEXT);
         populateViews(mWeatherData);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     private void populateViews(String[] weatherData) {
