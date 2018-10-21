@@ -25,7 +25,7 @@
 
     <ImageButton
         android:onClick="buttonOnLocationNavigationDrawerClicked"
-        android:background="#ffffff"
+        android:background="#00000000"
         android:contentDescription="@string/delete_selected_location"
         android:id="@+id/ib_delete_location"
         android:layout_width="wrap_content"

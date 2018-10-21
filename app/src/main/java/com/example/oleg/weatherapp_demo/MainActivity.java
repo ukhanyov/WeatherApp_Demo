@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Location;
 import android.location.LocationManager;
@@ -58,7 +59,14 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlacePhotoMetadata;
+import com.google.android.gms.location.places.PlacePhotoMetadataBuffer;
+import com.google.android.gms.location.places.PlacePhotoMetadataResponse;
+import com.google.android.gms.location.places.PlacePhotoResponse;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -108,6 +116,9 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
+        // Construct a GeoDataClient.
+        mGeoDataClient = Places.getGeoDataClient(this);
 
         // Toolbar stuff
         Toolbar toolbar = mBinding.toolbarLayout.toolbar;
@@ -275,9 +286,7 @@ public class MainActivity extends AppCompatActivity implements
             // TODO: Add offline mode
             // TODO: Add callback when internet is enabled
             // TODO: Add backgroundImage (maybe from placePicker)
-            // TODO: Change design
             // TODO: Implement sunrises and sundowns
-            // TODO: tap sound
         }
 
         fetchAllTheData(LOCATION_COORDINATES);
@@ -303,6 +312,83 @@ public class MainActivity extends AppCompatActivity implements
         DrawerLayout drawer = mBinding.drawerLayout;
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (item.getItemId()) {
+
+            case R.id.action_refresh_table:
+                cleanViews();
+
+                fetchAllTheData(LOCATION_COORDINATES);
+
+                return true;
+
+            case R.id.action_add_location:
+                // Start picking place on the map
+                try {
+                    if (haveNetworkConnection() && isConnected()) {
+                        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                        startActivityForResult(builder.build(this), Constants.PLACE_PICKER_REQUEST_FOR_LOCATION);
+                    }
+
+                } catch (InterruptedException |
+                        IOException |
+                        GooglePlayServicesNotAvailableException |
+                        GooglePlayServicesRepairableException e) {
+                    e.printStackTrace();
+                }
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.PLACE_PICKER_REQUEST_FOR_LOCATION) {
+            if (resultCode == RESULT_OK) {
+                cleanViews();
+                Place place = PlacePicker.getPlace(this, data);
+
+                LOCATION_COORDINATES = String.valueOf(place.getLatLng().latitude) + "," +
+                        String.valueOf(place.getLatLng().longitude);
+
+                mResultReceiver = new AddressResultReceiver(null);
+                Intent intent = new Intent(this, GeocodeAddressIntentService.class);
+                intent.putExtra(Constants.RECEIVER, mResultReceiver);
+                intent.putExtra(Constants.FETCH_TYPE_EXTRA, Constants.USE_ADDRESS_LOCATION);
+                intent.putExtra(Constants.LOCATION_LATITUDE_DATA_EXTRA, place.getLatLng().latitude);
+                intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, place.getLatLng().longitude);
+                startService(intent);
+
+                fetchAllTheData(LOCATION_COORDINATES);
+
+                SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
+                SharedPreferences.Editor prefEditor = preferencesLocation.edit();
+                prefEditor.clear();
+                prefEditor.putString("saved_location_coordinates", LOCATION_COORDINATES);
+                prefEditor.apply();
+
+                getPhotoFromPlacePicker(place.getId());
+            }
+        }
+    }
+
+    @Override
+    public void onClick(Weather weather) {
+        launchDetailsActivity(weather);
     }
 
     private void fetchAllTheData(String coordinates) {
@@ -530,83 +616,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        switch (item.getItemId()) {
-
-            case R.id.action_refresh_table:
-                cleanViews();
-
-                fetchAllTheData(LOCATION_COORDINATES);
-
-                return true;
-
-            case R.id.action_add_location:
-                // Start picking place on the map
-                try {
-                    if (haveNetworkConnection() && isConnected()) {
-                        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                        startActivityForResult(builder.build(this), Constants.PLACE_PICKER_REQUEST_FOR_LOCATION);
-                    }
-
-                } catch (InterruptedException |
-                        IOException |
-                        GooglePlayServicesNotAvailableException |
-                        GooglePlayServicesRepairableException e) {
-                    e.printStackTrace();
-                }
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.PLACE_PICKER_REQUEST_FOR_LOCATION) {
-            if (resultCode == RESULT_OK) {
-                cleanViews();
-                Place place = PlacePicker.getPlace(this, data);
-
-                LOCATION_COORDINATES = String.valueOf(place.getLatLng().latitude) + "," +
-                        String.valueOf(place.getLatLng().longitude);
-
-                mResultReceiver = new AddressResultReceiver(null);
-                Intent intent = new Intent(this, GeocodeAddressIntentService.class);
-                intent.putExtra(Constants.RECEIVER, mResultReceiver);
-                intent.putExtra(Constants.FETCH_TYPE_EXTRA, Constants.USE_ADDRESS_LOCATION);
-                intent.putExtra(Constants.LOCATION_LATITUDE_DATA_EXTRA, place.getLatLng().latitude);
-                intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA, place.getLatLng().longitude);
-                startService(intent);
-
-                fetchAllTheData(LOCATION_COORDINATES);
-
-                SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
-                SharedPreferences.Editor prefEditor = preferencesLocation.edit();
-                prefEditor.clear();
-                prefEditor.putString("saved_location_coordinates", LOCATION_COORDINATES);
-                prefEditor.apply();
-
-            }
-        }
-    }
-
-    // Item click, obviously
-    @Override
-    public void onClick(Weather weather) {
-        launchDetailsActivity(weather);
-    }
-
     public void currentWeatherClick(View view) {
 
         if (mWeatherNow != null)
@@ -774,5 +783,28 @@ public class MainActivity extends AppCompatActivity implements
         // The -i 5 is a timeout option
         final String command = "ping -i 5 -c 1 google.com";
         return Runtime.getRuntime().exec(command).waitFor() == 0;
+    }
+
+    private void getPhotoFromPlacePicker(String placeId) {
+        final Task<PlacePhotoMetadataResponse> photoMetadataResponse = mGeoDataClient.getPlacePhotos(placeId);
+        photoMetadataResponse.addOnCompleteListener(task -> {
+            // Get the list of photos.
+            PlacePhotoMetadataResponse photos = task.getResult();
+            // Get the PlacePhotoMetadataBuffer (metadata for all of the photos).
+            PlacePhotoMetadataBuffer photoMetadataBuffer = Objects.requireNonNull(photos).getPhotoMetadata();
+            // Get the first photo in the list.
+            PlacePhotoMetadata photoMetadata = photoMetadataBuffer.get(0);
+            // Get the attribution text.
+            CharSequence attribution = photoMetadata.getAttributions();
+            // Get a full-size bitmap for the photo.
+            Task<PlacePhotoResponse> photoResponse = mGeoDataClient.getPhoto(photoMetadata);
+            photoResponse.addOnCompleteListener(new OnCompleteListener<PlacePhotoResponse>() {
+                @Override
+                public void onComplete(@NonNull Task<PlacePhotoResponse> task) {
+                    PlacePhotoResponse photo = task.getResult();
+                    Bitmap bitmap = Objects.requireNonNull(photo).getBitmap();
+                }
+            });
+        });
     }
 }
