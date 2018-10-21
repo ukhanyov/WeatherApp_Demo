@@ -6,8 +6,8 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:minHeight="100dp"
         android:minWidth="100dp"
+        android:minHeight="100dp"
         tools:context=".DetailsActivity"
         tools:layout_editor_absoluteY="81dp">
 
@@ -16,12 +16,12 @@
             android:id="@+id/iv_details_weather_icon"
             android:layout_width="256dp"
             android:layout_height="285dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline_horizontal_layout_first"
             app:layout_constraintStart_toStartOf="parent"
@@ -32,106 +32,99 @@
             android:id="@+id/tv_details_1"
             android:layout_width="279dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_layout_first"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Date"
-            android:textColor="?attr/primaryTextColor"/>
+            tools:text="Date" />
 
         <TextView
             android:id="@+id/tv_details_2"
             android:layout_width="279dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_layout_first"
             app:layout_constraintTop_toBottomOf="@+id/tv_details_1"
-            tools:text="Summary"
-            android:textColor="?attr/primaryTextColor"/>
+            tools:text="Summary" />
 
         <TextView
             android:id="@+id/tv_details_3"
             android:layout_width="279dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_layout_first"
             app:layout_constraintTop_toBottomOf="@+id/tv_details_2"
-            tools:text="Temperature max"
-            android:textColor="?attr/primaryTextColor"/>
+            tools:text="Temperature max" />
 
         <TextView
             android:id="@+id/tv_details_4"
             android:layout_width="279dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_layout_first"
             app:layout_constraintTop_toBottomOf="@+id/tv_details_3"
-            tools:text="Temperature min"
-            android:textColor="?attr/primaryTextColor"/>
+            tools:text="Temperature min" />
 
         <TextView
             android:id="@+id/tv_details_5"
             android:layout_width="279dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_layout_first"
             app:layout_constraintTop_toBottomOf="@+id/tv_details_4"
-            tools:text="Humidity"
-            android:textColor="?attr/primaryTextColor"/>
+            tools:text="Humidity" />
 
         <TextView
             android:id="@+id/tv_details_6"
             android:layout_width="279dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_layout_first"
             app:layout_constraintTop_toBottomOf="@+id/tv_details_5"
-            tools:text="Pressure"
-            android:textColor="?attr/primaryTextColor"/>
+            tools:text="Pressure" />
 
         <TextView
             android:id="@+id/tv_details_7"
             android:layout_width="279dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_layout_first"
             app:layout_constraintTop_toBottomOf="@+id/tv_details_6"
-            tools:text="Wind speed"
-            android:textColor="?attr/primaryTextColor"/>
+            tools:text="Wind speed" />
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline_horizontal_layout_first"

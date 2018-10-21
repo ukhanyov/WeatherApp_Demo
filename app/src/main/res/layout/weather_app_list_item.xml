@@ -25,15 +25,13 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintLeft_toRightOf="@+id/weather_icon"
-        tools:text="Today, May 03"
-        android:textColor="?attr/primaryTextColor"/>
+        tools:text="Today, May 03" />
 
     <TextView
         android:id="@+id/tv_weather_summary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="?attr/secondaryTextColor"
         app:layout_constraintLeft_toLeftOf="@+id/tv_weather_date"
         app:layout_constraintTop_toTopOf="@+id/guideline"
         tools:text="Cloudly" />
@@ -46,7 +44,6 @@
         android:layout_marginRight="4dp"
         android:fontFamily="sans-serif-light"
         android:textSize="28sp"
-        android:textColor="?attr/primaryTextColor"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintRight_toLeftOf="@+id/tv_low_temperature"
         app:layout_constraintTop_toTopOf="@+id/guideline"
@@ -59,7 +56,6 @@
         android:fontFamily="sans-serif-light"
         android:gravity="end"
         android:textSize="28sp"
-        android:textColor="?attr/secondaryTextColor"
         app:layout_constraintBottom_toBottomOf="@+id/guideline"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline"

@@ -98,7 +98,7 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
 
             weatherIcon = itemView.findViewById(R.id.iv_horizontal_icon);
             weatherTime = itemView.findViewById(R.id.tv_horizontal_time);
-            weatherTemperature = itemView.findViewById(R.id.tv_horyzontal_temperature);
+            weatherTemperature = itemView.findViewById(R.id.tv_horizontal_temperature);
 
             itemView.setOnClickListener(this);
         }

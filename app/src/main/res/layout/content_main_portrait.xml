@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/cl_weather_now"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:onClick="currentWeatherClick"
+        tools:context=".MainActivity"
+        tools:showIn="@layout/app_bar_main">
+
+        <ImageView
+            android:id="@+id/iv_weather_now"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@string/current_weather_icon"
+            android:src="@drawable/ic_weather_default"
+            app:layout_constraintBottom_toTopOf="@+id/guideline_horizontal_layout_first"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_horizontal_weather_now_general"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_location" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_horizontal_weather_now_general"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintGuide_percent="0.4"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_weather_now_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="4dp"
+            android:hint="@string/weather_now_date_hint"
+            app:layout_constraintBottom_toTopOf="@+id/tv_weather_now_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_weather_now_general"
+            app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_location" />
+
+        <TextView
+            android:id="@+id/tv_weather_now_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="4dp"
+            android:hint="@string/weather_now_description_hint"
+            app:layout_constraintBottom_toTopOf="@+id/tv_weather_now_temp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_weather_now_general"
+            app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_date" />
+
+        <TextView
+            android:id="@+id/tv_weather_now_temp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="4dp"
+            android:hint="@string/weather_now_current_temp_hint"
+            app:layout_constraintBottom_toTopOf="@+id/tv_weather_now_tmp_apparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_weather_now_general"
+            app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_description" />
+
+        <TextView
+            android:id="@+id/tv_weather_now_tmp_apparent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="4dp"
+            android:hint="@string/apparent_temperature"
+            app:layout_constraintBottom_toTopOf="@+id/tv_weather_now_humidity"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_weather_now_general"
+            app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_temp" />
+
+        <TextView
+            android:id="@+id/tv_weather_now_humidity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:hint="@string/weather_now_humidity_level_hint"
+            app:layout_constraintBottom_toTopOf="@+id/guideline_horizontal_layout_first"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_weather_now_general"
+            app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_tmp_apparent" />
+
+        <TextView
+            android:id="@+id/tv_offline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/dark_red"
+            android:gravity="center"
+            android:text="@string/offline"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_weather_now_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/location_background"
+            android:gravity="center"
+            android:hint="@string/weather_now_location_hint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_offline" />
+
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_horizontal_layout_first"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintGuide_percent="0.3"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_weather_horizontal"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:clipToPadding="false"
+            android:paddingBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline_horizontal_layout_second"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideline_horizontal_layout_first">
+
+        </android.support.v7.widget.RecyclerView>
+
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_horizontal_layout_second"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintGuide_percent="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_weather"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:clipToPadding="false"
+            android:paddingBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideline_horizontal_layout_second" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

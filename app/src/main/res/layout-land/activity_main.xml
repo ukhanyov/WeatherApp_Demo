@@ -58,7 +58,7 @@
                 android:layout_marginBottom="4dp"
                 android:hint="@string/weather_now_date_hint"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:textColor="?attr/primaryTextColor"
+
                 app:layout_constraintBottom_toTopOf="@+id/tv_weather_now_description"
                 app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_layout2"
                 app:layout_constraintStart_toStartOf="parent"
@@ -74,7 +74,7 @@
                 android:layout_marginBottom="4dp"
                 android:hint="@string/weather_now_description_hint"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:textColor="?attr/primaryTextColor"
+
                 app:layout_constraintBottom_toTopOf="@+id/tv_weather_now_temp"
                 app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_layout2"
                 app:layout_constraintStart_toStartOf="parent"
@@ -90,7 +90,7 @@
                 android:layout_marginBottom="4dp"
                 android:hint="@string/weather_now_current_temp_hint"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:textColor="?attr/primaryTextColor"
+
                 app:layout_constraintBottom_toTopOf="@+id/tv_weather_now_tmp_apparent"
                 app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_layout2"
                 app:layout_constraintStart_toStartOf="parent"
@@ -107,7 +107,7 @@
                 android:layout_marginBottom="4dp"
                 android:hint="@string/apparent_temperature"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:textColor="?attr/primaryTextColor"
+
                 app:layout_constraintBottom_toTopOf="@+id/tv_weather_now_humidity"
                 app:layout_constraintEnd_toStartOf="@+id/guideline_horizontal_layout_first"
                 app:layout_constraintStart_toStartOf="parent"
@@ -124,7 +124,6 @@
                 android:layout_marginBottom="8dp"
                 android:hint="@string/weather_now_humidity_level_hint"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:textColor="?attr/primaryTextColor"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_layout2"
                 app:layout_constraintStart_toStartOf="parent"
@@ -138,7 +137,7 @@
                 android:background="@color/dark_red"
                 android:gravity="center"
                 android:text="@string/offline"
-                android:textColor="@color/white"
+
                 android:textSize="12sp"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -153,7 +152,7 @@
                 android:gravity="center"
                 android:hint="@string/weather_now_location_hint"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:textColor="?attr/primaryTextColor"
+
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_offline" />
@@ -168,7 +167,7 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_weather_horyzontal"
+                android:id="@+id/rv_weather_horizontal"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginTop="8dp"
@@ -208,12 +207,12 @@
 
         </android.support.constraint.ConstraintLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_navList"
-            android:layout_width="200dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left|start"
-            android:background="#ffeeeeee" />
+        <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:id="@+id/rv_navList"-->
+        <!--android:layout_width="200dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_gravity="left|start"-->
+        <!--android:background="#ffeeeeee" />-->
 
         <ProgressBar
             android:id="@+id/pb_loading_indicator"
