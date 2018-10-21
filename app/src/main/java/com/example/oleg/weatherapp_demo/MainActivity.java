@@ -12,6 +12,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -21,11 +22,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -656,22 +657,38 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void buttonOnLocationNavigationDrawerClicked(View view){
-        View child = mBinding.rvNavList.findContainingItemView(view);
-        int position = mBinding.rvNavList.getChildAdapterPosition(child);
-        MyLocationAdapter adapter = (MyLocationAdapter) mBinding.rvNavList.getAdapter();
-        adapter.notifyItemRemoved(position);
 
-        MyLocation location = adapter.getItem(position);
-        mMyLocationViewModel.deleteSpecificLocation(location.getLocationName());
-
-        // Check if location is in preferences
-        SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
-        if (location.getLocationName().equals(preferencesLocation.getString("saved_location_name", null)) ||
-                location.getLocationCoordinates().equals(preferencesLocation.getString("saved_location_coordinates", null))) {
-            SharedPreferences.Editor prefEditor = preferencesLocation.edit();
-            prefEditor.clear();
-            prefEditor.apply();
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(this);
         }
+        builder.setTitle("Delete entry")
+                .setMessage("Are you sure you want to delete this entry?")
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                    View child = mBinding.rvNavList.findContainingItemView(view);
+                    int position = mBinding.rvNavList.getChildAdapterPosition(child);
+                    MyLocationAdapter adapter = (MyLocationAdapter) mBinding.rvNavList.getAdapter();
+                    adapter.notifyItemRemoved(position);
+
+                    MyLocation location = adapter.getItem(position);
+                    mMyLocationViewModel.deleteSpecificLocation(location.getLocationName());
+
+                    // Check if location is in preferences
+                    SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
+                    if (location.getLocationName().equals(preferencesLocation.getString("saved_location_name", null)) ||
+                            location.getLocationCoordinates().equals(preferencesLocation.getString("saved_location_coordinates", null))) {
+                        SharedPreferences.Editor prefEditor = preferencesLocation.edit();
+                        prefEditor.clear();
+                        prefEditor.apply();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, (dialog, which) -> {
+                    // do nothing
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     // Get city name
