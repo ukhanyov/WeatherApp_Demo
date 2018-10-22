@@ -21,6 +21,15 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <android.support.constraint.Guideline
+            android:id="@+id/guideline_horizontal_layout_two"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintGuide_percent="0.20"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <android.support.constraint.Guideline
             android:id="@+id/guideline_vertical_layout_top"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -40,11 +49,10 @@
             android:src="@drawable/ic_weather_default"
             app:layout_constraintBottom_toTopOf="@+id/guideline_horizontal_layout_top"
             app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_layout_top"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_layout_two"
             app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_location" />
 
         <TextView
-            android:textAlignment="viewEnd"
             android:id="@+id/tv_humidity_label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -53,13 +61,14 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="4dp"
             android:text="@string/weather_now_humidity_level_hint"
+            android:gravity="right"
+            android:textAlignment="gravity"
             app:layout_constraintBottom_toTopOf="@+id/tv_wind_label"
             app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_layout_top"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guideline_horizontal_layout_top" />
 
         <TextView
-            android:textAlignment="viewEnd"
             android:id="@+id/tv_wind_label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -68,13 +77,14 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="4dp"
             android:text="@string/weather_now_wind_hint"
+            android:gravity="right"
+            android:textAlignment="gravity"
             app:layout_constraintBottom_toTopOf="@+id/tv_precipitation_label"
             app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_layout_top"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_humidity_label" />
 
         <TextView
-            android:textAlignment="viewEnd"
             android:id="@+id/tv_precipitation_label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -83,6 +93,8 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:text="@string/weather_now_precipitation_hint"
+            android:gravity="right"
+            android:textAlignment="gravity"
             app:layout_constraintBottom_toTopOf="@+id/guideline_horizontal_layout_first"
             app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_layout_top"
             app:layout_constraintStart_toStartOf="parent"
@@ -118,6 +130,7 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_wind" />
 
         <TextView
+            android:textSize="16sp"
             android:id="@+id/tv_label_forecast"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -130,6 +143,7 @@
             app:layout_constraintTop_toTopOf="@+id/guideline_horizontal_layout_first" />
 
         <TextView
+            android:textSize="16sp"
             android:id="@+id/tv_temp_low"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -140,6 +154,7 @@
             app:layout_constraintTop_toTopOf="@+id/guideline_horizontal_layout_first" />
 
         <TextView
+            android:textSize="16sp"
             android:id="@+id/tv_temp_high"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -153,10 +168,11 @@
             android:id="@+id/tv_weather_now_temp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:hint="@string/weather_now_current_temp_hint"
+            android:textSize="48sp"
             app:layout_constraintBottom_toTopOf="@+id/guideline_horizontal_layout_top"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline_vertical_layout_top"
@@ -180,9 +196,9 @@
             android:id="@+id/tv_offline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/red"
             android:gravity="center"
             android:text="@string/offline"
+            android:textColor="@color/red"
             android:textSize="12sp"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
@@ -195,6 +211,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:hint="@string/weather_now_location_hint"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -207,7 +224,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintGuide_percent="0.40"
+            app:layout_constraintGuide_percent="0.35"
             app:layout_constraintStart_toStartOf="parent" />
 
         <android.support.v7.widget.RecyclerView

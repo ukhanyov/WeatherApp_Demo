@@ -607,19 +607,23 @@ public class MainActivity extends AppCompatActivity implements
 
 
             mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowTemp.setText(getString(R.string.weather_now_current_temp,
-                    weather.getTemperatureMax(), getString(R.string.degrees_celsius)));
+                    String.valueOf(Math.round(Double.parseDouble(weather.getTemperatureMax()))), getString(R.string.degrees_celsius)));
 
-            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowHumidity.setText(weather.getHumidity());
+            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowHumidity.setText(getString(R.string.weather_now_current_humidity,
+                    weather.getHumidity(), getString(R.string.percentage)));
 
-            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowWind.setText(weather.getHumidity());
+            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowWind.setText(getString(R.string.weather_now_current_wind,
+                    weather.getWindSpeed(), getString(R.string.kmp)));
 
-            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowPrecipitation.setText(weather.getPrecipProbability());
+            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowPrecipitation.setText(getString(R.string.weather_now_current_precipitation,
+                    weather.getPrecipProbability(), getString(R.string.millimeters)));
 
-            mBinding.layoutContentMain.layoutContentAppBar.tvTempHigh.setText(getString(R.string.weather_now_current_temp,
-                    weather.getTemperatureMax(), getString(R.string.degrees_celsius)));
-
-            mBinding.layoutContentMain.layoutContentAppBar.tvTempLow.setText(getString(R.string.weather_now_current_temp,
-                    weather.getTemperatureMin(), getString(R.string.degrees_celsius)));
+            // TODO: Change place of assigning forecast to daily weather or whatever
+//            mBinding.layoutContentMain.layoutContentAppBar.tvTempHigh.setText(getString(R.string.weather_now_current_temp,
+//                    String.valueOf(Math.round(Double.parseDouble(weather.getTemperatureMax()))), getString(R.string.degrees_celsius)));
+//
+//            mBinding.layoutContentMain.layoutContentAppBar.tvTempLow.setText(getString(R.string.weather_now_current_temp,
+//                    String.valueOf(Math.round(Double.parseDouble(weather.getTemperatureMin()))), getString(R.string.degrees_celsius)));
         }
     }
 

@@ -18,6 +18,9 @@
     <string name="weather_now_location_hint">Your Location</string>
 
     <string name="weather_now_current_temp">%1$s%2$s</string>
+    <string name="weather_now_current_wind">%1$s %2$s</string>
+    <string name="weather_now_current_humidity">%1$s %2$s</string>
+    <string name="weather_now_current_precipitation">%1$s %2$s</string>
     <string name="degrees_celsius">°</string>
     <string name="weather_now_humidity_level">Humidity level: %1$s</string>
 
@@ -58,12 +61,13 @@
     <string name="open_navigation_drawer">Open navigation drawer</string>
     <string name="delete_selected_location">Delete selected location</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="details">Details</string>
     <string name="your_location">Your Location</string>
     <string name="forecast">Forecast</string>
     <string name="_11">11</string>
     <string name="_99">99</string>
     <string name="this_week">This week</string>
+    <string name="percentage">%</string>
+    <string name="kmp">kmp</string>
+    <string name="millimeters">mm</string>
 </resources>
