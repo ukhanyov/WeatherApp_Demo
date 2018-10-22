@@ -813,14 +813,13 @@ public class MainActivity extends AppCompatActivity implements
 
                 mSavedPicture = originalImage;
 
-                saveCurrentLocation(LOCATION_NAME);
-
                 Drawable drawable = new BitmapDrawable(getResources(),
                         BitmapTransforamationHelper.transformWithSavedProportions(originalImage, width, height));
 
                 mBinding.clActivityMain.setBackground(drawable);
                 mBinding.clActivityMain.getBackground().setAlpha(51); // Setting opacity (scale is 0 - 255)
 
+                saveCurrentLocation(LOCATION_NAME);
             });
         });
     }
@@ -850,18 +849,21 @@ public class MainActivity extends AppCompatActivity implements
 
     private void setBackgroundPicture(MyLocation myLocation) {
 
-        Bitmap bitmap = null;
+        final Bitmap bitmap;
 
         if (myLocation.getImageString() != null) {
             byte[] encodeByte = Base64.decode(myLocation.getImageString(), Base64.DEFAULT);
             bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
 
             // Transform original bitmap to resized bitmap
-            int widthOfLayout = mBinding.clActivityMain.getWidth();
-            int heightOfLayout = mBinding.clActivityMain.getHeight();
-            Drawable drawable = new BitmapDrawable(getResources(), BitmapTransforamationHelper.transformWithSavedProportions(bitmap, widthOfLayout, heightOfLayout));
-            mBinding.clActivityMain.setBackground(drawable);
-            mBinding.clActivityMain.getBackground().setAlpha(51); // Setting opacity (scale is 0 - 255)
+            final View view = mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow;
+            view.post(() -> {
+                Drawable drawable = new BitmapDrawable(getResources(),
+                        BitmapTransforamationHelper.transformWithSavedProportions(bitmap, view.getWidth(), view.getHeight()));
+                mBinding.clActivityMain.setBackground(drawable);
+                mBinding.clActivityMain.getBackground().setAlpha(51); // Setting opacity (scale is 0 - 255)
+            });
+
         }
 
     }
