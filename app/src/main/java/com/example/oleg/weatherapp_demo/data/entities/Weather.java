@@ -44,6 +44,12 @@ public class Weather {
     @ColumnInfo(name = "precipProbability")
     private String mPrecipProbability;
 
+    @ColumnInfo(name = "sunriseTime")
+    private String mSunriseTime;
+
+    @ColumnInfo(name = "sunsetTime")
+    private String mSunsetTime;
+
     public Weather(String date,
                    String summary,
                    String temperatureMax,
@@ -53,7 +59,9 @@ public class Weather {
                    String windSpeed,
                    String coordinates,
                    String typeOfDay,
-                   String precipProbability) {
+                   String precipProbability,
+                   String sunrise,
+                   String sunset) {
 
         this.mDate = date;
         this.mSummary = summary;
@@ -65,6 +73,8 @@ public class Weather {
         this.mCoordinates = coordinates;
         this.mTypeOfDay = typeOfDay;
         this.mPrecipProbability = precipProbability;
+        this.mSunriseTime = sunrise;
+        this.mSunsetTime = sunset;
     }
 
     public String getDate() {
@@ -109,5 +119,13 @@ public class Weather {
 
     public String getPrecipProbability() {
         return mPrecipProbability;
+    }
+
+    public String getSunriseTime() {
+        return mSunriseTime;
+    }
+
+    public String getSunsetTime() {
+        return mSunsetTime;
     }
 }

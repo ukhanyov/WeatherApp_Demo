@@ -37,6 +37,12 @@ public class PJWeeklySpecificDay {
     @Expose
     private Double mPrecipIntensity;
 
+    @SerializedName("sunriseTime")
+    private Long mSunriseTime;
+
+    @SerializedName("sunsetTime")
+    private Long mSunsetTime;
+
     public Long getTime() {
         return time;
     }
@@ -97,4 +103,23 @@ public class PJWeeklySpecificDay {
         return mPrecipIntensity;
     }
 
+    public void setPrecipIntensity(Double mPrecipIntensity) {
+        this.mPrecipIntensity = mPrecipIntensity;
+    }
+
+    public void setSinriseTime(Long mSinriseTime) {
+        this.mSunriseTime = mSinriseTime;
+    }
+
+    public void setSunsetTime(Long mSunsetTime) {
+        this.mSunsetTime = mSunsetTime;
+    }
+
+    public Long getSunriseTime() {
+        return mSunriseTime;
+    }
+
+    public Long getSunsetTime() {
+        return mSunsetTime;
+    }
 }

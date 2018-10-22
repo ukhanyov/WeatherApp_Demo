@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements
     // Weather instance for weather now
     private Weather mWeatherNow;
     private Weather mWeatherForThisDay;
+    private List<Weather> mWeatherDailyList;
 
     // Nav drawer
     DrawerLayout mDrawer;
@@ -172,8 +173,11 @@ public class MainActivity extends AppCompatActivity implements
 
         // LiveData/viewModels
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
+
+        mWeatherDailyList = new ArrayList<>();
         mWeatherViewModel.getWeatherDailyByCoordinatesAndType().observe(this, list -> {
             adapterVertical.setWeather(list);
+            mWeatherDailyList.addAll(list);
             mWeatherForThisDay = list.get(0);
 
             // TODO: decide what to do with location/date
@@ -186,7 +190,10 @@ public class MainActivity extends AppCompatActivity implements
                     String.valueOf(Math.round(Double.parseDouble(mWeatherForThisDay.getTemperatureMin()))), getString(R.string.degrees_celsius)));
 
         });
-        mWeatherViewModel.getWeatherHourlyByCoordinatesAndType().observe(this, horizontalAdapter::setWeather);
+        mWeatherViewModel.getWeatherHourlyByCoordinatesAndType().observe(this, list -> {
+            horizontalAdapter.setWeather(list);
+            horizontalAdapter.setDailyWeather(mWeatherDailyList);
+        });
 
         // Recycler view for nav drawer
         final MyLocationAdapter myLocationAdapter = new MyLocationAdapter(this);
@@ -500,7 +507,9 @@ public class MainActivity extends AppCompatActivity implements
                                 item.getWindSpeed().toString(),
                                 LOCATION_COORDINATES,
                                 Constants.DB_WEATHER_TYPE_DAILY,
-                                item.getPrecipIntensity().toString());
+                                item.getPrecipIntensity().toString(),
+                                item.getSunriseTime().toString(),
+                                item.getSunsetTime().toString());
 
                         mWeatherViewModel.insert(weather);
                     }
@@ -548,7 +557,9 @@ public class MainActivity extends AppCompatActivity implements
                                 item.getWindSpeed().toString(),
                                 LOCATION_COORDINATES,
                                 Constants.DB_WEATHER_TYPE_HOURLY,
-                                item.getPrecipIntensity().toString());
+                                item.getPrecipIntensity().toString(),
+                                null,
+                                null);
 
                         mWeatherViewModel.insert(weather);
                     }
@@ -595,7 +606,9 @@ public class MainActivity extends AppCompatActivity implements
                                 pj.getCurrently().getWindSpeed().toString(),
                                 LOCATION_COORDINATES,
                                 Constants.DB_WEATHER_TYPE_NOW,
-                                pj.getCurrently().getPrecipIntensity().toString());
+                                pj.getCurrently().getPrecipIntensity().toString(),
+                                null,
+                                null);
 
                         setWeatherNowViews(mWeatherNow);
                     }

@@ -16,10 +16,13 @@ import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 
 import java.util.List;
 
+import static com.example.oleg.weatherapp_demo.utils.NormalizeDate.*;
+
 public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizontalAdapter.WeatherViewHolder> {
 
     private final LayoutInflater mInflater;
     private List<Weather> mWeather; // Cached copy of weather
+    private List<Weather> mWeatherDaily;
     private Context mContext;
 
     // Item click stuff
@@ -56,14 +59,27 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
             holder.weatherIcon.setImageResource(
                     WeatherIconInterpreter.interpretIcon(current.getSummary()));
 
-            // Set time
-//            holder.weatherTime.setText(
-//                    NormalizeDate.getHumanFriendlyDateFromDB(Long.parseLong(current.getDate())));
-            if(NormalizeDate.checkIfTimeIsNow(Long.parseLong(current.getDate()))){
+            if(checkIfTimeIsNow(Long.parseLong(current.getDate()))){
                 holder.weatherTime.setText(R.string.now);
+                holder.weatherIcon.setImageResource(WeatherIconInterpreter.interpretIcon(current.getSummary()));
             }else{
-                holder.weatherTime.setText(
-                        NormalizeDate.getHumanFriendlyTimeFromDB(Long.parseLong(current.getDate())));
+
+                for(Weather iterator : mWeatherDaily){
+
+                    if(getHumanFriendlyTimeFromDB(Long.parseLong(iterator.getSunriseTime()))            // Time overlaps with sunrise
+                            .equals(getHumanFriendlyTimeFromDB(Long.parseLong(current.getDate())))){
+                        holder.weatherIcon.setImageResource(R.drawable.ic_weather_sunrise);
+                    } else if(getHumanFriendlyTimeFromDB(Long.parseLong(iterator.getSunsetTime()))      // Time overlaps with sunset
+                            .equals(getHumanFriendlyTimeFromDB(Long.parseLong(current.getDate())))){
+                        holder.weatherIcon.setImageResource(R.drawable.ic_weather_sunset);
+                    } else {                                                                            // Time overlaps with nothing
+                        holder.weatherIcon.setImageResource(WeatherIconInterpreter.interpretIcon(current.getSummary()));
+                    }
+                }
+
+
+
+                holder.weatherTime.setText(getHumanFriendlyTimeFromDB(Long.parseLong(current.getDate())));
             }
 
             // Set temperature
@@ -77,6 +93,11 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
 
     public void setWeather(List<Weather> weather){
         mWeather = weather;
+        notifyDataSetChanged();
+    }
+
+    public void setDailyWeather(List<Weather> weather){
+        mWeatherDaily = weather;
         notifyDataSetChanged();
     }
 

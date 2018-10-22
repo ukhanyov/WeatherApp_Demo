@@ -45,6 +45,12 @@ public class WeatherIconInterpreter {
             case "tornado":
                 return R.drawable.ic_weather_tornado;
 
+            case "sunriseTime":
+                return R.drawable.ic_weather_sunrise;
+
+            case "sunsetTime":
+                return R.drawable.ic_weather_sunset;
+
             default:
                 return R.drawable.ic_weather_default;
         }
