@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements
 
     // Weather instance for weather now
     private Weather mWeatherNow;
+    private Weather mWeatherForThisDay;
 
     // Nav drawer
     DrawerLayout mDrawer;
@@ -110,7 +111,6 @@ public class MainActivity extends AppCompatActivity implements
     // MyLocation instance for location
     private List<MyLocation> mMyLocationsList;
     private List<MyLocation> mMyLocationsListForBackground;
-    private MyLocation mMyLocationCurrent;
 
     private String LOCATION_COORDINATES = "37.8267,-122.4233";
     private String LOCATION_NAME = null;
@@ -172,7 +172,20 @@ public class MainActivity extends AppCompatActivity implements
 
         // LiveData/viewModels
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
-        mWeatherViewModel.getWeatherDailyByCoordinatesAndType().observe(this, adapterVertical::setWeather);
+        mWeatherViewModel.getWeatherDailyByCoordinatesAndType().observe(this, list -> {
+            adapterVertical.setWeather(list);
+            mWeatherForThisDay = list.get(0);
+
+            // TODO: decide what to do with location/date
+            //toolbar.setTitle(NormalizeDate.getHumanFriendlyDateFromDB(Long.parseLong(mWeatherForThisDay.getDate())));
+
+            mBinding.layoutContentMain.layoutContentAppBar.tvTempHigh.setText(getString(R.string.weather_now_current_temp,
+                    String.valueOf(Math.round(Double.parseDouble(mWeatherForThisDay.getTemperatureMax()))), getString(R.string.degrees_celsius)));
+
+            mBinding.layoutContentMain.layoutContentAppBar.tvTempLow.setText(getString(R.string.weather_now_current_temp,
+                    String.valueOf(Math.round(Double.parseDouble(mWeatherForThisDay.getTemperatureMin()))), getString(R.string.degrees_celsius)));
+
+        });
         mWeatherViewModel.getWeatherHourlyByCoordinatesAndType().observe(this, horizontalAdapter::setWeather);
 
         // Recycler view for nav drawer
@@ -420,6 +433,8 @@ public class MainActivity extends AppCompatActivity implements
 
             mBinding.layoutContentMain.layoutContentAppBar.tvOffline.setVisibility(View.VISIBLE);
             mBinding.layoutContentMain.layoutContentAppBar.tvOffline.setText(R.string.offline_turn_on_internet);
+
+            setWeatherNowViews(mWeatherForThisDay);
         }
     }
 
@@ -603,9 +618,6 @@ public class MainActivity extends AppCompatActivity implements
             mBinding.layoutContentMain.layoutContentAppBar.ivWeatherNow.setImageResource(
                     WeatherIconInterpreter.interpretIcon(weather.getSummary()));
 
-            // TODO: set date to the toolbar
-
-
             mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowTemp.setText(getString(R.string.weather_now_current_temp,
                     String.valueOf(Math.round(Double.parseDouble(weather.getTemperatureMax()))), getString(R.string.degrees_celsius)));
 
@@ -617,13 +629,6 @@ public class MainActivity extends AppCompatActivity implements
 
             mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowPrecipitation.setText(getString(R.string.weather_now_current_precipitation,
                     weather.getPrecipProbability(), getString(R.string.millimeters)));
-
-            // TODO: Change place of assigning forecast to daily weather or whatever
-//            mBinding.layoutContentMain.layoutContentAppBar.tvTempHigh.setText(getString(R.string.weather_now_current_temp,
-//                    String.valueOf(Math.round(Double.parseDouble(weather.getTemperatureMax()))), getString(R.string.degrees_celsius)));
-//
-//            mBinding.layoutContentMain.layoutContentAppBar.tvTempLow.setText(getString(R.string.weather_now_current_temp,
-//                    String.valueOf(Math.round(Double.parseDouble(weather.getTemperatureMin()))), getString(R.string.degrees_celsius)));
         }
     }
 
@@ -854,7 +859,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void loadMyLocations(String coordinates) {
 
-        if(mMyLocationsListForBackground.size() > 0){
+        if (mMyLocationsListForBackground.size() > 0) {
             for (MyLocation iterator : mMyLocationsListForBackground) {
                 if (iterator.getLocationCoordinates().equals(coordinates)) {
                     setBackgroundPicture(iterator);

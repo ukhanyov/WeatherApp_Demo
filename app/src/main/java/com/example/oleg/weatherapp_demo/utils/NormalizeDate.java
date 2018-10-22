@@ -5,13 +5,18 @@ import java.util.Date;
 
 public class NormalizeDate {
 
+    public static String getHumanFriendlyDayOfWeek(long dbDate){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(dbDate * 1000L);
+        return getFriendlyDayOfTheWeek(calendar.get(Calendar.DAY_OF_WEEK));
+    }
+
     public static String getHumanFriendlyDateFromDB(long dbDate) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(dbDate * 1000L);
-        return getFriendlyDayOfTheWeek(calendar.get(Calendar.DAY_OF_WEEK)) + "-" +
-                calendar.get(Calendar.DAY_OF_MONTH) + "-" +
-                getFriendlyMonth(calendar.get(Calendar.MONTH)) + "-" +
-                calendar.get(Calendar.YEAR);
+        return getFriendlyDayOfTheWeek(calendar.get(Calendar.DAY_OF_WEEK)) + ", " +
+                getFriendlyMonth(calendar.get(Calendar.MONTH)) + " " +
+                calendar.get(Calendar.DAY_OF_MONTH);
     }
 
     public static String getHumanFriendlyTimeFromDB(long dbDate){
@@ -24,19 +29,19 @@ public class NormalizeDate {
     private static String getFriendlyDayOfTheWeek(int key) {
         switch (key) {
             case 1:
-                return "Sun";
+                return "Sunday";
             case 2:
-                return "Mon";
+                return "Monday";
             case 3:
-                return "Tue";
+                return "Tuesday";
             case 4:
-                return "Wen";
+                return "Wensday";
             case 5:
-                return "Thu";
+                return "Thursday";
             case 6:
-                return "Fri";
+                return "Friday";
             case 7:
-                return "Sat";
+                return "Saturday";
             default:
                 return "NaN";
         }
@@ -45,29 +50,29 @@ public class NormalizeDate {
     private static String getFriendlyMonth(int key){
         switch (key) {
             case 0:
-                return "Jan";
+                return "January";
             case 1:
-                return "Feb";
+                return "February";
             case 2:
-                return "Mar";
+                return "March";
             case 3:
-                return "Apr";
+                return "April";
             case 4:
                 return "May";
             case 5:
-                return "Jun";
+                return "June";
             case 6:
-                return "Jul";
+                return "July";
             case 7:
-                return "Aug";
+                return "August";
             case 8:
-                return "Sept";
+                return "September";
             case 9:
-                return "Oct";
+                return "October";
             case 10:
-                return "Nov";
+                return "November";
             case 11:
-                return "Dec";
+                return "December";
             default:
                 return "NaN";
         }

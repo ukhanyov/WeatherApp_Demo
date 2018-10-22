@@ -56,7 +56,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         holder.weatherIcon.setImageResource(WeatherIconInterpreter.interpretIcon(current.getSummary()));
 
         //Weather Date
-        holder.weatherDate.setText(NormalizeDate.getHumanFriendlyDateFromDB(Long.parseLong(current.getDate())));
+        holder.weatherDate.setText(NormalizeDate.getHumanFriendlyDayOfWeek(Long.parseLong(current.getDate())));
 
         // Weather Summary
         holder.weatherSummary.setText(WeatherIconInterpreter.interpretDescription(current.getSummary()));
