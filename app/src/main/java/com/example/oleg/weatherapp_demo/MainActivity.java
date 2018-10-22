@@ -56,6 +56,7 @@ import com.example.oleg.weatherapp_demo.network.pojo.PJWeekly;
 import com.example.oleg.weatherapp_demo.network.pojo.PJWeeklySpecificDay;
 import com.example.oleg.weatherapp_demo.network.retrofit.GetDataService;
 import com.example.oleg.weatherapp_demo.network.retrofit.RetrofitWeatherInstance;
+import com.example.oleg.weatherapp_demo.utils.BitmapTransforamationHelper;
 import com.example.oleg.weatherapp_demo.utils.Constants;
 import com.example.oleg.weatherapp_demo.utils.CustomOnSwipeTouchListener;
 import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
@@ -791,47 +792,14 @@ public class MainActivity extends AppCompatActivity implements
             Task<PlacePhotoResponse> photoResponse = mGeoDataClient.getPhoto(photoMetadata);
             photoResponse.addOnCompleteListener(task1 -> {
                 PlacePhotoResponse photo = task1.getResult();
-                Bitmap originalImage = Objects.requireNonNull(photo).getBitmap();
 
-                // Resize bitmap
+                Bitmap originalImage = Objects.requireNonNull(photo).getBitmap();
                 int width = mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow.getWidth();
                 int height = mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow.getHeight();
-                Bitmap background = Bitmap.createBitmap((int) width, (int) height, Bitmap.Config.ARGB_8888);
 
-                float originalWidth = originalImage.getWidth();
-                float originalHeight = originalImage.getHeight();
+                Drawable drawable = new BitmapDrawable(getResources(),
+                        BitmapTransforamationHelper.transformWithSavedProportions(originalImage, width, height));
 
-                Canvas canvas = new Canvas(background);
-
-                float scale = 0.0f;
-
-                // TODO: Add if to differentiate
-                float xTranslation = 0.0f;
-                float yTranslation = 0.0f;
-                if (height > width) {
-                    // port
-                    scale = height / originalHeight;
-                    xTranslation = (width - originalWidth * scale) / 2.0f;
-                    yTranslation = 0.0f;
-                } else {
-                    // land
-                    scale = width / originalWidth;
-                    xTranslation = 0.0f;
-                    yTranslation = (height - originalHeight * scale) / 2.0f;
-                }
-
-                Matrix transformation = new Matrix();
-                transformation.postTranslate(xTranslation, yTranslation);
-                transformation.preScale(scale, scale);
-
-                Paint paint = new Paint();
-                paint.setFilterBitmap(true);
-
-                canvas.drawBitmap(originalImage, transformation, paint);
-
-                Drawable drawable = new BitmapDrawable(getResources(), background);
-
-                //((BitmapDrawable) drawable).setGravity(Gravity.CENTER);
                 mBinding.clActivityMain.setBackground(drawable);
                 mBinding.clActivityMain.getBackground().setAlpha(51); // Setting opacity (scale is 0 - 255)
 
