@@ -60,8 +60,8 @@ public class Weather {
                    String coordinates,
                    String typeOfDay,
                    String precipProbability,
-                   String sunrise,
-                   String sunset) {
+                   String sunriseTime,
+                   String sunsetTime) {
 
         this.mDate = date;
         this.mSummary = summary;
@@ -73,8 +73,56 @@ public class Weather {
         this.mCoordinates = coordinates;
         this.mTypeOfDay = typeOfDay;
         this.mPrecipProbability = precipProbability;
-        this.mSunriseTime = sunrise;
-        this.mSunsetTime = sunset;
+        this.mSunriseTime = sunriseTime;
+        this.mSunsetTime = sunsetTime;
+    }
+
+    public void setDate(String mDate) {
+        this.mDate = mDate;
+    }
+
+    public void setSummary(String mSummary) {
+        this.mSummary = mSummary;
+    }
+
+    public void setTemperatureMax(String mTemperatureMax) {
+        this.mTemperatureMax = mTemperatureMax;
+    }
+
+    public void setTemperatureMin(String mTemperatureMin) {
+        this.mTemperatureMin = mTemperatureMin;
+    }
+
+    public void setHumidity(String mHumidity) {
+        this.mHumidity = mHumidity;
+    }
+
+    public void setPressure(String mPressure) {
+        this.mPressure = mPressure;
+    }
+
+    public void setWindSpeed(String mWindSpeed) {
+        this.mWindSpeed = mWindSpeed;
+    }
+
+    public void setCoordinates(String mCoordinates) {
+        this.mCoordinates = mCoordinates;
+    }
+
+    public void setTypeOfDay(String mTypeOfDay) {
+        this.mTypeOfDay = mTypeOfDay;
+    }
+
+    public void setPrecipProbability(String mPrecipProbability) {
+        this.mPrecipProbability = mPrecipProbability;
+    }
+
+    public void setSunriseTime(String mSunriseTime) {
+        this.mSunriseTime = mSunriseTime;
+    }
+
+    public void setSunsetTime(String mSunsetTime) {
+        this.mSunsetTime = mSunsetTime;
     }
 
     public String getDate() {

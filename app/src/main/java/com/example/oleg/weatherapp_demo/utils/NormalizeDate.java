@@ -22,8 +22,7 @@ public class NormalizeDate {
     public static String getHumanFriendlyTimeFromDB(long dbDate){
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(dbDate * 1000L);
-        return calendar.get(Calendar.HOUR_OF_DAY) + ":" +
-                calendar.get(Calendar.MINUTE) + "0";
+        return calendar.get(Calendar.HOUR_OF_DAY) + ":" + "00";
     }
 
     private static String getFriendlyDayOfTheWeek(int key) {

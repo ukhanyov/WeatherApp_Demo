@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.example.oleg.weatherapp_demo.R;
 import com.example.oleg.weatherapp_demo.data.entities.Weather;
-import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 
 import java.util.List;
@@ -66,13 +65,16 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
 
                 for(Weather iterator : mWeatherDaily){
 
-                    if(getHumanFriendlyTimeFromDB(Long.parseLong(iterator.getSunriseTime()))            // Time overlaps with sunrise
-                            .equals(getHumanFriendlyTimeFromDB(Long.parseLong(current.getDate())))){
+                    String time = getHumanFriendlyTimeFromDB(Long.parseLong(current.getDate()));
+                    String sunriseTime = getHumanFriendlyTimeFromDB(Long.parseLong(iterator.getSunriseTime()));
+                    String sunsetTime = getHumanFriendlyTimeFromDB(Long.parseLong(iterator.getSunsetTime()));
+
+                    // Time overlaps with sunrise
+                    if(sunriseTime.equals(time)){
                         holder.weatherIcon.setImageResource(R.drawable.ic_weather_sunrise);
-                    } else if(getHumanFriendlyTimeFromDB(Long.parseLong(iterator.getSunsetTime()))      // Time overlaps with sunset
-                            .equals(getHumanFriendlyTimeFromDB(Long.parseLong(current.getDate())))){
+                    } else if(sunsetTime.equals(time)){ // Time overlaps with sunset
                         holder.weatherIcon.setImageResource(R.drawable.ic_weather_sunset);
-                    } else {                                                                            // Time overlaps with nothing
+                    } else { // Time overlaps with nothing
                         holder.weatherIcon.setImageResource(WeatherIconInterpreter.interpretIcon(current.getSummary()));
                     }
                 }

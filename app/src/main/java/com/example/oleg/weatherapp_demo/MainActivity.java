@@ -58,7 +58,6 @@ import com.example.oleg.weatherapp_demo.network.retrofit.RetrofitWeatherInstance
 import com.example.oleg.weatherapp_demo.utils.BitmapTransforamationHelper;
 import com.example.oleg.weatherapp_demo.utils.Constants;
 import com.example.oleg.weatherapp_demo.utils.CustomOnSwipeTouchListener;
-import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
