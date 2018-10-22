@@ -318,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements
             mBinding.layoutContentMain.layoutContentAppBar.tvOffline.setVisibility(View.VISIBLE);
             mBinding.layoutContentMain.layoutContentAppBar.tvOffline.setText(R.string.offline_turn_on_location);
 
-            // TODO: Add offline mode
+            // TODO: in offline mode make weather now to show details
             // TODO: Add callback when internet is enabled
             // TODO: Implement sunrises and sundowns
         }

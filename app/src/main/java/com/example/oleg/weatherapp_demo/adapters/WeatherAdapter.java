@@ -58,9 +58,6 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         //Weather Date
         holder.weatherDate.setText(NormalizeDate.getHumanFriendlyDayOfWeek(Long.parseLong(current.getDate())));
 
-        // Weather Summary
-        holder.weatherSummary.setText(WeatherIconInterpreter.interpretDescription(current.getSummary()));
-
         // High (max) temperature
         holder.weatherTemperatureHigh.setText(
                         mContext.getString(R.string.temperature_view_holder_degrees_celsius,
@@ -96,7 +93,6 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
 
         ImageView weatherIcon;
         TextView weatherDate;
-        TextView weatherSummary;
         TextView weatherTemperatureHigh;
         TextView weatherTemperatureLow;
 
@@ -105,7 +101,6 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
 
             weatherIcon = view.findViewById(R.id.weather_icon);
             weatherDate = view.findViewById(R.id.tv_weather_date);
-            weatherSummary = view.findViewById(R.id.tv_weather_summary);
             weatherTemperatureHigh = view.findViewById(R.id.tv_high_temperature);
             weatherTemperatureLow = view.findViewById(R.id.tv_low_temperature);
 
