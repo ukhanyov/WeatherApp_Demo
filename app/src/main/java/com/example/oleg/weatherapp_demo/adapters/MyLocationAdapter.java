@@ -1,7 +1,10 @@
 package com.example.oleg.weatherapp_demo.adapters;
 
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.oleg.weatherapp_demo.R;
 import com.example.oleg.weatherapp_demo.data.entities.MyLocation;
+import com.example.oleg.weatherapp_demo.utils.BitmapTransforamationHelper;
 
 import java.util.List;
 
@@ -18,9 +22,11 @@ public class MyLocationAdapter extends RecyclerView.Adapter<MyLocationAdapter.My
 
     private final LayoutInflater mInflater;
     private List<MyLocation> mMyLocations; // Cached copy of MyLocations
+    private Context mContext;
 
     public MyLocationAdapter(Context context){
         mInflater = LayoutInflater.from(context);
+        mContext = context;
     }
 
     @NonNull
@@ -35,6 +41,14 @@ public class MyLocationAdapter extends RecyclerView.Adapter<MyLocationAdapter.My
         if(mMyLocations != null){
             MyLocation current = mMyLocations.get(position);
             holder.locationName.setText(current.getLocationName());
+
+            // set background image
+//            int width = holder.constraintLayout.getWidth();
+//            int height = holder.constraintLayout.getHeight();
+//            Drawable drawable = new BitmapDrawable(mContext.getResources(),
+//                    BitmapTransforamationHelper.transformWithSavedProportions(mMyLocations.get(position).getPicture(), width, height));
+//            holder.constraintLayout.setBackground(drawable);
+//            holder.constraintLayout.getBackground().setAlpha(51); // Setting opacity (scale is 0 - 255)
         }else {
             throw new IllegalArgumentException("Some error with binding data for navigation recycler view");
         }
@@ -64,12 +78,14 @@ public class MyLocationAdapter extends RecyclerView.Adapter<MyLocationAdapter.My
 
         TextView locationName;
         ImageButton imageButton;
+        //ConstraintLayout constraintLayout;
 
         MyLocationViewHolder(View view){
             super(view);
 
             locationName = view.findViewById(R.id.tv_location_item_name);
             imageButton = view.findViewById(R.id.ib_delete_location);
+            //constraintLayout = view.findViewById(R.id.cl_activity_main);
         }
     }
 }

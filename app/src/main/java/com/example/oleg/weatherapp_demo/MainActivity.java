@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements
 
         mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow.setOnTouchListener(new CustomOnSwipeTouchListener(MainActivity.this) {
 
-            public void onSwipeRight() {
+            public void onSwipeRight() throws GooglePlayServicesNotAvailableException, GooglePlayServicesRepairableException {
 
                 mMyLocationsList = new ArrayList<>();
                 mMyLocationsList = myLocationAdapter.getAll();
@@ -201,6 +201,8 @@ public class MainActivity extends AppCompatActivity implements
 
                             LOCATION_COORDINATES = mMyLocationsList.get(position + 1).getLocationCoordinates();
                             mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(mMyLocationsList.get(position + 1).getLocationName());
+
+                            //callToGetPicture();
 
                             fetchAllTheData(LOCATION_COORDINATES);
 
@@ -231,6 +233,8 @@ public class MainActivity extends AppCompatActivity implements
 
                             LOCATION_COORDINATES = mMyLocationsList.get(position - 1).getLocationCoordinates();
                             mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(mMyLocationsList.get(position - 1).getLocationName());
+
+                            //callToGetPicture();
 
                             fetchAllTheData(LOCATION_COORDINATES);
 
@@ -289,9 +293,7 @@ public class MainActivity extends AppCompatActivity implements
 
             // TODO: Add offline mode
             // TODO: Add callback when internet is enabled
-            // TODO: Add backgroundImage (maybe from placePicker)
             // TODO: Implement sunrises and sundowns
-            // TODO: save images to the MyLocation table
         }
 
         fetchAllTheData(LOCATION_COORDINATES);
@@ -332,19 +334,10 @@ public class MainActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
 
             case R.id.action_add_location:
-                // Start picking place on the map
-                try {
-                    if (haveNetworkConnection() && isConnected()) {
-                        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                        startActivityForResult(builder.build(this), Constants.PLACE_PICKER_REQUEST_FOR_LOCATION);
-                    }
-
-                } catch (InterruptedException |
-                        IOException |
-                        GooglePlayServicesNotAvailableException |
-                        GooglePlayServicesRepairableException e) {
-                    e.printStackTrace();
+                if (haveNetworkConnection() && isConnected()) {
+                    callToGetPicture();
                 }
+
                 return true;
 
             default:
@@ -391,32 +384,29 @@ public class MainActivity extends AppCompatActivity implements
 
     private void fetchAllTheData(String coordinates) {
 
+        if (haveNetworkConnection() && isConnected()) {
 
-        try {
-            if (haveNetworkConnection() && isConnected()) {
-                // Daily data
-                fetchDailyData();
+            //callToGetPicture();
 
-                // Hourly data
-                fetchHourlyData();
+            // Daily data
+            fetchDailyData();
 
-                // Now data
-                fetchNowData();
+            // Hourly data
+            fetchHourlyData();
 
-                mBinding.layoutContentMain.layoutContentAppBar.tvOffline.setVisibility(View.GONE);
+            // Now data
+            fetchNowData();
 
-            } else {
-                // Query for data (offline)
-                mWeatherViewModel.queryWeatherHourlyByCoordinatesAndType(coordinates, Constants.DB_WEATHER_TYPE_HOURLY);
-                mWeatherViewModel.queryWeatherDailyByCoordinatesAndType(coordinates, Constants.DB_WEATHER_TYPE_DAILY);
+            mBinding.layoutContentMain.layoutContentAppBar.tvOffline.setVisibility(View.GONE);
+
+        } else {
+            // Query for data (offline)
+            mWeatherViewModel.queryWeatherHourlyByCoordinatesAndType(coordinates, Constants.DB_WEATHER_TYPE_HOURLY);
+            mWeatherViewModel.queryWeatherDailyByCoordinatesAndType(coordinates, Constants.DB_WEATHER_TYPE_DAILY);
 
 
-                mBinding.layoutContentMain.layoutContentAppBar.tvOffline.setVisibility(View.VISIBLE);
-                mBinding.layoutContentMain.layoutContentAppBar.tvOffline.setText(R.string.offline_turn_on_internet);
-            }
-        } catch (InterruptedException |
-                IOException e) {
-            e.printStackTrace();
+            mBinding.layoutContentMain.layoutContentAppBar.tvOffline.setVisibility(View.VISIBLE);
+            mBinding.layoutContentMain.layoutContentAppBar.tvOffline.setText(R.string.offline_turn_on_internet);
         }
     }
 
@@ -643,7 +633,7 @@ public class MainActivity extends AppCompatActivity implements
             mDrawer.closeDrawers();
 
             MyLocationAdapter adapter = (MyLocationAdapter) mBinding.rvNavList.getAdapter();
-            MyLocation location = adapter.getItem(mBinding.rvNavList.getChildAdapterPosition(child));
+            MyLocation location = Objects.requireNonNull(adapter).getItem(mBinding.rvNavList.getChildAdapterPosition(child));
             LOCATION_COORDINATES = location.getLocationCoordinates();
 
             SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
@@ -671,9 +661,9 @@ public class MainActivity extends AppCompatActivity implements
                 .setMessage("Are you sure you want to delete this entry?")
                 .setPositiveButton(android.R.string.yes, (dialog, which) -> {
                     View child = mBinding.rvNavList.findContainingItemView(view);
-                    int position = mBinding.rvNavList.getChildAdapterPosition(child);
+                    int position = mBinding.rvNavList.getChildAdapterPosition(Objects.requireNonNull(child));
                     MyLocationAdapter adapter = (MyLocationAdapter) mBinding.rvNavList.getAdapter();
-                    adapter.notifyItemRemoved(position);
+                    Objects.requireNonNull(adapter).notifyItemRemoved(position);
 
                     MyLocation location = adapter.getItem(position);
                     mMyLocationViewModel.deleteSpecificLocation(location.getLocationName());
@@ -776,11 +766,16 @@ public class MainActivity extends AppCompatActivity implements
         mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(null);
     }
 
-    public boolean isConnected() throws InterruptedException, IOException {
+    public boolean isConnected() {
 
         // The -i 5 is a timeout option
         final String command = "ping -i 5 -c 1 google.com";
-        return Runtime.getRuntime().exec(command).waitFor() == 0;
+        try {
+            return Runtime.getRuntime().exec(command).waitFor() == 0;
+        } catch (InterruptedException | IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private void getPhotoFromPlacePicker(String placeId) {
@@ -796,7 +791,7 @@ public class MainActivity extends AppCompatActivity implements
                 Bitmap originalImage = Objects.requireNonNull(photo).getBitmap();
                 int width = mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow.getWidth();
                 int height = mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow.getHeight();
-
+                
                 Drawable drawable = new BitmapDrawable(getResources(),
                         BitmapTransforamationHelper.transformWithSavedProportions(originalImage, width, height));
 
@@ -805,5 +800,16 @@ public class MainActivity extends AppCompatActivity implements
 
             });
         });
+    }
+
+    private void callToGetPicture() {
+        try {
+            PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+            startActivityForResult(builder.build(MainActivity.this), Constants.PLACE_PICKER_REQUEST_FOR_LOCATION);
+        } catch (GooglePlayServicesNotAvailableException e) {
+            Log.e(MainActivity.class.getSimpleName(), e.toString());
+        } catch (GooglePlayServicesRepairableException e) {
+            e.printStackTrace();
+        }
     }
 }

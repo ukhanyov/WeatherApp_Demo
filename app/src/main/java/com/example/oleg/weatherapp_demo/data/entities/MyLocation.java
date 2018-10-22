@@ -3,14 +3,11 @@ package com.example.oleg.weatherapp_demo.data.entities;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
 @Entity(tableName = "location_table")
 public class MyLocation {
-
-//    @PrimaryKey(autoGenerate = true)
-//    @ColumnInfo(name = "locationId")
-//    private Integer mId;
 
     @PrimaryKey
     @NonNull
@@ -30,7 +27,7 @@ public class MyLocation {
         this.mLocationName = locationName;
         this.mLocationCoordinates = locationCoordinates;
         this.mLatitude = latitude;
-        this.mLongitude = longitude;
+        this.mLongitude = longitude;;
     }
 
     public void setLocationName(@NonNull String mLocationName) {
