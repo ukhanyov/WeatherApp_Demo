@@ -120,6 +120,8 @@ public class MainActivity extends AppCompatActivity implements
 
     Bitmap mSavedPicture;
 
+    Toolbar toolbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements
         mGeoDataClient = Places.getGeoDataClient(this);
 
         // Toolbar stuff
-        Toolbar toolbar = mBinding.toolbarLayout.toolbar;
+        toolbar = mBinding.toolbarLayout.toolbar;
         setSupportActionBar(toolbar);
         mDrawer = mBinding.drawerLayout;
 
@@ -210,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements
                         if (position < mMyLocationsList.size() - 1) {
 
                             LOCATION_COORDINATES = mMyLocationsList.get(position + 1).getLocationCoordinates();
+                            toolbar.setTitle(mMyLocationsList.get(position + 1).getLocationName());
                             mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(mMyLocationsList.get(position + 1).getLocationName());
 
                             loadMyLocations(LOCATION_COORDINATES);
@@ -242,6 +245,7 @@ public class MainActivity extends AppCompatActivity implements
                         if (position >= 0) {
 
                             LOCATION_COORDINATES = mMyLocationsList.get(position - 1).getLocationCoordinates();
+                            toolbar.setTitle(mMyLocationsList.get(position - 1).getLocationName());
                             mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(mMyLocationsList.get(position - 1).getLocationName());
 
                             loadMyLocations(LOCATION_COORDINATES);
@@ -293,6 +297,7 @@ public class MainActivity extends AppCompatActivity implements
                 findUserLocation();
             } else {
                 LOCATION_COORDINATES = checkLocationCoordinates;
+                toolbar.setTitle(checkLocationName);
                 mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(checkLocationName);
             }
 
@@ -651,6 +656,7 @@ public class MainActivity extends AppCompatActivity implements
             prefEditor.putString("saved_location_name", location.getLocationName());
             prefEditor.apply();
 
+            toolbar.setTitle(location.getLocationName());
             mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(location.getLocationName());
 
             fetchAllTheData(LOCATION_COORDINATES);
@@ -706,6 +712,7 @@ public class MainActivity extends AppCompatActivity implements
                 final Address address = resultData.getParcelable(Constants.RESULT_ADDRESS);
                 runOnUiThread(() -> {
                     assert address != null;
+                    toolbar.setTitle(address.getLocality());
                     mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(address.getLocality());
 
                     //saveCurrentLocation(address.getLocality());
