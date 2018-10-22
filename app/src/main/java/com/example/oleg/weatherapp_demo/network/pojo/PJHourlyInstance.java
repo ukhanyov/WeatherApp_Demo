@@ -33,6 +33,10 @@ public class PJHourlyInstance {
     @Expose
     private Double temperatureMax;
 
+    @SerializedName("precipIntensity")
+    @Expose
+    private Double mPrecipIntensity;
+
     public Long getTime() {
         return time;
     }
@@ -87,5 +91,9 @@ public class PJHourlyInstance {
 
     public void setTemperatureMax(Double temperatureMax) {
         this.temperatureMax = temperatureMax;
+    }
+
+    public Double getPrecipIntensity() {
+        return mPrecipIntensity;
     }
 }

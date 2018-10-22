@@ -11,13 +11,13 @@
     <string name="action_refresh_table">Refresh Table</string>
     <string name="contentDescription_weather_icon">Icon that represents expected weather</string>
 
-    <string name="weather_now_humidity_level_hint">Humidity level: </string>
-    <string name="weather_now_current_temp_hint">Temperature is: </string>
-    <string name="weather_now_description_hint">Weather is whatever</string>
-    <string name="weather_now_date_hint">Weather now</string>
-    <string name="weather_now_location_hint">Your myLocation</string>
+    <string name="weather_now_humidity_level_hint">Humidity:</string>
+    <string name="weather_now_current_temp_hint">Temperature</string>
+    <string name="weather_now_precipitation_hint">Precipitation:</string>
+    <string name="weather_now_wind_hint">Wind:</string>
+    <string name="weather_now_location_hint">Your Location</string>
 
-    <string name="weather_now_current_temp">Temperature is: %1$s%2$s</string>
+    <string name="weather_now_current_temp">%1$s%2$s</string>
     <string name="degrees_celsius">°</string>
     <string name="weather_now_humidity_level">Humidity level: %1$s</string>
 
@@ -62,4 +62,8 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="details">Details</string>
     <string name="your_location">Your Location</string>
+    <string name="forecast">Forecast</string>
+    <string name="_11">11</string>
+    <string name="_99">99</string>
+    <string name="this_week">This week</string>
 </resources>

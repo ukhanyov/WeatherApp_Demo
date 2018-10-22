@@ -33,6 +33,10 @@ public class PJWeeklySpecificDay {
     @Expose
     private Double temperatureMax;
 
+    @SerializedName("precipIntensity")
+    @Expose
+    private Double mPrecipIntensity;
+
     public Long getTime() {
         return time;
     }
@@ -87,6 +91,10 @@ public class PJWeeklySpecificDay {
 
     public void setTemperatureMax(Double temperatureMax) {
         this.temperatureMax = temperatureMax;
+    }
+
+    public Double getPrecipIntensity() {
+        return mPrecipIntensity;
     }
 
 }

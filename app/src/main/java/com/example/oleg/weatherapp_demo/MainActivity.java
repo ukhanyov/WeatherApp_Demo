@@ -484,7 +484,8 @@ public class MainActivity extends AppCompatActivity implements
                                 item.getPressure().toString(),
                                 item.getWindSpeed().toString(),
                                 LOCATION_COORDINATES,
-                                Constants.DB_WEATHER_TYPE_DAILY);
+                                Constants.DB_WEATHER_TYPE_DAILY,
+                                item.getPrecipIntensity().toString());
 
                         mWeatherViewModel.insert(weather);
                     }
@@ -531,7 +532,8 @@ public class MainActivity extends AppCompatActivity implements
                                 item.getPressure().toString(),
                                 item.getWindSpeed().toString(),
                                 LOCATION_COORDINATES,
-                                Constants.DB_WEATHER_TYPE_HOURLY);
+                                Constants.DB_WEATHER_TYPE_HOURLY,
+                                item.getPrecipIntensity().toString());
 
                         mWeatherViewModel.insert(weather);
                     }
@@ -577,7 +579,8 @@ public class MainActivity extends AppCompatActivity implements
                                 pj.getCurrently().getPressure().toString(),
                                 pj.getCurrently().getWindSpeed().toString(),
                                 LOCATION_COORDINATES,
-                                Constants.DB_WEATHER_TYPE_NOW);
+                                Constants.DB_WEATHER_TYPE_NOW,
+                                pj.getCurrently().getPrecipIntensity().toString());
 
                         setWeatherNowViews(mWeatherNow);
                     }
@@ -600,20 +603,23 @@ public class MainActivity extends AppCompatActivity implements
             mBinding.layoutContentMain.layoutContentAppBar.ivWeatherNow.setImageResource(
                     WeatherIconInterpreter.interpretIcon(weather.getSummary()));
 
-            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowDate.setText(
-                    NormalizeDate.getHumanFriendlyDateFromDB(Long.valueOf(weather.getDate())));
+            // TODO: set date to the toolbar
 
-            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowDescription.setText(
-                    WeatherIconInterpreter.interpretDescription(weather.getSummary()));
 
             mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowTemp.setText(getString(R.string.weather_now_current_temp,
                     weather.getTemperatureMax(), getString(R.string.degrees_celsius)));
 
-            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowTmpApparent.setText(getString(R.string.how_it_feels,
-                    weather.getTemperatureMin(), getString(R.string.degrees_celsius)));
+            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowHumidity.setText(weather.getHumidity());
 
-            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowHumidity.setText(getString(R.string.weather_now_humidity_level,
-                    weather.getHumidity()));
+            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowWind.setText(weather.getHumidity());
+
+            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowPrecipitation.setText(weather.getPrecipProbability());
+
+            mBinding.layoutContentMain.layoutContentAppBar.tvTempHigh.setText(getString(R.string.weather_now_current_temp,
+                    weather.getTemperatureMax(), getString(R.string.degrees_celsius)));
+
+            mBinding.layoutContentMain.layoutContentAppBar.tvTempLow.setText(getString(R.string.weather_now_current_temp,
+                    weather.getTemperatureMin(), getString(R.string.degrees_celsius)));
         }
     }
 
@@ -783,10 +789,10 @@ public class MainActivity extends AppCompatActivity implements
         mWeatherViewModel.deleteAll();
         mBinding.layoutContentMain.layoutContentAppBar.ivWeatherNow.setImageResource(R.drawable.ic_weather_default);
 
-        mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowDate.setText(null);
-        mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowDescription.setText(null);
+        mBinding.layoutContentMain.layoutContentAppBar.tvPrecipitationLabel.setText(null);
+        mBinding.layoutContentMain.layoutContentAppBar.tvTempHigh.setText(null);
         mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowTemp.setText(null);
-        mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowTmpApparent.setText(null);
+        mBinding.layoutContentMain.layoutContentAppBar.tvTempLow.setText(null);
         mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowHumidity.setText(null);
         mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(null);
     }

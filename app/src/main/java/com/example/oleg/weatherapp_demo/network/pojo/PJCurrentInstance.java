@@ -29,7 +29,12 @@ public class PJCurrentInstance {
     private Double pressure;
 
     @SerializedName("windSpeed")
+    @Expose
     private Double windSpeed;
+
+    @SerializedName("precipIntensity")
+    @Expose
+    private Double mPrecipIntensity;
 
     public Integer getTime() {
         return time;
@@ -57,5 +62,9 @@ public class PJCurrentInstance {
 
     public Double getWindSpeed() {
         return windSpeed;
+    }
+
+    public Double getPrecipIntensity() {
+        return mPrecipIntensity;
     }
 }

@@ -41,6 +41,9 @@ public class Weather {
     @ColumnInfo(name = "type_of_day")
     private String mTypeOfDay;
 
+    @ColumnInfo(name = "precipProbability")
+    private String mPrecipProbability;
+
     public Weather(String date,
                    String summary,
                    String temperatureMax,
@@ -49,7 +52,8 @@ public class Weather {
                    String pressure,
                    String windSpeed,
                    String coordinates,
-                   String typeOfDay) {
+                   String typeOfDay,
+                   String precipProbability) {
 
         this.mDate = date;
         this.mSummary = summary;
@@ -60,6 +64,7 @@ public class Weather {
         this.mWindSpeed = windSpeed;
         this.mCoordinates = coordinates;
         this.mTypeOfDay = typeOfDay;
+        this.mPrecipProbability = precipProbability;
     }
 
     public String getDate() {
@@ -101,4 +106,8 @@ public class Weather {
     }
 
     public void setId(Integer id) { this.mId = id; }
+
+    public String getPrecipProbability() {
+        return mPrecipProbability;
+    }
 }
