@@ -8,9 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
@@ -33,6 +31,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -73,6 +72,7 @@ import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.tasks.Task;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -109,11 +109,16 @@ public class MainActivity extends AppCompatActivity implements
 
     // MyLocation instance for location
     private List<MyLocation> mMyLocationsList;
+    private List<MyLocation> mMyLocationsListForBackground;
+    private MyLocation mMyLocationCurrent;
 
     private String LOCATION_COORDINATES = "37.8267,-122.4233";
+    private String LOCATION_NAME = null;
 
     // For picture
     GeoDataClient mGeoDataClient;
+
+    Bitmap mSavedPicture;
 
 
     @Override
@@ -175,8 +180,13 @@ public class MainActivity extends AppCompatActivity implements
         recyclerViewNavView.setHasFixedSize(true);
 
         // Location viewModel stuff
+        mMyLocationsListForBackground = new ArrayList<>();
         mMyLocationViewModel = ViewModelProviders.of(this).get(MyLocationViewModel.class);
-        mMyLocationViewModel.getAllLocations().observe(this, myLocationAdapter::setMyLocations);
+        mMyLocationViewModel.getAllLocations().observe(this, list -> {
+            myLocationAdapter.setMyLocations(list);
+            mMyLocationsListForBackground.addAll(list);
+            loadMyLocations(LOCATION_COORDINATES);
+        });
 
         // Swipes on screen
         swipesOnScreen(myLocationAdapter);
@@ -187,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements
 
         mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow.setOnTouchListener(new CustomOnSwipeTouchListener(MainActivity.this) {
 
-            public void onSwipeRight() throws GooglePlayServicesNotAvailableException, GooglePlayServicesRepairableException {
+            public void onSwipeRight() {
 
                 mMyLocationsList = new ArrayList<>();
                 mMyLocationsList = myLocationAdapter.getAll();
@@ -202,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements
                             LOCATION_COORDINATES = mMyLocationsList.get(position + 1).getLocationCoordinates();
                             mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(mMyLocationsList.get(position + 1).getLocationName());
 
-                            //callToGetPicture();
+                            loadMyLocations(LOCATION_COORDINATES);
 
                             fetchAllTheData(LOCATION_COORDINATES);
 
@@ -234,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements
                             LOCATION_COORDINATES = mMyLocationsList.get(position - 1).getLocationCoordinates();
                             mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(mMyLocationsList.get(position - 1).getLocationName());
 
-                            //callToGetPicture();
+                            loadMyLocations(LOCATION_COORDINATES);
 
                             fetchAllTheData(LOCATION_COORDINATES);
 
@@ -285,7 +295,6 @@ public class MainActivity extends AppCompatActivity implements
                 LOCATION_COORDINATES = checkLocationCoordinates;
                 mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(checkLocationName);
             }
-
 
         } else {
             mBinding.layoutContentMain.layoutContentAppBar.tvOffline.setVisibility(View.VISIBLE);
@@ -373,6 +382,7 @@ public class MainActivity extends AppCompatActivity implements
                 prefEditor.apply();
 
                 getPhotoFromPlacePicker(place.getId());
+                //saveCurrentLocation(LOCATION_NAME);
             }
         }
     }
@@ -385,8 +395,6 @@ public class MainActivity extends AppCompatActivity implements
     private void fetchAllTheData(String coordinates) {
 
         if (haveNetworkConnection() && isConnected()) {
-
-            //callToGetPicture();
 
             // Daily data
             fetchDailyData();
@@ -646,6 +654,8 @@ public class MainActivity extends AppCompatActivity implements
             mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(location.getLocationName());
 
             fetchAllTheData(LOCATION_COORDINATES);
+
+            loadMyLocations(LOCATION_COORDINATES);
         }
     }
 
@@ -697,8 +707,10 @@ public class MainActivity extends AppCompatActivity implements
                 runOnUiThread(() -> {
                     assert address != null;
                     mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(address.getLocality());
-                    saveCurrentLocation(address.getLocality());
 
+                    //saveCurrentLocation(address.getLocality());
+
+                    LOCATION_NAME = address.getLocality();
 
                     SharedPreferences preferencesLocation = getSharedPreferences("display_location_settings", MODE_PRIVATE);
                     SharedPreferences.Editor prefEditor = preferencesLocation.edit();
@@ -717,11 +729,17 @@ public class MainActivity extends AppCompatActivity implements
 
             String[] coordinates = LOCATION_COORDINATES.split(",");
 
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            mSavedPicture.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            byte[] b = baos.toByteArray();
+            String temp = Base64.encodeToString(b, Base64.DEFAULT);
+
             mMyLocationViewModel.insert(new MyLocation(
                     address,
                     LOCATION_COORDINATES,
                     Double.valueOf(coordinates[0]),
-                    Double.valueOf(coordinates[1])
+                    Double.valueOf(coordinates[1]),
+                    temp
             ));
         }
     }
@@ -779,6 +797,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void getPhotoFromPlacePicker(String placeId) {
+
         final Task<PlacePhotoMetadataResponse> photoMetadataResponse = mGeoDataClient.getPlacePhotos(placeId);
         photoMetadataResponse.addOnCompleteListener(task -> {
             PlacePhotoMetadataResponse photos = task.getResult();
@@ -791,7 +810,11 @@ public class MainActivity extends AppCompatActivity implements
                 Bitmap originalImage = Objects.requireNonNull(photo).getBitmap();
                 int width = mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow.getWidth();
                 int height = mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow.getHeight();
-                
+
+                mSavedPicture = originalImage;
+
+                saveCurrentLocation(LOCATION_NAME);
+
                 Drawable drawable = new BitmapDrawable(getResources(),
                         BitmapTransforamationHelper.transformWithSavedProportions(originalImage, width, height));
 
@@ -811,5 +834,35 @@ public class MainActivity extends AppCompatActivity implements
         } catch (GooglePlayServicesRepairableException e) {
             e.printStackTrace();
         }
+    }
+
+    private void loadMyLocations(String coordinates) {
+
+        if(mMyLocationsListForBackground.size() > 0){
+            for (MyLocation iterator : mMyLocationsListForBackground) {
+                if (iterator.getLocationCoordinates().equals(coordinates)) {
+                    setBackgroundPicture(iterator);
+                    return;
+                }
+            }
+        }
+    }
+
+    private void setBackgroundPicture(MyLocation myLocation) {
+
+        Bitmap bitmap = null;
+
+        if (myLocation.getImageString() != null) {
+            byte[] encodeByte = Base64.decode(myLocation.getImageString(), Base64.DEFAULT);
+            bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+
+            // Transform original bitmap to resized bitmap
+            int widthOfLayout = mBinding.clActivityMain.getWidth();
+            int heightOfLayout = mBinding.clActivityMain.getHeight();
+            Drawable drawable = new BitmapDrawable(getResources(), BitmapTransforamationHelper.transformWithSavedProportions(bitmap, widthOfLayout, heightOfLayout));
+            mBinding.clActivityMain.setBackground(drawable);
+            mBinding.clActivityMain.getBackground().setAlpha(51); // Setting opacity (scale is 0 - 255)
+        }
+
     }
 }

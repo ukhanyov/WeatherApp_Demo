@@ -11,7 +11,7 @@ import com.example.oleg.weatherapp_demo.data.dao.WeatherDao;
 import com.example.oleg.weatherapp_demo.data.entities.MyLocation;
 import com.example.oleg.weatherapp_demo.data.entities.Weather;
 
-@Database(entities = {Weather.class, MyLocation.class}, version = 6)
+@Database(entities = {Weather.class, MyLocation.class}, version = 7, exportSchema = false)
 public abstract class RoomDatabase extends android.arch.persistence.room.RoomDatabase {
 
     public abstract WeatherDao weatherDao();

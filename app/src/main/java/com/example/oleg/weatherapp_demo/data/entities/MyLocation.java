@@ -3,7 +3,6 @@ package com.example.oleg.weatherapp_demo.data.entities;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
 @Entity(tableName = "location_table")
@@ -23,11 +22,15 @@ public class MyLocation {
     @ColumnInfo(name = "longitude")
     private Double mLongitude;
 
-    public MyLocation(@NonNull String locationName, String locationCoordinates, Double latitude, Double longitude) {
+    @ColumnInfo(name = "imageString")
+    String mImageString;
+
+    public MyLocation(@NonNull String locationName, String locationCoordinates, Double latitude, Double longitude, String imageString) {
         this.mLocationName = locationName;
         this.mLocationCoordinates = locationCoordinates;
         this.mLatitude = latitude;
-        this.mLongitude = longitude;;
+        this.mLongitude = longitude;
+        this.mImageString = imageString;
     }
 
     public void setLocationName(@NonNull String mLocationName) {
@@ -52,5 +55,9 @@ public class MyLocation {
 
     public Double getLongitude() {
         return mLongitude;
+    }
+
+    public String getImageString() {
+        return mImageString;
     }
 }
