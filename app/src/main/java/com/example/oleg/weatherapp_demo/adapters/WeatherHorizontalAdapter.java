@@ -69,16 +69,19 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
                     String sunriseTime = getHumanFriendlyTimeFromDB(Long.parseLong(iterator.getSunriseTime()));
                     String sunsetTime = getHumanFriendlyTimeFromDB(Long.parseLong(iterator.getSunsetTime()));
 
+                    // TODO: fix sunset/sunrise logic
                     // Time overlaps with sunrise
                     if(sunriseTime.equals(time)){
                         holder.weatherIcon.setImageResource(R.drawable.ic_weather_sunrise);
+                        break;
                     } else if(sunsetTime.equals(time)){ // Time overlaps with sunset
                         holder.weatherIcon.setImageResource(R.drawable.ic_weather_sunset);
+                        break;
                     } else { // Time overlaps with nothing
                         holder.weatherIcon.setImageResource(WeatherIconInterpreter.interpretIcon(current.getSummary()));
+                        break;
                     }
                 }
-
 
 
                 holder.weatherTime.setText(getHumanFriendlyTimeFromDB(Long.parseLong(current.getDate())));
