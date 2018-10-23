@@ -12,136 +12,118 @@
             android:id="@+id/toolbar_layout_details"
             layout="@layout/toolbar_layout" />
 
-        <android.support.constraint.ConstraintLayout
-            android:layout_marginTop="@dimen/abc_action_bar_default_height_material"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/iv_details_weather_icon"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@string/contentDescription_weather_icon"
+            app:layout_constraintBottom_toTopOf="@+id/guideline_horizontal_layout_fourth"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_layout_first"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideline_horizontal_layout_third"
+            app:srcCompat="@drawable/ic_weather_default" />
 
-            <ImageView
-                android:id="@+id/iv_details_weather_icon"
-                android:layout_width="256dp"
-                android:layout_height="285dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/guideline_horizontal_layout_first"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_weather_default" />
+        <TextView
+            android:id="@+id/tv_details_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_layout_details"
+            tools:text="Date" />
 
-            <TextView
-                android:id="@+id/tv_details_date"
-                android:layout_width="279dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_layout_first"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Date" />
+        <TextView
+            android:id="@+id/tv_details_temperature"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            android:textSize="48sp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline_horizontal_layout_fourth"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_layout_second"
+            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_layout_first"
+            app:layout_constraintTop_toTopOf="@+id/guideline_horizontal_layout_third"
+            tools:text="15" />
 
-            <TextView
-                android:id="@+id/tv_details_2"
-                android:layout_width="279dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_layout_first"
-                app:layout_constraintTop_toBottomOf="@+id/tv_details_date"
-                tools:text="Summary" />
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_vertical_layout_first"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintGuide_percent="0.25"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
 
-            <TextView
-                android:id="@+id/tv_details_temperature"
-                android:layout_width="279dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_layout_first"
-                app:layout_constraintTop_toBottomOf="@+id/tv_details_2"
-                tools:text="Temperature max" />
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_vertical_layout_second"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintGuide_percent="0.5"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
 
-            <TextView
-                android:id="@+id/tv_details_4"
-                android:layout_width="279dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_layout_first"
-                app:layout_constraintTop_toBottomOf="@+id/tv_details_temperature"
-                tools:text="Temperature min" />
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_horizontal_layout_third"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintGuide_percent="0.35"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
 
-            <TextView
-                android:id="@+id/tv_details_5"
-                android:layout_width="279dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_layout_first"
-                app:layout_constraintTop_toBottomOf="@+id/tv_details_4"
-                tools:text="Humidity" />
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_horizontal_layout_fourth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintGuide_percent="0.75"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
 
-            <TextView
-                android:id="@+id/tv_details_6"
-                android:layout_width="279dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_layout_first"
-                app:layout_constraintTop_toBottomOf="@+id/tv_details_5"
-                tools:text="Pressure" />
+        <TextView
+            android:id="@+id/tv_details_forecast_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center"
+            android:text="@string/this_forecast"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_layout_second"
+            app:layout_constraintTop_toBottomOf="@+id/tv_details_date" />
 
-            <TextView
-                android:id="@+id/tv_details_7"
-                android:layout_width="279dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_layout_first"
-                app:layout_constraintTop_toBottomOf="@+id/tv_details_6"
-                tools:text="Wind speed" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_details"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_layout_second"
+            app:layout_constraintTop_toBottomOf="@+id/tv_details_forecast_type">
 
-            <android.support.constraint.Guideline
-                android:id="@+id/guideline_horizontal_layout_first"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintGuide_percent="0.5"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent" />
-
-        </android.support.constraint.ConstraintLayout>
+        </android.support.v7.widget.RecyclerView>
 
     </android.support.constraint.ConstraintLayout>
 </layout>

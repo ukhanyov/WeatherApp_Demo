@@ -64,8 +64,7 @@
     <string name="details">Details</string>
     <string name="your_location">Your Location</string>
     <string name="forecast">Forecast</string>
-    <string name="_11">11</string>
-    <string name="_99">99</string>
+    <string name="_0">0</string>
     <string name="this_week">This week</string>
     <string name="percentage">%</string>
     <string name="kmp">kmp</string>
