@@ -108,7 +108,6 @@ public class NormalizeDate {
         calendarFromDb.setTimeInMillis(dbDate * 1000L);
         TimeZone timeZone = TimeZone.getTimeZone(zoneIdString);
         calendarFromDb.setTimeZone(timeZone);
-
         return calendarFromDb.get(Calendar.HOUR_OF_DAY) + ":" + "00";
     }
 }

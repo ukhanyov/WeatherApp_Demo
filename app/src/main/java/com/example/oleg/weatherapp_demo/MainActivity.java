@@ -179,6 +179,8 @@ public class MainActivity extends AppCompatActivity implements
         mWeatherViewModel.getWeatherDailyByCoordinatesAndType().observe(this, list -> {
             adapterVertical.setWeather(list);
             mWeatherDailyList.addAll(list);
+            horizontalAdapter.setWeatherList(list);
+
             mWeatherForThisDay = list.get(0);
 
             mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowDate.setText(NormalizeDate.getHumanFriendlyDateFromDB(
@@ -197,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements
         });
         mWeatherViewModel.getWeatherHourlyByCoordinatesAndType().observe(this, list -> {
             horizontalAdapter.setWeather(list);
-            horizontalAdapter.setDailyWeather(mWeatherDailyList);
+
         });
 
         // Recycler view for nav drawer
