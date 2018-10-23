@@ -81,12 +81,12 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
 
             if (check) {
                 if (time.equals(sSunrise)) {
-                    holder.weatherTime.setText(time);
+                    holder.weatherTime.setText(mContext.getString(R.string.sunrise));
                     holder.weatherIcon.setImageResource(R.drawable.ic_weather_sunrise);
                 }
 
                 if (time.equals(sSunset)) {
-                    holder.weatherTime.setText(time);
+                    holder.weatherTime.setText(mContext.getString(R.string.sunset));
                     holder.weatherIcon.setImageResource(R.drawable.ic_weather_sunset);
                 }
             }

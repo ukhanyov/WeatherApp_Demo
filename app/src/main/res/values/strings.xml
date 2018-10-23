@@ -70,4 +70,6 @@
     <string name="percentage">%</string>
     <string name="kmp">kmp</string>
     <string name="millimeters">mm</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
 </resources>
