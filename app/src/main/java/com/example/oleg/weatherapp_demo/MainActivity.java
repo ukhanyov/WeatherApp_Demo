@@ -658,6 +658,7 @@ public class MainActivity extends AppCompatActivity implements
             }
 
             startDetailsActivityIntent
+                    .putExtra("toolbar_title", toolbar.getTitle().toString())
                     .putExtra("weather_key", key)
                     .putExtra("weather_list", (ArrayList<ParcelableWeather>) parcelableWeathers);
             if(mSavedPicture != null){
@@ -869,7 +870,6 @@ public class MainActivity extends AppCompatActivity implements
         if (myLocation.getImageString() != null) {
             byte[] encodeByte = Base64.decode(myLocation.getImageString(), Base64.DEFAULT);
             bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-
             // Transform original bitmap to resized bitmap
             final View view = mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow;
             view.post(() -> {
@@ -878,8 +878,6 @@ public class MainActivity extends AppCompatActivity implements
                 mBinding.clActivityMain.setBackground(drawable);
                 mBinding.clActivityMain.getBackground().setAlpha(51); // Setting opacity (scale is 0 - 255)
             });
-
         }
-
     }
 }

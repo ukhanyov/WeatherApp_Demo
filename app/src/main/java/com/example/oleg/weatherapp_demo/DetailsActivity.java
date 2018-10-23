@@ -50,6 +50,8 @@ public class DetailsActivity extends AppCompatActivity{
         ArrayList<ParcelableWeather> list = getIntent().getParcelableArrayListExtra("weather_list");
         String key = getIntent().getStringExtra("weather_key");
         Bitmap bitmap = getIntent().getParcelableExtra("bitmap");
+        String title = getIntent().getStringExtra("toolbar_title");
+        Objects.requireNonNull(toolbar).setTitle(title);
 
         List<Weather> weatherList = new ArrayList<>();
         for (ParcelableWeather instance : list){
