@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.example.oleg.weatherapp_demo.utils.Constants.OPACITY_LEVEL;
+
 public class DetailsActivity extends AppCompatActivity{
 
     // Fancy dataBinding
@@ -112,7 +114,7 @@ public class DetailsActivity extends AppCompatActivity{
                     Drawable drawable = new BitmapDrawable(getResources(),
                             BitmapTransforamationHelper.transformWithSavedProportions(bitmap, view.getWidth(), view.getHeight()));
                     mBinding.clActivityDetails.setBackground(drawable);
-                    mBinding.clActivityDetails.getBackground().setAlpha(51); // Setting opacity (scale is 0 - 255)
+                    mBinding.clActivityDetails.getBackground().setAlpha(OPACITY_LEVEL); // Setting opacity (scale is 0 - 255)
                 });
             }
         }

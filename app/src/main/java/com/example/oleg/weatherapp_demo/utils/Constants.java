@@ -37,4 +37,6 @@ public class Constants {
     public static final String KEY_VERTICAL = "key_vertical";
     public static final String KEY_HORIZONTAL = "key_horizontal";
 
+    public static final int OPACITY_LEVEL = 51;
+
 }

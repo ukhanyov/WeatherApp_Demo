@@ -83,6 +83,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.oleg.weatherapp_demo.utils.Constants.OPACITY_LEVEL;
+
 public class MainActivity extends AppCompatActivity implements
         // item click stuff
         WeatherAdapter.WeatherAdapterOnClickHandler,
@@ -821,29 +823,57 @@ public class MainActivity extends AppCompatActivity implements
 
     private void getPhotoFromPlacePicker(String placeId) {
 
+        //final boolean[] trigger = new boolean[1];
+
         final Task<PlacePhotoMetadataResponse> photoMetadataResponse = mGeoDataClient.getPlacePhotos(placeId);
         photoMetadataResponse.addOnCompleteListener(task -> {
-            PlacePhotoMetadataResponse photos = task.getResult();
-            PlacePhotoMetadataBuffer photoMetadataBuffer = Objects.requireNonNull(photos).getPhotoMetadata();
-            PlacePhotoMetadata photoMetadata = photoMetadataBuffer.get(0);
-            Task<PlacePhotoResponse> photoResponse = mGeoDataClient.getPhoto(photoMetadata);
-            photoResponse.addOnCompleteListener(task1 -> {
-                PlacePhotoResponse photo = task1.getResult();
+            try{
+                PlacePhotoMetadataResponse photos = task.getResult();
+                PlacePhotoMetadataBuffer photoMetadataBuffer = Objects.requireNonNull(photos).getPhotoMetadata();
+                PlacePhotoMetadata photoMetadata = photoMetadataBuffer.get(0);
+                Task<PlacePhotoResponse> photoResponse = mGeoDataClient.getPhoto(photoMetadata);
 
-                Bitmap originalImage = Objects.requireNonNull(photo).getBitmap();
-                int width = mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow.getWidth();
-                int height = mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow.getHeight();
+                photoResponse.addOnCompleteListener(task1 -> {
+                    PlacePhotoResponse photo = task1.getResult();
 
-                mSavedPicture = originalImage;
+                    Bitmap originalImage = Objects.requireNonNull(photo).getBitmap();
+                    int width = mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow.getWidth();
+                    int height = mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow.getHeight();
 
-                Drawable drawable = new BitmapDrawable(getResources(),
-                        BitmapTransforamationHelper.transformWithSavedProportions(originalImage, width, height));
+                    mSavedPicture = originalImage;
 
-                mBinding.clActivityMain.setBackground(drawable);
-                mBinding.clActivityMain.getBackground().setAlpha(51); // Setting opacity (scale is 0 - 255)
+                    Drawable drawable = new BitmapDrawable(getResources(),
+                            BitmapTransforamationHelper.transformWithSavedProportions(originalImage, width, height));
 
-                saveCurrentLocation(LOCATION_NAME);
-            });
+                    mBinding.clActivityMain.setBackground(drawable);
+                    mBinding.clActivityMain.getBackground().setAlpha(OPACITY_LEVEL); // Setting opacity (scale is 0 - 255)
+
+                    saveCurrentLocation(LOCATION_NAME);
+                    //trigger[0] = true;
+                });
+            }catch (IllegalStateException e) {
+                Toast.makeText(this, "No location picture to save", Toast.LENGTH_SHORT).show();
+                Log.e(MainActivity.class.getSimpleName(), e.toString());
+            }
+//            } finally {
+//                if(!trigger[0]){
+//                    Bitmap originalImage = BitmapFactory.decodeResource(getResources(),
+//                            R.drawable.ic_location_unawailable);
+//                    int width = mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow.getWidth();
+//                    int height = mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow.getHeight();
+//
+//                    mSavedPicture = originalImage;
+//
+//                    Drawable drawable = new BitmapDrawable(getResources(),
+//                            BitmapTransforamationHelper.transformWithSavedProportions(originalImage, width, height));
+//
+//                    mBinding.clActivityMain.setBackground(drawable);
+//                    mBinding.clActivityMain.getBackground().setAlpha(OPACITY_LEVEL); // Setting opacity (scale is 0 - 255)
+//
+//                    saveCurrentLocation(LOCATION_NAME);
+//                }
+//            }
+
         });
     }
 
@@ -883,7 +913,7 @@ public class MainActivity extends AppCompatActivity implements
                 Drawable drawable = new BitmapDrawable(getResources(),
                         BitmapTransforamationHelper.transformWithSavedProportions(bitmap, view.getWidth(), view.getHeight()));
                 mBinding.clActivityMain.setBackground(drawable);
-                mBinding.clActivityMain.getBackground().setAlpha(51); // Setting opacity (scale is 0 - 255)
+                mBinding.clActivityMain.getBackground().setAlpha(OPACITY_LEVEL); // Setting opacity (scale is 0 - 255)
             });
         }
     }
