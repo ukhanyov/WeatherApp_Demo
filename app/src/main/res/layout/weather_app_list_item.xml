@@ -10,7 +10,6 @@
         android:id="@+id/weather_icon"
         android:layout_width="0dp"
         android:layout_height="0dp"
-
         android:contentDescription="@string/contentDescription_weather_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_two"
@@ -19,26 +18,27 @@
         tools:src="@drawable/ic_weather_default" />
 
     <TextView
+        android:gravity="right"
+        android:textAlignment="gravity"
         android:id="@+id/tv_weather_date"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_one"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_five"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Today, May 03" />
+        tools:text="Wednesday" />
 
     <TextView
         android:id="@+id/tv_high_temperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
         android:fontFamily="sans-serif-light"
         android:textSize="28sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/tv_low_temperature"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_four"
+        app:layout_constraintStart_toStartOf="@+id/guideline_vertical_three"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="19\u00b0" />
 
@@ -46,12 +46,12 @@
         android:id="@+id/tv_low_temperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:fontFamily="sans-serif-light"
         android:gravity="end"
         android:textSize="28sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline_vertical_four"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="10\u00b0" />
 
@@ -70,5 +70,26 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.6" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline_vertical_three"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.7" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline_vertical_four"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.85" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline_vertical_five"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.30" />
 
 </android.support.constraint.ConstraintLayout>
