@@ -14,8 +14,6 @@ import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -77,7 +75,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -105,7 +102,6 @@ public class MainActivity extends AppCompatActivity implements
     // Weather instance for weather now
     private Weather mWeatherNow;
     private Weather mWeatherForThisDay;
-    private List<Weather> mWeatherDailyList;
 
     // Nav drawer
     DrawerLayout mDrawer;
@@ -175,13 +171,11 @@ public class MainActivity extends AppCompatActivity implements
         // LiveData/viewModels
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
 
-        mWeatherDailyList = new ArrayList<>();
         mWeatherViewModel.getWeatherDailyByCoordinatesAndType().observe(this, list -> {
             adapterVertical.setWeather(list);
-            mWeatherDailyList.addAll(list);
             horizontalAdapter.setWeatherList(list);
 
-            mWeatherForThisDay = list.get(0);
+            mWeatherForThisDay = Objects.requireNonNull(list).get(0);
 
             mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowDate.setText(NormalizeDate.getHumanFriendlyDateFromDB(
                     Long.parseLong(mWeatherForThisDay.getDate())));
@@ -197,10 +191,7 @@ public class MainActivity extends AppCompatActivity implements
             }
 
         });
-        mWeatherViewModel.getWeatherHourlyByCoordinatesAndType().observe(this, list -> {
-            horizontalAdapter.setWeather(list);
-
-        });
+        mWeatherViewModel.getWeatherHourlyByCoordinatesAndType().observe(this, horizontalAdapter::setWeather);
 
         // Recycler view for nav drawer
         final MyLocationAdapter myLocationAdapter = new MyLocationAdapter(this);
@@ -213,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements
         mMyLocationViewModel = ViewModelProviders.of(this).get(MyLocationViewModel.class);
         mMyLocationViewModel.getAllLocations().observe(this, list -> {
             myLocationAdapter.setMyLocations(list);
-            mMyLocationsListForBackground.addAll(list);
+            mMyLocationsListForBackground.addAll(Objects.requireNonNull(list));
             loadMyLocations(LOCATION_COORDINATES);
         });
 
@@ -351,8 +342,6 @@ public class MainActivity extends AppCompatActivity implements
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-
         DrawerLayout drawer = mBinding.drawerLayout;
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -366,12 +355,10 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
         switch (item.getItemId()) {
 
             case R.id.action_add_location:
-                if (haveNetworkConnection() && isConnected()) {
+                if (isConnected()) {
                     callToGetPicture();
                 }
 
@@ -421,7 +408,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void fetchAllTheData(String coordinates) {
 
-        if (haveNetworkConnection() && isConnected()) {
+        if (isConnected()) {
 
             // Daily data
             fetchDailyData();
@@ -780,27 +767,27 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private boolean haveNetworkConnection() {
-        boolean haveConnectedWifi = false;
-        boolean haveConnectedMobile = false;
-
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo[] netInfo = Objects.requireNonNull(cm).getAllNetworkInfo();
-        for (NetworkInfo ni : netInfo) {
-            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
-                if (ni.isConnected())
-                    haveConnectedWifi = true;
-            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
-                if (ni.isConnected())
-                    haveConnectedMobile = true;
-        }
-        return haveConnectedWifi || haveConnectedMobile;
-    }
+//    private boolean haveNetworkConnection() {
+//        boolean haveConnectedWifi = false;
+//        boolean haveConnectedMobile = false;
+//
+//        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//        NetworkInfo[] netInfo = Objects.requireNonNull(cm).getAllNetworkInfo();
+//        for (NetworkInfo ni : netInfo) {
+//            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+//                if (ni.isConnected())
+//                    haveConnectedWifi = true;
+//            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+//                if (ni.isConnected())
+//                    haveConnectedMobile = true;
+//        }
+//        return haveConnectedWifi || haveConnectedMobile;
+//    }
 
     private boolean haveLocationEnabled() {
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        boolean gps_enabled = false;
-        boolean network_enabled = false;
+        boolean gps_enabled;
+        boolean network_enabled;
 
         gps_enabled = Objects.requireNonNull(lm).isProviderEnabled(LocationManager.GPS_PROVIDER);
         network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
