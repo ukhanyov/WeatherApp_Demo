@@ -157,9 +157,9 @@ public class MainActivity extends AppCompatActivity implements
 
         // Second "this" is for item click
         final WeatherAdapter adapterVertical = new WeatherAdapter(this, this);
+        recyclerViewVertical.setHasFixedSize(true);
         recyclerViewVertical.setAdapter(adapterVertical);
         recyclerViewVertical.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewVertical.setHasFixedSize(true);
 
         // Setup horizontal recyclerView
         final WeatherHorizontalAdapter horizontalAdapter =
@@ -167,11 +167,9 @@ public class MainActivity extends AppCompatActivity implements
         recyclerViewHorizontal.setAdapter(horizontalAdapter);
         LinearLayoutManager layoutManagerHorizontal
                 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        recyclerViewHorizontal.setLayoutManager(layoutManagerHorizontal);
         recyclerViewHorizontal.setHasFixedSize(true);
+        recyclerViewHorizontal.setLayoutManager(layoutManagerHorizontal);
         recyclerViewHorizontal.setItemViewCacheSize(20);
-        recyclerViewHorizontal.setDrawingCacheEnabled(true);
-        recyclerViewHorizontal.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
         // LiveData/viewModels
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
@@ -180,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements
             adapterVertical.setWeather(list);
             horizontalAdapter.setWeatherList(list);
             mWeatherForThisDay = Objects.requireNonNull(list).get(0);
-
+            adapterVertical.notifyDataSetChanged();
             mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowDate.setText(NormalizeDate.getHumanFriendlyDateFromDB(
                     Long.parseLong(mWeatherForThisDay.getDate())));
 
@@ -196,7 +194,10 @@ public class MainActivity extends AppCompatActivity implements
 
         });
 
-        mWeatherViewModel.getWeatherHourlyByCoordinatesAndType().observe(this, horizontalAdapter::setWeather);
+        mWeatherViewModel.getWeatherHourlyByCoordinatesAndType().observe(this, list -> {
+            horizontalAdapter.setWeather(list);
+            horizontalAdapter.notifyDataSetChanged();
+        });
 
         // Recycler view for nav drawer
         final MyLocationAdapter myLocationAdapter = new MyLocationAdapter(this);
