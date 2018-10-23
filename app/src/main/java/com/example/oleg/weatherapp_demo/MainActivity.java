@@ -104,9 +104,6 @@ public class MainActivity extends AppCompatActivity implements
     private Weather mWeatherNow;
     private Weather mWeatherForThisDay;
 
-    private List<Weather> mWeatherListForADay;
-    private List<Weather> mWeatherListForAWeek;
-
     // Nav drawer
     DrawerLayout mDrawer;
 
@@ -175,11 +172,9 @@ public class MainActivity extends AppCompatActivity implements
         // LiveData/viewModels
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
 
-        mWeatherListForAWeek = new ArrayList<>();
         mWeatherViewModel.getWeatherDailyByCoordinatesAndType().observe(this, list -> {
             adapterVertical.setWeather(list);
             horizontalAdapter.setWeatherList(list);
-            mWeatherListForAWeek.addAll(Objects.requireNonNull(list));
             mWeatherForThisDay = Objects.requireNonNull(list).get(0);
 
             mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowDate.setText(NormalizeDate.getHumanFriendlyDateFromDB(
@@ -197,11 +192,7 @@ public class MainActivity extends AppCompatActivity implements
 
         });
 
-        mWeatherListForADay = new ArrayList<>();
-        mWeatherViewModel.getWeatherHourlyByCoordinatesAndType().observe(this, list -> {
-            horizontalAdapter.setWeather(list);
-            mWeatherListForADay.addAll(Objects.requireNonNull(list));
-        });
+        mWeatherViewModel.getWeatherHourlyByCoordinatesAndType().observe(this, horizontalAdapter::setWeather);
 
         // Recycler view for nav drawer
         final MyLocationAdapter myLocationAdapter = new MyLocationAdapter(this);
@@ -407,8 +398,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onClick(List<Weather> weather) {
-        launchDetailsActivity(weather);
+    public void onClick(List<Weather> weather, String key) {
+        launchDetailsActivity(weather, key);
     }
 
     private void fetchAllTheData(String coordinates) {
@@ -642,7 +633,7 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void launchDetailsActivity(List<Weather> weather) {
+    private void launchDetailsActivity(List<Weather> weather, String key) {
         if(weather != null){
             Intent startDetailsActivityIntent = new Intent(MainActivity.this, DetailsActivity.class);
 
@@ -667,24 +658,14 @@ public class MainActivity extends AppCompatActivity implements
             }
 
             startDetailsActivityIntent
-                    .putExtra("weather_key", "test_key")
+                    .putExtra("weather_key", key)
                     .putExtra("weather_list", (ArrayList<ParcelableWeather>) parcelableWeathers);
+            if(mSavedPicture != null){
+                startDetailsActivityIntent.putExtra("bitmap", mSavedPicture);
+            }
+
             startActivity(startDetailsActivityIntent);
         }
-
-
-//        String[] data = {
-//                weather.getDate(),
-//                weather.getSummary(),
-//                weather.getTemperatureMax(),
-//                weather.getTemperatureMin(),
-//                weather.getHumidity(),
-//                weather.getPressure(),
-//                weather.getWindSpeed()
-//        };
-
-        //startDetailsActivity.putExtra(Intent.EXTRA_TEXT, data);
-        //startActivity(startDetailsActivity);
     }
 
     public void textOnLocationNavigationDrawerClicked(View view) {

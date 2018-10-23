@@ -72,5 +72,6 @@
     <string name="millimeters">mm</string>
     <string name="sunrise">Sunrise</string>
     <string name="sunset">Sunset</string>
-    <string name="this_forecast">This ... forecast</string>
+    <string name="this_forecast">This … forecast</string>
+    <string name="weather_for_this_week">Weather for this week</string>
 </resources>

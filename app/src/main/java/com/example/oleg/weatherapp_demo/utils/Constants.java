@@ -33,6 +33,8 @@ public class Constants {
 
     // Requests
     public static final int PLACE_PICKER_REQUEST_FOR_LOCATION = 101;
-    public static final int PLACE_PICKER_REQUEST_FOR_PICTURE = 102;
+
+    public static final String KEY_VERTICAL = "key_vertical";
+    public static final String KEY_HORIZONTAL = "key_horizontal";
 
 }

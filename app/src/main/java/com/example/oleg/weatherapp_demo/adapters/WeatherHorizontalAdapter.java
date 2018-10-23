@@ -11,11 +11,13 @@ import android.widget.TextView;
 
 import com.example.oleg.weatherapp_demo.R;
 import com.example.oleg.weatherapp_demo.data.entities.Weather;
+import com.example.oleg.weatherapp_demo.utils.Constants;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.oleg.weatherapp_demo.utils.Constants.*;
 import static com.example.oleg.weatherapp_demo.utils.NormalizeDate.*;
 
 public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizontalAdapter.WeatherViewHolder> {
@@ -41,7 +43,7 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
     }
 
     public interface WeatherHorizontalAdapterOnClickHandler {
-        void onClick(List<Weather> weatherList);
+        void onClick(List<Weather> weatherList, String key);
     }
 
 
@@ -133,7 +135,7 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
 
         @Override
         public void onClick(View v) {
-            mClickHandler.onClick(getAllWeather());
+            mClickHandler.onClick(getAllWeather(), KEY_HORIZONTAL);
         }
     }
 }

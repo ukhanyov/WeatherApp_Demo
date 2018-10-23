@@ -16,6 +16,8 @@ import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 
 import java.util.List;
 
+import static com.example.oleg.weatherapp_demo.utils.Constants.KEY_VERTICAL;
+
 public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder> {
 
     private final LayoutInflater mInflater;
@@ -34,7 +36,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
     }
 
     public interface WeatherAdapterOnClickHandler {
-        void onClick(List<Weather> weatherList);
+        void onClick(List<Weather> weatherList, String key);
     }
 
     @NonNull
@@ -110,7 +112,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         // Item click stuff
         @Override
         public void onClick(View v) {
-            mClickHandler.onClick(getAllWeather());
+            mClickHandler.onClick(getAllWeather(), KEY_VERTICAL);
         }
     }
 
