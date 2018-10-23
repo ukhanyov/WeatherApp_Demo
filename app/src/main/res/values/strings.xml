@@ -74,4 +74,5 @@
     <string name="sunset">Sunset</string>
     <string name="this_forecast">This … forecast</string>
     <string name="weather_for_this_week">Weather for this week</string>
+    <string name="weather_for_next_days">Weather for next days by hour</string>
 </resources>

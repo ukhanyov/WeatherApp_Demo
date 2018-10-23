@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.oleg.weatherapp_demo.R;
 import com.example.oleg.weatherapp_demo.data.entities.Weather;
+import com.example.oleg.weatherapp_demo.utils.Constants;
 import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 
@@ -21,10 +22,12 @@ public class DetailsWeatherAdapter extends RecyclerView.Adapter<DetailsWeatherAd
     private final LayoutInflater mInflater;
     private List<Weather> mWeather; // Cached copy of weather
     private Context mContext;
+    private String mKey;
 
-    public DetailsWeatherAdapter(Context context) {
+    public DetailsWeatherAdapter(Context context, String key) {
         mInflater = LayoutInflater.from(context);
         mContext = context;
+        mKey = key;
     }
 
 
@@ -47,7 +50,11 @@ public class DetailsWeatherAdapter extends RecyclerView.Adapter<DetailsWeatherAd
             holder.weatherIcon.setImageResource(WeatherIconInterpreter.interpretIcon(current.getSummary()));
 
             //Weather Date
-            holder.weatherDate.setText(NormalizeDate.getHumanFriendlyDayOfWeek(Long.parseLong(current.getDate())));
+            if(mKey.equals(Constants.KEY_VERTICAL)){
+                holder.weatherDate.setText(NormalizeDate.getHumanFriendlyDayOfWeek(Long.parseLong(current.getDate())));
+            } else if(mKey.equals(Constants.KEY_HORIZONTAL)){
+                holder.weatherDate.setText(NormalizeDate.getHumanFriendlyTimeFromDB(Long.parseLong(current.getDate())));
+            }
 
             // High (max) temperature
             holder.weatherTemperatureHigh.setText(

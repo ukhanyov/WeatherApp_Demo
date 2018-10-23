@@ -71,9 +71,8 @@ public class DetailsActivity extends AppCompatActivity{
         }
 
         if(key.equals(Constants.KEY_VERTICAL)){
-            // Setup recyclerView
             RecyclerView recyclerView = mBinding.rvDetails;
-            final DetailsWeatherAdapter adapter = new DetailsWeatherAdapter(this);
+            final DetailsWeatherAdapter adapter = new DetailsWeatherAdapter(this, key);
             recyclerView.setAdapter(adapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setHasFixedSize(true);
@@ -85,11 +84,24 @@ public class DetailsActivity extends AppCompatActivity{
             mBinding.tvDetailsTemperature.setText(getString(R.string.weather_now_current_temp,
                     String.valueOf(Math.round(Double.parseDouble(weatherList.get(0).getTemperatureMax()))),
                     getString(R.string.degrees_celsius)));
-        } else if(key.equals(Constants.KEY_VERTICAL)){
-            // Setup display from vertical
+        } else if(key.equals(Constants.KEY_HORIZONTAL)){
+            RecyclerView recyclerView = mBinding.rvDetails;
+            final DetailsWeatherAdapter adapter = new DetailsWeatherAdapter(this, key);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            recyclerView.setHasFixedSize(true);
+            adapter.setWeather(weatherList);
+
+            mBinding.ivDetailsWeatherIcon.setImageResource(WeatherIconInterpreter.interpretIcon(weatherList.get(0).getSummary()));
+            mBinding.tvDetailsDate.setText(NormalizeDate.getHumanFriendlyDateFromDB(Long.parseLong(weatherList.get(0).getDate())));
+            mBinding.tvDetailsForecastType.setText(getString(R.string.weather_for_next_days));
+            mBinding.tvDetailsTemperature.setText(getString(R.string.weather_now_current_temp,
+                    String.valueOf(Math.round(Double.parseDouble(weatherList.get(0).getTemperatureMax()))),
+                    getString(R.string.degrees_celsius)));
         }
 
         if(bitmap != null){
+            // TODO: do something about it
             // Transform original bitmap to resized bitmap
             final View view = mBinding.clActivityDetails;
             view.post(() -> {
