@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements
             mBinding.layoutContentMain.layoutContentAppBar.tvTempLow.setText(getString(R.string.weather_now_current_temp,
                     String.valueOf(Math.round(Double.parseDouble(mWeatherForThisDay.getTemperatureMin()))), getString(R.string.degrees_celsius)));
 
-            if(!isConnected()){
+            if (!isConnected()) {
                 setWeatherNowViews(mWeatherForThisDay);
             }
 
@@ -317,7 +317,6 @@ public class MainActivity extends AppCompatActivity implements
             mBinding.layoutContentMain.layoutContentAppBar.tvOffline.setText(R.string.offline_turn_on_location);
 
             // TODO: Add callback when internet is enabled
-            // TODO: details activity
         }
 
         fetchAllTheData(LOCATION_COORDINATES);
@@ -634,11 +633,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void launchDetailsActivity(List<Weather> weather, String key) {
-        if(weather != null){
+        if (weather != null) {
             Intent startDetailsActivityIntent = new Intent(MainActivity.this, DetailsActivity.class);
 
             List<ParcelableWeather> parcelableWeathers = new ArrayList<>();
-            for (Weather instance : weather){
+            for (Weather instance : weather) {
                 parcelableWeathers.add(new ParcelableWeather(
                         instance.getId(),
                         instance.getDate(),
@@ -657,13 +656,21 @@ public class MainActivity extends AppCompatActivity implements
                 );
             }
 
+
+            if (mMyLocationsListForBackground.size() > 0) {
+                for (MyLocation iterator : mMyLocationsListForBackground) {
+                    if (iterator.getLocationCoordinates().equals(LOCATION_COORDINATES)) {
+                        byte[] encodeByte = Base64.decode(iterator.getImageString(), Base64.DEFAULT);
+                        startDetailsActivityIntent.putExtra("bite", encodeByte);
+                        break;
+                    }
+                }
+            }
+
             startDetailsActivityIntent
                     .putExtra("toolbar_title", toolbar.getTitle().toString())
                     .putExtra("weather_key", key)
                     .putExtra("weather_list", (ArrayList<ParcelableWeather>) parcelableWeathers);
-            if(mSavedPicture != null){
-                startDetailsActivityIntent.putExtra("bitmap", mSavedPicture);
-            }
 
             startActivity(startDetailsActivityIntent);
         }
@@ -871,7 +878,7 @@ public class MainActivity extends AppCompatActivity implements
             byte[] encodeByte = Base64.decode(myLocation.getImageString(), Base64.DEFAULT);
             bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
             // Transform original bitmap to resized bitmap
-            final View view = mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow;
+            final View view = mBinding.clActivityMain;
             view.post(() -> {
                 Drawable drawable = new BitmapDrawable(getResources(),
                         BitmapTransforamationHelper.transformWithSavedProportions(bitmap, view.getWidth(), view.getHeight()));

@@ -2,6 +2,7 @@ package com.example.oleg.weatherapp_demo;
 
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -29,7 +30,6 @@ public class DetailsActivity extends AppCompatActivity{
     // Fancy dataBinding
     ActivityDetailsBinding mBinding;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +49,7 @@ public class DetailsActivity extends AppCompatActivity{
         // Get Weathers
         ArrayList<ParcelableWeather> list = getIntent().getParcelableArrayListExtra("weather_list");
         String key = getIntent().getStringExtra("weather_key");
-        Bitmap bitmap = getIntent().getParcelableExtra("bitmap");
+        byte[] byteArray = getIntent().getByteArrayExtra("bite");
         String title = getIntent().getStringExtra("toolbar_title");
         Objects.requireNonNull(toolbar).setTitle(title);
 
@@ -102,20 +102,20 @@ public class DetailsActivity extends AppCompatActivity{
                     getString(R.string.degrees_celsius)));
         }
 
-        if(bitmap != null){
-            // TODO: do something about it
+        if(byteArray != null){
             // Transform original bitmap to resized bitmap
-            final View view = mBinding.clActivityDetails;
-            view.post(() -> {
-                Drawable drawable = new BitmapDrawable(getResources(),
-                        BitmapTransforamationHelper.transformWithSavedProportions(bitmap, view.getWidth(), view.getHeight()));
-                mBinding.clActivityDetails.setBackground(drawable);
-                mBinding.clActivityDetails.getBackground().setAlpha(51); // Setting opacity (scale is 0 - 255)
-            });
+            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+
+            View view = mBinding.clActivityDetails;
+            if(view != null){
+                view.post(() -> {
+                    Drawable drawable = new BitmapDrawable(getResources(),
+                            BitmapTransforamationHelper.transformWithSavedProportions(bitmap, view.getWidth(), view.getHeight()));
+                    mBinding.clActivityDetails.setBackground(drawable);
+                    mBinding.clActivityDetails.getBackground().setAlpha(51); // Setting opacity (scale is 0 - 255)
+                });
+            }
         }
-
-
-
     }
 
     @Override

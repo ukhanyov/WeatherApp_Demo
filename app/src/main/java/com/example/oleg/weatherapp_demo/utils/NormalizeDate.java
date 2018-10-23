@@ -12,8 +12,6 @@ import java.util.TimeZone;
 
 public class NormalizeDate {
 
-    // TODO: add am/pm (or not)
-
     public static String getHumanFriendlyDayOfWeek(long dbDate){
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(dbDate * 1000L);

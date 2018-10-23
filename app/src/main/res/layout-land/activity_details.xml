@@ -125,5 +125,16 @@
 
         </android.support.v7.widget.RecyclerView>
 
+        <View
+            android:id="@+id/v_line_separator"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintBottom_toTopOf="@+id/rv_details"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_layout_second" />
+
     </android.support.constraint.ConstraintLayout>
 </layout>
