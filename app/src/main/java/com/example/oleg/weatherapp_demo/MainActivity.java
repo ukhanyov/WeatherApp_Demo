@@ -170,6 +170,9 @@ public class MainActivity extends AppCompatActivity implements
                 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerViewHorizontal.setLayoutManager(layoutManagerHorizontal);
         recyclerViewHorizontal.setHasFixedSize(true);
+        recyclerViewHorizontal.setItemViewCacheSize(20);
+        recyclerViewHorizontal.setDrawingCacheEnabled(true);
+        recyclerViewHorizontal.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
         // LiveData/viewModels
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
@@ -855,25 +858,6 @@ public class MainActivity extends AppCompatActivity implements
                 Toast.makeText(this, "No location picture to save", Toast.LENGTH_SHORT).show();
                 Log.e(MainActivity.class.getSimpleName(), e.toString());
             }
-//            } finally {
-//                if(!trigger[0]){
-//                    Bitmap originalImage = BitmapFactory.decodeResource(getResources(),
-//                            R.drawable.ic_location_unawailable);
-//                    int width = mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow.getWidth();
-//                    int height = mBinding.layoutContentMain.layoutContentAppBar.clWeatherNow.getHeight();
-//
-//                    mSavedPicture = originalImage;
-//
-//                    Drawable drawable = new BitmapDrawable(getResources(),
-//                            BitmapTransforamationHelper.transformWithSavedProportions(originalImage, width, height));
-//
-//                    mBinding.clActivityMain.setBackground(drawable);
-//                    mBinding.clActivityMain.getBackground().setAlpha(OPACITY_LEVEL); // Setting opacity (scale is 0 - 255)
-//
-//                    saveCurrentLocation(LOCATION_NAME);
-//                }
-//            }
-
         });
     }
 

@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.example.oleg.weatherapp_demo.R;
 import com.example.oleg.weatherapp_demo.data.entities.Weather;
-import com.example.oleg.weatherapp_demo.utils.Constants;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ import java.util.List;
 import static com.example.oleg.weatherapp_demo.utils.Constants.*;
 import static com.example.oleg.weatherapp_demo.utils.NormalizeDate.*;
 
-public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizontalAdapter.WeatherViewHolder> {
+public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizontalAdapter.WeatherHorizontalViewHolder> {
 
     private final LayoutInflater mInflater;
     private List<Weather> mWeather; // Cached copy of weather
@@ -49,13 +48,13 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
 
     @NonNull
     @Override
-    public WeatherViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public WeatherHorizontalViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.weather_app_horizontal_list_item, parent, false);
-        return new WeatherViewHolder(itemView);
+        return new WeatherHorizontalViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull WeatherViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull WeatherHorizontalViewHolder holder, int position) {
         if (mWeather != null) {
             // Binding data to a view here
 
@@ -94,6 +93,7 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
             }
 
             // Set temperature
+            //holder.weatherTime.setText(String.valueOf(holder.getAdapterPosition()));
             holder.weatherTemperature.setText(
                     mContext.getString(R.string.temperature_view_holder_degrees_celsius,
                             String.valueOf(Math.round(Double.parseDouble(current.getTemperatureMax())))));
@@ -117,13 +117,13 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
         return mWeather;
     }
 
-    public class WeatherViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class WeatherHorizontalViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView weatherIcon;
         TextView weatherTime;
         TextView weatherTemperature;
 
-        WeatherViewHolder(View itemView) {
+        WeatherHorizontalViewHolder(View itemView) {
             super(itemView);
 
             weatherIcon = itemView.findViewById(R.id.iv_horizontal_icon);
