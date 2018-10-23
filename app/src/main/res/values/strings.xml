@@ -15,7 +15,7 @@
     <string name="weather_now_current_temp_hint">Temperature</string>
     <string name="weather_now_precipitation_hint">Precipitation:</string>
     <string name="weather_now_wind_hint">Wind:</string>
-    <string name="weather_now_location_hint">Your Location</string>
+    <string name="weather_now_date_hint">Tuesday, November 4</string>
 
     <string name="weather_now_current_temp">%1$s%2$s</string>
     <string name="weather_now_current_wind">%1$s %2$s</string>

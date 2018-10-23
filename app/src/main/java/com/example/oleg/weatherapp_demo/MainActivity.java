@@ -58,6 +58,7 @@ import com.example.oleg.weatherapp_demo.network.retrofit.RetrofitWeatherInstance
 import com.example.oleg.weatherapp_demo.utils.BitmapTransforamationHelper;
 import com.example.oleg.weatherapp_demo.utils.Constants;
 import com.example.oleg.weatherapp_demo.utils.CustomOnSwipeTouchListener;
+import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -76,6 +77,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -179,14 +181,18 @@ public class MainActivity extends AppCompatActivity implements
             mWeatherDailyList.addAll(list);
             mWeatherForThisDay = list.get(0);
 
-            // TODO: decide what to do with location/date
-            //toolbar.setTitle(NormalizeDate.getHumanFriendlyDateFromDB(Long.parseLong(mWeatherForThisDay.getDate())));
+            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowDate.setText(NormalizeDate.getHumanFriendlyDateFromDB(
+                    Long.parseLong(mWeatherForThisDay.getDate())));
 
             mBinding.layoutContentMain.layoutContentAppBar.tvTempHigh.setText(getString(R.string.weather_now_current_temp,
                     String.valueOf(Math.round(Double.parseDouble(mWeatherForThisDay.getTemperatureMax()))), getString(R.string.degrees_celsius)));
 
             mBinding.layoutContentMain.layoutContentAppBar.tvTempLow.setText(getString(R.string.weather_now_current_temp,
                     String.valueOf(Math.round(Double.parseDouble(mWeatherForThisDay.getTemperatureMin()))), getString(R.string.degrees_celsius)));
+
+            if(!isConnected()){
+                setWeatherNowViews(mWeatherForThisDay);
+            }
 
         });
         mWeatherViewModel.getWeatherHourlyByCoordinatesAndType().observe(this, list -> {
@@ -232,7 +238,6 @@ public class MainActivity extends AppCompatActivity implements
 
                             LOCATION_COORDINATES = mMyLocationsList.get(position + 1).getLocationCoordinates();
                             toolbar.setTitle(mMyLocationsList.get(position + 1).getLocationName());
-                            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(mMyLocationsList.get(position + 1).getLocationName());
 
                             loadMyLocations(LOCATION_COORDINATES);
 
@@ -265,7 +270,6 @@ public class MainActivity extends AppCompatActivity implements
 
                             LOCATION_COORDINATES = mMyLocationsList.get(position - 1).getLocationCoordinates();
                             toolbar.setTitle(mMyLocationsList.get(position - 1).getLocationName());
-                            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(mMyLocationsList.get(position - 1).getLocationName());
 
                             loadMyLocations(LOCATION_COORDINATES);
 
@@ -317,16 +321,14 @@ public class MainActivity extends AppCompatActivity implements
             } else {
                 LOCATION_COORDINATES = checkLocationCoordinates;
                 toolbar.setTitle(checkLocationName);
-                mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(checkLocationName);
             }
 
         } else {
             mBinding.layoutContentMain.layoutContentAppBar.tvOffline.setVisibility(View.VISIBLE);
             mBinding.layoutContentMain.layoutContentAppBar.tvOffline.setText(R.string.offline_turn_on_location);
 
-            // TODO: in offline mode make weather now to show details
             // TODO: Add callback when internet is enabled
-            // TODO: Implement sunrises and sundowns
+            // TODO: details activity
         }
 
         fetchAllTheData(LOCATION_COORDINATES);
@@ -406,7 +408,6 @@ public class MainActivity extends AppCompatActivity implements
                 prefEditor.apply();
 
                 getPhotoFromPlacePicker(place.getId());
-                //saveCurrentLocation(LOCATION_NAME);
             }
         }
     }
@@ -508,7 +509,8 @@ public class MainActivity extends AppCompatActivity implements
                                 Constants.DB_WEATHER_TYPE_DAILY,
                                 item.getPrecipIntensity().toString(),
                                 item.getSunriseTime().toString(),
-                                item.getSunsetTime().toString());
+                                item.getSunsetTime().toString(),
+                                pj.getTimezone());
 
                         mWeatherViewModel.insert(weather);
                     }
@@ -558,7 +560,8 @@ public class MainActivity extends AppCompatActivity implements
                                 Constants.DB_WEATHER_TYPE_HOURLY,
                                 item.getPrecipIntensity().toString(),
                                 null,
-                                null);
+                                null,
+                                pj.getTimezone());
 
                         mWeatherViewModel.insert(weather);
                     }
@@ -607,7 +610,8 @@ public class MainActivity extends AppCompatActivity implements
                                 Constants.DB_WEATHER_TYPE_NOW,
                                 pj.getCurrently().getPrecipIntensity().toString(),
                                 null,
-                                null);
+                                null,
+                                pj.getTimezone());
 
                         setWeatherNowViews(mWeatherNow);
                     }
@@ -684,7 +688,6 @@ public class MainActivity extends AppCompatActivity implements
             prefEditor.apply();
 
             toolbar.setTitle(location.getLocationName());
-            mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(location.getLocationName());
 
             fetchAllTheData(LOCATION_COORDINATES);
 
@@ -740,9 +743,6 @@ public class MainActivity extends AppCompatActivity implements
                 runOnUiThread(() -> {
                     assert address != null;
                     toolbar.setTitle(address.getLocality());
-                    mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(address.getLocality());
-
-                    //saveCurrentLocation(address.getLocality());
 
                     LOCATION_NAME = address.getLocality();
 
@@ -815,7 +815,7 @@ public class MainActivity extends AppCompatActivity implements
         mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowTemp.setText(null);
         mBinding.layoutContentMain.layoutContentAppBar.tvTempLow.setText(null);
         mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowHumidity.setText(null);
-        mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowLocation.setText(null);
+        mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowDate.setText(null);
     }
 
     public boolean isConnected() {

@@ -50,6 +50,9 @@ public class Weather {
     @ColumnInfo(name = "sunsetTime")
     private String mSunsetTime;
 
+    @ColumnInfo(name = "timezone")
+    private String mTimezone;
+
     public Weather(String date,
                    String summary,
                    String temperatureMax,
@@ -61,7 +64,8 @@ public class Weather {
                    String typeOfDay,
                    String precipProbability,
                    String sunriseTime,
-                   String sunsetTime) {
+                   String sunsetTime,
+                   String timezone) {
 
         this.mDate = date;
         this.mSummary = summary;
@@ -75,54 +79,7 @@ public class Weather {
         this.mPrecipProbability = precipProbability;
         this.mSunriseTime = sunriseTime;
         this.mSunsetTime = sunsetTime;
-    }
-
-    public void setDate(String mDate) {
-        this.mDate = mDate;
-    }
-
-    public void setSummary(String mSummary) {
-        this.mSummary = mSummary;
-    }
-
-    public void setTemperatureMax(String mTemperatureMax) {
-        this.mTemperatureMax = mTemperatureMax;
-    }
-
-    public void setTemperatureMin(String mTemperatureMin) {
-        this.mTemperatureMin = mTemperatureMin;
-    }
-
-    public void setHumidity(String mHumidity) {
-        this.mHumidity = mHumidity;
-    }
-
-    public void setPressure(String mPressure) {
-        this.mPressure = mPressure;
-    }
-
-    public void setWindSpeed(String mWindSpeed) {
-        this.mWindSpeed = mWindSpeed;
-    }
-
-    public void setCoordinates(String mCoordinates) {
-        this.mCoordinates = mCoordinates;
-    }
-
-    public void setTypeOfDay(String mTypeOfDay) {
-        this.mTypeOfDay = mTypeOfDay;
-    }
-
-    public void setPrecipProbability(String mPrecipProbability) {
-        this.mPrecipProbability = mPrecipProbability;
-    }
-
-    public void setSunriseTime(String mSunriseTime) {
-        this.mSunriseTime = mSunriseTime;
-    }
-
-    public void setSunsetTime(String mSunsetTime) {
-        this.mSunsetTime = mSunsetTime;
+        this.mTimezone = timezone;
     }
 
     public String getDate() {
@@ -175,5 +132,9 @@ public class Weather {
 
     public String getSunsetTime() {
         return mSunsetTime;
+    }
+
+    public String getTimezone() {
+        return mTimezone;
     }
 }

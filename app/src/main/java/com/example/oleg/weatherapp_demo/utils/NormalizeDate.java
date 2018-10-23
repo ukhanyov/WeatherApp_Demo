@@ -1,7 +1,14 @@
 package com.example.oleg.weatherapp_demo.utils;
 
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.SimpleTimeZone;
+import java.util.TimeZone;
 
 public class NormalizeDate {
 
@@ -93,5 +100,15 @@ public class NormalizeDate {
         Calendar currentTime = Calendar.getInstance();
         return (calendarFromDb.get(Calendar.HOUR_OF_DAY) == currentTime.get(Calendar.HOUR_OF_DAY) &&
                 calendarFromDb.get(Calendar.DAY_OF_MONTH) == currentTime.get(Calendar.DAY_OF_MONTH));
+    }
+
+
+    public static String getTimeWithLocality(long dbDate, String zoneIdString){
+        Calendar calendarFromDb = Calendar.getInstance();
+        calendarFromDb.setTimeInMillis(dbDate * 1000L);
+        TimeZone timeZone = TimeZone.getTimeZone(zoneIdString);
+        calendarFromDb.setTimeZone(timeZone);
+
+        return calendarFromDb.get(Calendar.HOUR_OF_DAY) + ":" + "00";
     }
 }

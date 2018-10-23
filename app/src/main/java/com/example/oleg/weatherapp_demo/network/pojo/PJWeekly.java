@@ -5,6 +5,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class PJWeekly {
 
+    @SerializedName("timezone")
+    private String timezone;
+
     @SerializedName("daily")
     @Expose
     private PJWeeklyArray PJWeeklyArray;
@@ -13,5 +16,7 @@ public class PJWeekly {
         return PJWeeklyArray;
     }
 
-
+    public String getTimezone() {
+        return timezone;
+    }
 }

@@ -5,6 +5,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class PJCurrent {
 
+    @SerializedName("timezone")
+    private String timezone;
+
     @SerializedName("currently")
     @Expose
     private PJCurrentInstance currently;
@@ -13,4 +16,7 @@ public class PJCurrent {
         return currently;
     }
 
+    public String getTimezone() {
+        return timezone;
+    }
 }

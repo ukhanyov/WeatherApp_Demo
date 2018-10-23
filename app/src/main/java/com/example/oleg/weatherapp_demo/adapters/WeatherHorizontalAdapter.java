@@ -30,7 +30,6 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
     public WeatherHorizontalAdapter(Context context, WeatherHorizontalAdapterOnClickHandler clickHandler) {
         mInflater = LayoutInflater.from(context);
         mContext = context;
-
         // Item click stuff
         mClickHandler = clickHandler;
     }
@@ -49,7 +48,7 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
 
     @Override
     public void onBindViewHolder(@NonNull WeatherViewHolder holder, int position) {
-        if(mWeather != null){
+        if (mWeather != null) {
             // Binding data to a view here
 
             Weather current = mWeather.get(position);
@@ -58,62 +57,60 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
             holder.weatherIcon.setImageResource(
                     WeatherIconInterpreter.interpretIcon(current.getSummary()));
 
-            if(checkIfTimeIsNow(Long.parseLong(current.getDate()))){
+            if (checkIfTimeIsNow(Long.parseLong(current.getDate()))) {
                 holder.weatherTime.setText(R.string.now);
                 holder.weatherIcon.setImageResource(WeatherIconInterpreter.interpretIcon(current.getSummary()));
-            }else{
+            } else {
 
-                for(Weather iterator : mWeatherDaily){
+                String time = getHumanFriendlyTimeFromDB(Long.parseLong(current.getDate()));
 
-                    String time = getHumanFriendlyTimeFromDB(Long.parseLong(current.getDate()));
-                    String sunriseTime = getHumanFriendlyTimeFromDB(Long.parseLong(iterator.getSunriseTime()));
-                    String sunsetTime = getHumanFriendlyTimeFromDB(Long.parseLong(iterator.getSunsetTime()));
-
-                    // TODO: fix sunset/sunrise logic
-                    // Time overlaps with sunrise
-                    if(sunriseTime.equals(time)){
+                if(mWeatherDaily != null){
+                    String sunriseTime = getTimeWithLocality(Long.parseLong(mWeatherDaily.get(0).getSunriseTime()), mWeatherDaily.get(0).getTimezone());
+                    String sunsetTime = getTimeWithLocality(Long.parseLong(mWeatherDaily.get(0).getSunsetTime()), mWeatherDaily.get(0).getTimezone());
+                    if(time.equals(sunriseTime)){
+                        holder.weatherTime.setText(time);
                         holder.weatherIcon.setImageResource(R.drawable.ic_weather_sunrise);
-                        break;
-                    } else if(sunsetTime.equals(time)){ // Time overlaps with sunset
+                    } else if(time.equals(sunsetTime)){
+                        holder.weatherTime.setText(time);
                         holder.weatherIcon.setImageResource(R.drawable.ic_weather_sunset);
-                        break;
-                    } else { // Time overlaps with nothing
-                        holder.weatherIcon.setImageResource(WeatherIconInterpreter.interpretIcon(current.getSummary()));
-                        break;
                     }
+                }else {
+                    holder.weatherTime.setText(time);
+                    holder.weatherIcon.setImageResource(WeatherIconInterpreter.interpretIcon(current.getSummary()));
                 }
 
-
-                holder.weatherTime.setText(getHumanFriendlyTimeFromDB(Long.parseLong(current.getDate())));
             }
+
+            holder.weatherTime.setText(getHumanFriendlyTimeFromDB(Long.parseLong(current.getDate())));
+
 
             // Set temperature
             holder.weatherTemperature.setText(
                     mContext.getString(R.string.temperature_view_holder_degrees_celsius,
                             String.valueOf(Math.round(Double.parseDouble(current.getTemperatureMax())))));
-        }else {
+        } else {
             throw new IllegalArgumentException("Some error with binding data for horyzontal recycler view");
         }
     }
 
-    public void setWeather(List<Weather> weather){
+    public void setWeather(List<Weather> weather) {
         mWeather = weather;
         notifyDataSetChanged();
     }
 
-    public void setDailyWeather(List<Weather> weather){
+    public void setDailyWeather(List<Weather> weather) {
         mWeatherDaily = weather;
         notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        if(mWeather != null) return mWeather.size();
+        if (mWeather != null) return mWeather.size();
         else return 0;
     }
 
 
-    public class WeatherViewHolder extends RecyclerView.ViewHolder  implements View.OnClickListener{
+    public class WeatherViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView weatherIcon;
         TextView weatherTime;

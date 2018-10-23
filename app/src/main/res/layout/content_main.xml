@@ -50,7 +50,7 @@
             app:layout_constraintBottom_toTopOf="@+id/guideline_horizontal_layout_top"
             app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_layout_top"
             app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_layout_two"
-            app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_location" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_date" />
 
         <TextView
             android:id="@+id/tv_humidity_label"
@@ -60,8 +60,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="4dp"
-            android:text="@string/weather_now_humidity_level_hint"
             android:gravity="right"
+            android:text="@string/weather_now_humidity_level_hint"
             android:textAlignment="gravity"
             app:layout_constraintBottom_toTopOf="@+id/tv_wind_label"
             app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_layout_top"
@@ -76,8 +76,8 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="4dp"
-            android:text="@string/weather_now_wind_hint"
             android:gravity="right"
+            android:text="@string/weather_now_wind_hint"
             android:textAlignment="gravity"
             app:layout_constraintBottom_toTopOf="@+id/tv_precipitation_label"
             app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_layout_top"
@@ -92,8 +92,8 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:text="@string/weather_now_precipitation_hint"
             android:gravity="right"
+            android:text="@string/weather_now_precipitation_hint"
             android:textAlignment="gravity"
             app:layout_constraintBottom_toTopOf="@+id/guideline_horizontal_layout_first"
             app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_layout_top"
@@ -130,7 +130,6 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_wind" />
 
         <TextView
-            android:textSize="16sp"
             android:id="@+id/tv_label_forecast"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -138,29 +137,30 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:text="@string/forecast"
+            android:textSize="16sp"
             app:layout_constraintEnd_toStartOf="@+id/tv_temp_high"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guideline_horizontal_layout_first" />
 
         <TextView
-            android:textSize="16sp"
             android:id="@+id/tv_temp_low"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:text="@string/_11"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guideline_horizontal_layout_first" />
 
         <TextView
-            android:textSize="16sp"
             android:id="@+id/tv_temp_high"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:text="@string/_99"
+            android:textSize="16sp"
             app:layout_constraintEnd_toStartOf="@+id/tv_temp_low"
             app:layout_constraintTop_toTopOf="@+id/guideline_horizontal_layout_first" />
 
@@ -176,7 +176,7 @@
             app:layout_constraintBottom_toTopOf="@+id/guideline_horizontal_layout_top"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline_vertical_layout_top"
-            app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_location" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_weather_now_date" />
 
         <TextView
             android:id="@+id/tv_weather_now_humidity"
@@ -206,12 +206,12 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tv_weather_now_location"
+            android:id="@+id/tv_weather_now_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:hint="@string/weather_now_location_hint"
-            android:visibility="gone"
+            android:hint="@string/weather_now_date_hint"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -231,9 +231,7 @@
             android:id="@+id/rv_weather_horizontal"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
             android:clipToPadding="false"
             android:paddingBottom="8dp"
             app:layout_constraintBottom_toTopOf="@+id/guideline_horizontal_layout_second"
