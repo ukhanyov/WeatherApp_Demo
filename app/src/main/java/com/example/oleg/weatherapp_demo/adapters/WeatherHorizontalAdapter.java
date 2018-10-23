@@ -25,6 +25,8 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
     private List<Weather> mWeather; // Cached copy of weather
     private List<Weather> mWeatherList;
     private Context mContext;
+    private String mSunrise = null;
+    private String mSunset = null;
 
     // Item click stuff
     private final WeatherHorizontalAdapter.WeatherHorizontalAdapterOnClickHandler mClickHandler;
@@ -39,6 +41,8 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
     public void setWeatherList(List<Weather> list) {
         mWeatherList = new ArrayList<>();
         mWeatherList.addAll(list);
+        mSunrise = getTimeWithLocality(Long.parseLong(mWeatherList.get(0).getSunriseTime()), mWeatherList.get(0).getTimezone());
+        mSunset = getTimeWithLocality(Long.parseLong(mWeatherList.get(0).getSunsetTime()), mWeatherList.get(0).getTimezone());
     }
 
     public interface WeatherHorizontalAdapterOnClickHandler {
@@ -56,44 +60,31 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
     @Override
     public void onBindViewHolder(@NonNull WeatherHorizontalViewHolder holder, int position) {
         if (mWeather != null) {
-            // Binding data to a view here
 
             Weather current = mWeather.get(position);
 
             // Set icon
             String time = getHumanFriendlyTimeFromDB(Long.parseLong(current.getDate()));
-            String sSunrise = null;
-            String sSunset = null;
-            boolean check = false;
-            if (mWeatherList != null && mWeatherList.size() > 0) {
-                sSunrise = getTimeWithLocality(Long.parseLong(mWeatherList.get(0).getSunriseTime()), mWeatherList.get(0).getTimezone());
-                sSunset = getTimeWithLocality(Long.parseLong(mWeatherList.get(0).getSunsetTime()), mWeatherList.get(0).getTimezone());
-                check = true;
-            }
 
             if (checkIfTimeIsNow(Long.parseLong(current.getDate()))) {
                 holder.weatherTime.setText(R.string.now);
                 holder.weatherIcon.setImageResource(WeatherIconInterpreter.interpretIcon(current.getSummary()));
             } else {
-
                 holder.weatherTime.setText(time);
                 holder.weatherIcon.setImageResource(WeatherIconInterpreter.interpretIcon(current.getSummary()));
             }
 
-            if (check) {
-                if (time.equals(sSunrise)) {
-                    holder.weatherTime.setText(mContext.getString(R.string.sunrise));
-                    holder.weatherIcon.setImageResource(R.drawable.ic_weather_sunrise);
-                }
+            if (time.equals(mSunrise)) {
+                holder.weatherTime.setText(mContext.getString(R.string.sunrise));
+                holder.weatherIcon.setImageResource(R.drawable.ic_weather_sunrise);
+            }
 
-                if (time.equals(sSunset)) {
-                    holder.weatherTime.setText(mContext.getString(R.string.sunset));
-                    holder.weatherIcon.setImageResource(R.drawable.ic_weather_sunset);
-                }
+            if (time.equals(mSunset)) {
+                holder.weatherTime.setText(mContext.getString(R.string.sunset));
+                holder.weatherIcon.setImageResource(R.drawable.ic_weather_sunset);
             }
 
             // Set temperature
-            //holder.weatherTime.setText(String.valueOf(holder.getAdapterPosition()));
             holder.weatherTemperature.setText(
                     mContext.getString(R.string.temperature_view_holder_degrees_celsius,
                             String.valueOf(Math.round(Double.parseDouble(current.getTemperatureMax())))));
@@ -113,7 +104,7 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
         else return 0;
     }
 
-    public List<Weather> getAllWeather(){
+    public List<Weather> getAllWeather() {
         return mWeather;
     }
 
