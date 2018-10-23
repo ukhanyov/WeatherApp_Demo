@@ -41,7 +41,7 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
     }
 
     public interface WeatherHorizontalAdapterOnClickHandler {
-        void onClick(Weather id);
+        void onClick(List<Weather> weatherList);
     }
 
 
@@ -111,6 +111,10 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
         else return 0;
     }
 
+    public List<Weather> getAllWeather(){
+        return mWeather;
+    }
+
     public class WeatherViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView weatherIcon;
@@ -129,9 +133,7 @@ public class WeatherHorizontalAdapter extends RecyclerView.Adapter<WeatherHorizo
 
         @Override
         public void onClick(View v) {
-            int adapterPosition = getAdapterPosition();
-            Weather weather = mWeather.get(adapterPosition);
-            mClickHandler.onClick(weather);
+            mClickHandler.onClick(getAllWeather());
         }
     }
 }

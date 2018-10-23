@@ -57,6 +57,7 @@ import com.example.oleg.weatherapp_demo.utils.BitmapTransforamationHelper;
 import com.example.oleg.weatherapp_demo.utils.Constants;
 import com.example.oleg.weatherapp_demo.utils.CustomOnSwipeTouchListener;
 import com.example.oleg.weatherapp_demo.utils.NormalizeDate;
+import com.example.oleg.weatherapp_demo.utils.ParcelableWeather;
 import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -102,6 +103,9 @@ public class MainActivity extends AppCompatActivity implements
     // Weather instance for weather now
     private Weather mWeatherNow;
     private Weather mWeatherForThisDay;
+
+    private List<Weather> mWeatherListForADay;
+    private List<Weather> mWeatherListForAWeek;
 
     // Nav drawer
     DrawerLayout mDrawer;
@@ -171,10 +175,11 @@ public class MainActivity extends AppCompatActivity implements
         // LiveData/viewModels
         mWeatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
 
+        mWeatherListForAWeek = new ArrayList<>();
         mWeatherViewModel.getWeatherDailyByCoordinatesAndType().observe(this, list -> {
             adapterVertical.setWeather(list);
             horizontalAdapter.setWeatherList(list);
-
+            mWeatherListForAWeek.addAll(Objects.requireNonNull(list));
             mWeatherForThisDay = Objects.requireNonNull(list).get(0);
 
             mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowDate.setText(NormalizeDate.getHumanFriendlyDateFromDB(
@@ -191,7 +196,12 @@ public class MainActivity extends AppCompatActivity implements
             }
 
         });
-        mWeatherViewModel.getWeatherHourlyByCoordinatesAndType().observe(this, horizontalAdapter::setWeather);
+
+        mWeatherListForADay = new ArrayList<>();
+        mWeatherViewModel.getWeatherHourlyByCoordinatesAndType().observe(this, list -> {
+            horizontalAdapter.setWeather(list);
+            mWeatherListForADay.addAll(Objects.requireNonNull(list));
+        });
 
         // Recycler view for nav drawer
         final MyLocationAdapter myLocationAdapter = new MyLocationAdapter(this);
@@ -280,11 +290,6 @@ public class MainActivity extends AppCompatActivity implements
                         return;
                     }
                 }
-            }
-
-            public void onSimpleClick() {
-
-                if (mWeatherNow != null) launchDetailsActivity(mWeatherNow);
             }
 
         });
@@ -402,7 +407,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onClick(Weather weather) {
+    public void onClick(List<Weather> weather) {
         launchDetailsActivity(weather);
     }
 
@@ -637,26 +642,49 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    public void currentWeatherClick(View view) {
+    private void launchDetailsActivity(List<Weather> weather) {
+        if(weather != null){
+            Intent startDetailsActivityIntent = new Intent(MainActivity.this, DetailsActivity.class);
 
-        if (mWeatherNow != null)
-            launchDetailsActivity(mWeatherNow);
+            List<ParcelableWeather> parcelableWeathers = new ArrayList<>();
+            for (Weather instance : weather){
+                parcelableWeathers.add(new ParcelableWeather(
+                        instance.getId(),
+                        instance.getDate(),
+                        instance.getSummary(),
+                        instance.getTemperatureMax(),
+                        instance.getTemperatureMin(),
+                        instance.getHumidity(),
+                        instance.getPressure(),
+                        instance.getWindSpeed(),
+                        instance.getCoordinates(),
+                        instance.getTypeOfDay(),
+                        instance.getPrecipProbability(),
+                        instance.getSunriseTime(),
+                        instance.getSunsetTime(),
+                        instance.getTimezone())
+                );
+            }
 
-    }
+            startDetailsActivityIntent
+                    .putExtra("weather_key", "test_key")
+                    .putExtra("weather_list", (ArrayList<ParcelableWeather>) parcelableWeathers);
+            startActivity(startDetailsActivityIntent);
+        }
 
-    private void launchDetailsActivity(Weather weather) {
-        Intent startDetailsActivity = new Intent(MainActivity.this, DetailsActivity.class);
-        String[] data = {
-                weather.getDate(),
-                weather.getSummary(),
-                weather.getTemperatureMax(),
-                weather.getTemperatureMin(),
-                weather.getHumidity(),
-                weather.getPressure(),
-                weather.getWindSpeed()
-        };
-        startDetailsActivity.putExtra(Intent.EXTRA_TEXT, data);
-        startActivity(startDetailsActivity);
+
+//        String[] data = {
+//                weather.getDate(),
+//                weather.getSummary(),
+//                weather.getTemperatureMax(),
+//                weather.getTemperatureMin(),
+//                weather.getHumidity(),
+//                weather.getPressure(),
+//                weather.getWindSpeed()
+//        };
+
+        //startDetailsActivity.putExtra(Intent.EXTRA_TEXT, data);
+        //startActivity(startDetailsActivity);
     }
 
     public void textOnLocationNavigationDrawerClicked(View view) {
@@ -766,23 +794,6 @@ public class MainActivity extends AppCompatActivity implements
             ));
         }
     }
-
-//    private boolean haveNetworkConnection() {
-//        boolean haveConnectedWifi = false;
-//        boolean haveConnectedMobile = false;
-//
-//        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-//        NetworkInfo[] netInfo = Objects.requireNonNull(cm).getAllNetworkInfo();
-//        for (NetworkInfo ni : netInfo) {
-//            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
-//                if (ni.isConnected())
-//                    haveConnectedWifi = true;
-//            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
-//                if (ni.isConnected())
-//                    haveConnectedMobile = true;
-//        }
-//        return haveConnectedWifi || haveConnectedMobile;
-//    }
 
     private boolean haveLocationEnabled() {
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);

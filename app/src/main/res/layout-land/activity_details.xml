@@ -34,7 +34,7 @@
                 app:srcCompat="@drawable/ic_weather_default" />
 
             <TextView
-                android:id="@+id/tv_details_1"
+                android:id="@+id/tv_details_date"
                 android:layout_width="279dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -58,7 +58,7 @@
                 android:layout_marginRight="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/guideline_horizontal_layout_first"
-                app:layout_constraintTop_toBottomOf="@+id/tv_details_1"
+                app:layout_constraintTop_toBottomOf="@+id/tv_details_date"
                 tools:text="Summary" />
 
             <TextView

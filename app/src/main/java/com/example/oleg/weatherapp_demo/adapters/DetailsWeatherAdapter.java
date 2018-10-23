@@ -16,57 +16,48 @@ import com.example.oleg.weatherapp_demo.utils.WeatherIconInterpreter;
 
 import java.util.List;
 
-public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder> {
+public class DetailsWeatherAdapter extends RecyclerView.Adapter<DetailsWeatherAdapter.DetailsWeatherViewHolder> {
 
     private final LayoutInflater mInflater;
     private List<Weather> mWeather; // Cached copy of weather
     private Context mContext;
 
-    // Item click stuff
-    final private WeatherAdapterOnClickHandler mClickHandler;
-
-    public WeatherAdapter(Context context, WeatherAdapterOnClickHandler clickHandler) {
+    public DetailsWeatherAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
         mContext = context;
-
-        // Item click stuff
-        mClickHandler = clickHandler;
     }
 
-    public interface WeatherAdapterOnClickHandler {
-        void onClick(List<Weather> weatherList);
-    }
 
     @NonNull
     @Override
-    public WeatherViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+    public DetailsWeatherAdapter.DetailsWeatherViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
 
         View itemView = mInflater.inflate(R.layout.weather_app_list_item, viewGroup, false);
-        return new WeatherViewHolder(itemView);
+        return new DetailsWeatherAdapter.DetailsWeatherViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull WeatherViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull DetailsWeatherAdapter.DetailsWeatherViewHolder holder, int position) {
         if(mWeather != null){
-        // Binding data to a view here
+            // Binding data to a view here
 
-        Weather current = mWeather.get(position);
+            Weather current = mWeather.get(position);
 
-        // Weather Icon
-        holder.weatherIcon.setImageResource(WeatherIconInterpreter.interpretIcon(current.getSummary()));
+            // Weather Icon
+            holder.weatherIcon.setImageResource(WeatherIconInterpreter.interpretIcon(current.getSummary()));
 
-        //Weather Date
-        holder.weatherDate.setText(NormalizeDate.getHumanFriendlyDayOfWeek(Long.parseLong(current.getDate())));
+            //Weather Date
+            holder.weatherDate.setText(NormalizeDate.getHumanFriendlyDayOfWeek(Long.parseLong(current.getDate())));
 
-        // High (max) temperature
-        holder.weatherTemperatureHigh.setText(
-                        mContext.getString(R.string.temperature_view_holder_degrees_celsius,
-                        String.valueOf(Math.round(Double.parseDouble(current.getTemperatureMax())))));
+            // High (max) temperature
+            holder.weatherTemperatureHigh.setText(
+                    mContext.getString(R.string.temperature_view_holder_degrees_celsius,
+                            String.valueOf(Math.round(Double.parseDouble(current.getTemperatureMax())))));
 
-         // Low (min) temperature
-        holder.weatherTemperatureLow.setText(
-                        mContext.getString(R.string.temperature_view_holder_degrees_celsius,
-                        String.valueOf(Math.round(Double.parseDouble(current.getTemperatureMin())))));
+            // Low (min) temperature
+            holder.weatherTemperatureLow.setText(
+                    mContext.getString(R.string.temperature_view_holder_degrees_celsius,
+                            String.valueOf(Math.round(Double.parseDouble(current.getTemperatureMin())))));
         } else {
             throw new IllegalArgumentException("Some error with binding data for vertical recycler view");
         }
@@ -89,14 +80,14 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         else return null;
     }
 
-    class WeatherViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class DetailsWeatherViewHolder extends RecyclerView.ViewHolder{
 
         ImageView weatherIcon;
         TextView weatherDate;
         TextView weatherTemperatureHigh;
         TextView weatherTemperatureLow;
 
-        WeatherViewHolder(View view) {
+        DetailsWeatherViewHolder(View view) {
             super(view);
 
             weatherIcon = view.findViewById(R.id.weather_icon);
@@ -104,14 +95,6 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
             weatherTemperatureHigh = view.findViewById(R.id.tv_high_temperature);
             weatherTemperatureLow = view.findViewById(R.id.tv_low_temperature);
 
-            view.setOnClickListener(this);
-        }
-
-        // Item click stuff
-        @Override
-        public void onClick(View v) {
-            mClickHandler.onClick(getAllWeather());
         }
     }
-
 }
