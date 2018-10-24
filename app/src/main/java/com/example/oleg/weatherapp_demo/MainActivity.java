@@ -178,7 +178,6 @@ public class MainActivity extends AppCompatActivity implements
             adapterVertical.setWeather(list);
             horizontalAdapter.setWeatherList(list);
             mWeatherForThisDay = Objects.requireNonNull(list).get(0);
-            adapterVertical.notifyDataSetChanged();
             mBinding.layoutContentMain.layoutContentAppBar.tvWeatherNowDate.setText(NormalizeDate.getHumanFriendlyDateFromDB(
                     Long.parseLong(mWeatherForThisDay.getDate())));
 
@@ -196,7 +195,6 @@ public class MainActivity extends AppCompatActivity implements
 
         mWeatherViewModel.getWeatherHourlyByCoordinatesAndType().observe(this, list -> {
             horizontalAdapter.setWeather(list);
-            horizontalAdapter.notifyDataSetChanged();
         });
 
         // Recycler view for nav drawer
@@ -826,8 +824,6 @@ public class MainActivity extends AppCompatActivity implements
 
     private void getPhotoFromPlacePicker(String placeId) {
 
-        //final boolean[] trigger = new boolean[1];
-
         final Task<PlacePhotoMetadataResponse> photoMetadataResponse = mGeoDataClient.getPlacePhotos(placeId);
         photoMetadataResponse.addOnCompleteListener(task -> {
             try{
@@ -852,7 +848,6 @@ public class MainActivity extends AppCompatActivity implements
                     mBinding.clActivityMain.getBackground().setAlpha(OPACITY_LEVEL); // Setting opacity (scale is 0 - 255)
 
                     saveCurrentLocation(LOCATION_NAME);
-                    //trigger[0] = true;
                 });
             }catch (IllegalStateException e) {
                 Toast.makeText(this, "No location picture to save", Toast.LENGTH_SHORT).show();
